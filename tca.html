@@ -83,6 +83,43 @@
         }
 
         .license-badge a { color: var(--accent); text-decoration: none; font-weight: bold; }
+
+        /* The Interactive Sandbox */
+        .sandbox {
+            background: var(--bg);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin: 4rem 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        .input-wrapper { display: flex; gap: 10px; margin-top: 2rem; }
+        #query-input { 
+            flex: 1; padding: 16px; border-radius: 8px; border: 1px solid var(--border);
+            background: var(--card-bg); color: var(--text); font-size: 1rem;
+        }
+        .btn-route { 
+            background: var(--accent); color: white; border: none; padding: 0 24px; 
+            border-radius: 8px; font-weight: 600; cursor: pointer; transition: transform 0.1s;
+        }
+        .btn-route:active { transform: scale(0.98); }
+
+        .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 2rem; }
+        .stat { background: var(--card-bg); padding: 15px; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
+        .stat label { font-size: 0.7rem; color: var(--muted); display: block; margin-bottom: 5px; }
+        .stat span { font-size: 1.5rem; font-weight: 700; }
+        
+        #log-container { 
+            height: 200px; overflow-y: auto; background: var(--code-bg); 
+            border-radius: 8px; padding: 1rem; font-family: 'SFMono-Regular', Consolas, monospace; font-size: 0.8rem;
+        }
+        .log-line { margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px; display: flex; justify-content: space-between; }
+        
+        /* Layer Colors */
+        .l1 { color: var(--layer1); } .l2 { color: var(--layer2); }
+        .l3 { color: var(--layer3); } .l4 { color: var(--layer4); }
+
     </style>
 </head>
 <body>
@@ -97,6 +134,35 @@
         <strong>Abstract:</strong> This article presents the Tiered-Cost Architecture (TCA), a sophisticated multi-layer AI processing framework designed to optimize computational resources, ensure ethical compliance, and maintain cost efficiency through intelligent query routing and continuous learning mechanisms.
     </div>
 
+ <div class="sandbox">
+        <h3 style="margin-top: 0;">Live Prototype: Adaptive Routing Engine</h3>
+        <p>Test the Cognitive Gate below. The engine will determine which processing tier is required for your query in real-time.</p>
+        
+        <div class="dashboard">
+            <div class="stat"><label>L1 (Reflex)</label><span id="count-1" class="l1">0</span></div>
+            <div class="stat"><label>L2 (On-Device)</label><span id="count-2" class="l2">0</span></div>
+            <div class="stat"><label>L3 (Specialist)</label><span id="count-3" class="l3">0</span></div>
+            <div class="stat"><label>L4 (Gen-AI)</label><span id="count-4" class="l4">0</span></div>
+        </div>
+
+        <div id="log-container">
+            <div class="muted">System ready. Waiting for query...</div>
+        </div>
+
+        <div class="input-wrapper">
+            <input type="text" id="query-input" placeholder="Enter a request (e.g. 'Hello', '2+2', 'Write a story')">
+            <button class="btn-route" onclick="handleRouting()">Route</button>
+        </div>
+
+     <div style="text-align: right;">
+            <a href="https://ezmu.github.io/TCA_JS_router.html" class="router-link" target="_blank">
+                View Detailed Router Logic ↗
+            </a>
+        </div>
+    </div>
+
+
+    
     <section>
         <h2>1. Introduction</h2>
         <p>Modern AI systems face the challenge of balancing computational cost, response quality, and ethical safety. The Tiered-Cost Architecture addresses these challenges through a hierarchical approach that processes queries across multiple layers based on complexity, cost, and privacy requirements, all governed by a cognitive control plane.</p>
@@ -248,5 +314,58 @@
         </div>
     </footer>
 
+<script>
+    const counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+
+    function handleRouting() {
+        const input = document.getElementById('query-input');
+        const query = input.value.trim();
+        if (!query) return;
+
+        const start = performance.now();
+        const result = route(query);
+        const duration = (performance.now() - start).toFixed(3);
+
+        // Update UI
+        counts[result.layer]++;
+        document.getElementById(`count-${result.layer}`).innerText = counts[result.layer];
+        
+        const log = document.getElementById('log-container');
+        const div = document.createElement('div');
+        div.className = 'log-line';
+        div.innerHTML = `
+            <span><strong class="l${result.layer}">[L${result.layer}]</strong> ${query.substring(0,25)}${query.length > 25 ? '...' : ''}</span>
+            <span class="muted">${duration}ms</span>
+        `;
+        log.prepend(div);
+        input.value = '';
+    }
+
+    function route(q) {
+        const text = q.toLowerCase();
+        
+        // Layer 1: Deterministic (Regex)
+        if (/^(hi|hello|thanks|bye|good morning|hey)/.test(text)) {
+            return { layer: 1 };
+        }
+        
+        // Layer 3: Math/Code patterns
+        if (/[+\-*/=^]/.test(text) || /calc|math|calculate/.test(text)) {
+            return { layer: 3 };
+        }
+
+        // Layer 2: Simple Facts (Short queries)
+        if (text.split(' ').length < 6 && (text.includes('who') || text.includes('what') || text.includes('where'))) {
+            return { layer: 2 };
+        }
+
+        // Layer 4: Complexity / Length
+        if (text.length > 50 || /write|story|poem|explain|why|how/.test(text)) {
+            return { layer: 4 };
+        }
+
+        return { layer: 2 }; // Default to local SLM
+    }
+</script>
 </body>
 </html>
