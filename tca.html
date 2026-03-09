@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCA Framework | Tiered-Cost Architecture Whitepaper</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+        });
+    </script>
+    
+    <style>
+        :root {
+            --bg: #0d1117;
+            --text: #c9d1d9;
+            --h-color: #f0f6fc;
+            --accent: #58a6ff;
+            --border: #30363d;
+            --code-bg: #161b22;
+            --warning: #f0883e;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 { color: var(--h-color); border-bottom: 1px solid var(--border); padding-bottom: 0.3em; margin-top: 2.5rem; }
+        h1 { font-size: 2.5em; text-align: center; margin-bottom: 1em; border: none; line-height: 1.2; }
+        
+        .abstract {
+            background: var(--code-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+        }
+
+        .license-header {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--warning);
+            border: 1px solid var(--warning);
+            padding: 5px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .mermaid { 
+            background: #161b22; 
+            padding: 20px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border);
+            margin: 2rem 0; 
+        }
+        
+        table { width: 100%; border-collapse: collapse; margin: 2rem 0; }
+        th, td { border: 1px solid var(--border); padding: 12px; text-align: left; }
+        th { background-color: #161b22; color: var(--h-color); }
+
+        .tier-meta { font-size: 0.85em; color: var(--accent); font-weight: bold; margin-bottom: 5px; display: block; }
+        
+        ul { margin-bottom: 1rem; padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+
+        footer {
+            text-align: center;
+            padding: 3rem;
+            margin-top: 5rem;
+            border-top: 1px solid var(--border);
+            background: var(--code-bg);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .license-badge a { color: var(--accent); text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="license-header">
+        Proprietary Intellectual Property • CC BY-NC 4.0 Protected
+    </div>
+
+    <h1>Tiered-Cost Architecture (TCA):<br>A Comprehensive Framework for Efficient AI Processing</h1>
+
+    <div class="abstract">
+        <strong>Abstract:</strong> This article presents the Tiered-Cost Architecture (TCA), a sophisticated multi-layer AI processing framework designed to optimize computational resources, ensure ethical compliance, and maintain cost efficiency through intelligent query routing and continuous learning mechanisms.
+    </div>
+
+    <section>
+        <h2>1. Introduction</h2>
+        <p>Modern AI systems face the challenge of balancing computational cost, response quality, and ethical safety. The Tiered-Cost Architecture addresses these challenges through a hierarchical approach that processes queries across multiple layers based on complexity, cost, and privacy requirements, all governed by a cognitive control plane.</p>
+    </section>
+
+    <section>
+        <h2>2. System Architecture Overview</h2>
+        <p>The TCA consists of four processing layers and a central control plane, arranged in ascending order of computational cost and capability:</p>
+        
+        <div class="mermaid">
+        flowchart TB
+            A[Tiered-Cost Architecture TCA]
+            
+            A --> CP[Control Plane & Cognitive Gate]
+            CP --> CPA[Context Analyzer]
+            CP --> CPB[Logical Validity Assessment]
+            CP --> CPC[Ethical & Intent Evaluator]
+            CP --> CPD[Adaptive Router]
+            CP --> CPE[Feedback & Learning Loop]
+            
+            CP --> L1[Layer 1: On-Device Deterministic Processing]
+            L1 --> L1A[Rule Engine]
+            L1 --> L1B[Local Cache]
+            L1 --> L1C[Reflex-Level Responses]
+            
+            L1 --> L2[Layer 2: On-Device Lightweight Inference]
+            L2 --> L2A[Micro-Intent Classifier]
+            L2 --> L2B[Local Knowledge Graph]
+            L2 --> L2C[Ambiguity Resolver]
+            
+            L2 --> L3[Layer 3: Server-Side Narrow AI]
+            L3 --> L3A[Math & Code Engines]
+            L3 --> L3B[Specialized Factual Databases]
+            L3 --> L3C[Domain-Specific Reasoning]
+            
+            L3 --> L4[Layer 4: Server-Side Generative AI]
+            L4 --> L4A[Large LLM]
+            L4 --> L4B[Deep Reasoning & Synthesis]
+            
+            L4 --> CPE
+            
+            style A fill:#2e7d32,color:#fff
+            style CP fill:#1c2d3d,color:#fff
+            style L1 fill:#1b3320,color:#fff
+            style L2 fill:#2a331b,color:#fff
+            style L3 fill:#332b1b,color:#fff
+            style L4 fill:#331b1b,color:#fff
+            style CPE fill:#3d1c2d,color:#fff
+        </div>
+    </section>
+
+    <section>
+        <h2>3. The Cognitive Gate: First Line of Defense</h2>
+        <p>Before any query reaches the processing layers, it passes through the Cognitive Gate—a critical validation layer that ensures all interactions are logical and ethical.</p>
+        
+        <h3>3.1 Components</h3>
+        <ul>
+            <li><strong>Context Analyzer:</strong> Examines the query's contextual relevance to ongoing sessions.</li>
+            <li><strong>Logical Validity Assessment:</strong> Checks for coherence and consistency in the request.</li>
+            <li><strong>Ethical & Intent Evaluator:</strong> Screens for harmful, biased, or inappropriate content at the edge.</li>
+        </ul>
+
+        <h3>3.2 Routing Workflow</h3>
+        <div class="mermaid">
+            graph TD
+                In[User Query] --> Norm[Normalization]
+                Norm --> Gate{Cognitive Gate}
+                Gate -->|Valid| Router[Routing Engine]
+                Gate -->|Inconsistent| Clarify[Clarification Request]
+                Gate -->|Ethical Issue| Deflect[Deflection Response]
+        </div>
+    </section>
+
+    <section>
+        <h2>4. The Four Processing Layers</h2>
+        
+        <h3>4.1 Layer 1: On-Device Deterministic Processing</h3>
+        <span class="tier-meta">Cost: Lowest | Privacy: Highest | Speed: Fastest</span>
+        <p>This layer handles simple, rule-based queries that can be resolved locally without network connectivity. It includes rule engines, local caches, and reflex-level responses for common interactions.</p>
+
+        <h3>4.2 Layer 2: On-Device Lightweight Inference</h3>
+        <span class="tier-meta">Cost: Low | Privacy: High | Speed: Fast</span>
+        <p>On-device machine learning models (SLMs) handle moderately complex tasks such as micro-intent classification, local knowledge graph queries, and ambiguity resolution.</p>
+
+        <h3>4.3 Layer 3: Server-Side Narrow AI</h3>
+        <span class="tier-meta">Cost: Medium | Privacy: Moderate | Speed: Moderate</span>
+        <p>Specialized server-side models for domain-specific tasks. This includes math and code execution engines, factual databases, and specialized reasoning (legal, medical, or technical).</p>
+
+        <h3>4.4 Layer 4: Server-Side Generative AI</h3>
+        <span class="tier-meta">Cost: Highest | Privacy: Lowest | Speed: Slowest</span>
+        <p>Full-capability large language models reserved for high-order tasks: creative content generation, deep synthesis, and complex problem-solving.</p>
+    </section>
+
+    <section>
+        <h2>5. Adaptive Routing & Continuous Learning</h2>
+        <p>The system utilizes a feedback loop to learn from every interaction, optimizing future routing decisions based on performance and accuracy metrics.</p>
+        <div class="mermaid">
+            graph LR
+                Q[New Query] --> RD[Routing Decision]
+                RD --> Exec[Execution]
+                Exec --> Eval[Performance Evaluation]
+                Eval --> Mem[Feedback Memory]
+                Mem --> RD
+        </div>
+    </section>
+
+    <section>
+        <h2>6. Benefits of TCA</h2>
+        <ul>
+            <li><strong>Cost Efficiency:</strong> Prevents expensive LLM invocation for trivial tasks.</li>
+            <li><strong>Privacy Protection:</strong> Processes sensitive data locally in Layers 1 and 2.</li>
+            <li><strong>Ethical Safety:</strong> Multi-layer validation acts as an ethical firewall.</li>
+            <li><strong>Scalability:</strong> Distributed processing reduces server-side bottlenecks.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>7. Implementation Considerations</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Factor</th>
+                    <th>Implementation Metric</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Complexity</td><td>Token count, intent depth, and required reasoning steps.</td></tr>
+                <tr><td>Privacy</td><td>Presence of PII or sensitive enterprise data.</td></tr>
+                <tr><td>Urgency</td><td>Maximum allowable latency for the specific query type.</td></tr>
+                <tr><td>Budget</td><td>Allocated computational cost per user session.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>8. Conclusion</h2>
+        <p>The Tiered-Cost Architecture represents a shift from "AI-First" to "Efficiency-First" design. By combining intelligent routing, multi-layer processing, and continuous learning, TCA enables AI systems that are powerful, private, and ethically responsible.</p>
+    </section>
+
+    <footer>
+        <div class="license-badge">
+            <p><strong>© 2026 Ez-Eldeen A. Mushtaha. All Rights Reserved.</strong></p>
+            <p>Licensed under <br>
+                <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+            </p>
+            <p style="margin-top:15px; font-size: 0.8rem; color: #8b949e;">
+                Inquiries: <a href="mailto:3z.eldeen@gmail.com" style="color: #8b949e;">3z.eldeen@gmail.com</a>
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
