@@ -1,125 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ez-Eldeen A. Y. Mushtaha | Portfolio</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            line-height: 1.6;
-            background: #f4f4f4;
-            color: #333;
-        }
-        header {
-            background: #1f2937;
-            color: #fff;
-            padding: 20px 0;
-            text-align: center;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 2em;
-        }
-        header p {
-            margin: 5px 0 0;
-            font-size: 1.2em;
-        }
-        nav {
-            margin-top: 10px;
-        }
-        nav a {
-            color: #fff;
-            margin: 0 15px;
-            text-decoration: none;
-        }
-        section {
-            padding: 40px 20px;
-            max-width: 900px;
-            margin: auto;
-            background: #fff;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #111827;
-        }
-        .projects {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        .project-card {
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background: #f9f9f9;
-            transition: 0.3s;
-        }
-        .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .project-card a {
-            color: #1d4ed8;
-            text-decoration: none;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #1f2937;
-            color: #fff;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ez-Eldeen A. Y. Mushtaha | Portfolio</title>
+<style>
+body {font-family:'Segoe UI',sans-serif;margin:0;background:#f0f2f5;color:#333;}
+header {background:#1f2937;color:#fff;text-align:center;padding:50px 20px 30px;}
+header img {width:120px;height:120px;border-radius:50%;border:3px solid #fff;margin-bottom:15px;}
+header h1 {margin:10px 0 5px;font-size:2.2em;}
+header p {margin:0;font-size:1.1em;}
+nav {margin-top:15px;}
+nav a {color:#fff;margin:0 15px;text-decoration:none;font-weight:bold;transition:0.3s;}
+nav a:hover {color:#60a5fa;}
+section {max-width:1000px;margin:40px auto;padding:30px;background:#fff;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,0.05);}
+h2 {text-align:center;margin-bottom:30px;color:#111827;}
+.projects {display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;}
+.project-card {background:#f9fafb;border-radius:10px;padding:20px;transition:transform 0.3s,box-shadow 0.3s;border:1px solid #e5e7eb;}
+.project-card:hover {transform:translateY(-7px);box-shadow:0 8px 20px rgba(0,0,0,0.1);}
+.project-card a {color:#1d4ed8;font-weight:bold;text-decoration:none;}
+footer {text-align:center;padding:25px;background:#1f2937;color:#fff;}
+footer a {color:#60a5fa;text-decoration:none;}
+footer a:hover {text-decoration:underline;}
+</style>
 </head>
 <body>
 
 <header>
-    <h1>Ez-Eldeen A. Y. Mushtaha</h1>
-    <p>Software Engineer & Systems Architect</p>
-    <nav>
-        <a href="#projects">Projects</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-    </nav>
+<img src="https://avatars.githubusercontent.com/u/8163584?v=4" alt="Ez-Eldeen A. Y. Mushtaha">
+<h1>Ez-Eldeen A. Y. Mushtaha</h1>
+<p>Software Engineer & Systems Architect</p>
+<nav>
+<a href="#projects">Projects</a>
+<a href="#about">About</a>
+<a href="#contact">Contact</a>
+</nav>
 </header>
 
 <section id="projects">
     <h2>Projects</h2>
     <div class="projects">
+
         <div class="project-card">
-            <h3><a href="https://github.com/ezmu/view-hints" target="_blank">View Hints</a></h3>
-            <p>Laravel package to show variable hints in Blade templates for debugging and inline editing.</p>
+            <h3><a href="https://github.com/ezmu/memory-scanner-poc" target="_blank">memory-scanner-poc</a></h3>
+            <p>Proof of Concept for scanning memory to extract readable text, URLs, and images from allocated memory blocks.</p>
         </div>
         <div class="project-card">
-            <h3><a href="https://github.com/ezmu/docs-generator" target="_blank">Docs Generator</a></h3>
-            <p>Tool to automatically generate documentation from code and database schema.</p>
+            <h3><a href="https://github.com/ezmu/live-lang-translator" target="_blank">live-lang-translator</a></h3>
+            <p>Inline translation editor for Laravel apps with live preview and modal editor.</p>
         </div>
         <div class="project-card">
-            <h3><a href="https://github.com/ezmu/API-Tester" target="_blank">API Tester</a></h3>
+            <h3><a href="https://github.com/ezmu/html-to-markdown" target="_blank">html-to-markdown</a></h3>
+            <p>HTML to Markdown Converter.</p>
+        </div>
+        <div class="project-card">
+            <h3><a href="https://github.com/ezmu/tech-articles" target="_blank">tech-articles</a></h3>
+            <p>Collection of technology-related articles.</p>
+        </div>
+        <div class="project-card">
+            <h3><a href="https://github.com/ezmu/ascii-tree-builder" target="_blank">ascii-tree-builder</a></h3>
+            <p>HTML project for building ASCII-style tree structures.</p>
+        </div>
+        <div class="project-card">
+            <h3><a href="https://github.com/ezmu/ModuleGenerator" target="_blank">ModuleGenerator</a></h3>
+            <p>Magento 2 Module Generator.</p>
+        </div>
+        <div class="project-card">
+            <h3><a href="https://github.com/ezmu/Db-Manager" target="_blank">Db-Manager</a></h3>
+            <p>Laravel Database management command.</p>
+        </div>
+        <div class="project-card">
+            <h3><a href="https://github.com/ezmu/API-Tester" target="_blank">API-Tester</a></h3>
             <p>Lightweight tool to test REST APIs and monitor responses with built-in reports.</p>
+        </div>
+        <div class="project-card">
+            <h3><a href="https://github.com/ezmu/view-hints" target="_blank">view-hints</a></h3>
+            <p>Laravel package to show Blade debugging hints and inline editing.</p>
+        </div>
+        <div class="project-card">
+            <h3><a href="https://github.com/ezmu/docs-generator" target="_blank">docs-generator</a></h3>
+            <p>Laravel Docs Generator.</p>
         </div>
     </div>
 </section>
 
 <section id="about">
-    <h2>About Me</h2>
-    <p>
-        I am a Software Engineer & Systems Architect based in Gaza, Palestine. I have over 18 years of experience in building, integrating, and scaling real-world systems including ERP, eCommerce platforms, and secure infrastructures. I specialize in system analysis, data analysis, and building robust, scalable applications.
-    </p>
+<h2>About Me</h2>
+<p>
+Software Engineer & Systems Architect based in Gaza, Palestine. 18+ years experience in ERP, eCommerce, and scalable systems.
+</p>
 </section>
 
 <section id="contact">
-    <h2>Contact</h2>
-    <p>Email: <a href="mailto:3z.eldeen@gmail.com">3z.eldeen@gmail.com</a></p>
-    <p>GitHub: <a href="https://github.com/ezmu" target="_blank">https://github.com/ezmu</a></p>
+<h2>Contact</h2>
+<p>Email: <a href="mailto:3z.eldeen@gmail.com">3z.eldeen@gmail.com</a></p>
+<p>GitHub: <a href="https://github.com/ezmu" target="_blank">https://github.com/ezmu</a></p>
+<p>LinkedIn: <a href="https://www.linkedin.com/in/ezmu" target="_blank">https://www.linkedin.com/in/ezmu</a></p>
+<p>Medium: <a href="https://medium.com/@3z.eldeen" target="_blank">https://medium.com/@3z.eldeen</a></p>
 </section>
 
 <footer>
-    © 2026 Ez-Eldeen A. Y. Mushtaha
+© 2026 Ez-Eldeen A. Y. Mushtaha
 </footer>
 
 </body>
