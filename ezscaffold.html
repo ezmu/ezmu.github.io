@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laravel Architect Pro V10 - No Shortcuts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        :root { --primary: #10b981; --bg: #020617; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: #94a3b8; }
+        .mono { font-family: 'Fira Code', monospace; }
+        .tab-active { color: var(--primary); border-bottom: 3px solid var(--primary); background: rgba(16, 185, 129, 0.08); }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        .code-pre { background: #0d1117 !important; border: 1px solid #1e293b; border-radius: 12px; }
+    </style>
+</head>
+<body class="h-screen overflow-hidden flex flex-col">
+
+<div id="app" class="flex flex-col h-full">
+    <header class="h-16 bg-[#0f172a] border-b border-slate-800 flex items-center justify-between px-8">
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center rotate-3 shadow-emerald-500/20 shadow-lg">
+                    <i class="fa-solid fa-code-branch text-white"></i>
+                </div>
+                <h1 class="text-white font-black tracking-tighter uppercase">EzScaffold <span class="text-emerald-500">V10</span></h1>
+            </div>
+            <div class="flex bg-slate-900 rounded-xl p-1 border border-slate-800">
+                <button v-for="fw in ['tailwind', 'bootstrap', 'vue', 'livewire']" :key="fw" 
+                    @click="uiFramework = fw"
+                    :class="['px-5 py-2 text-[10px] font-black uppercase rounded-lg transition-all', uiFramework === fw ? 'bg-emerald-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300']">
+                    {{ fw }}
+                </button>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button @click="resetFields" class="text-xs font-bold text-red-500 hover:bg-red-500/10 px-4 py-2 rounded-lg transition">CLEAR ARCHITECTURE</button>
+        </div>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden">
+        <aside class="w-80 bg-[#0b0f1a] border-r border-slate-800 p-6 overflow-y-auto custom-scrollbar">
+            <div class="mb-8">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-3">Target Model</label>
+                <input v-model="modelName" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-emerald-400 font-bold mono outline-none focus:border-emerald-500 transition">
+            </div>
+
+            <div class="mb-8">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-4">Core Modules</label>
+                <div class="space-y-2">
+                    <label v-for="(val, key) in options" :key="key" class="flex items-center justify-between p-3 bg-slate-900/50 border border-slate-800 rounded-xl cursor-pointer hover:bg-slate-800 transition">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{{ key.replace(/([A-Z])/g, ' $1') }}</span>
+                        <input v-model="options[key]" type="checkbox" class="accent-emerald-500 w-4 h-4">
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">ORM Relations</label>
+                    <button @click="addRelation" class="text-emerald-500"><i class="fa-solid fa-plus-circle"></i></button>
+                </div>
+                <div v-for="(rel, index) in relations" :key="index" class="p-3 bg-slate-900 border border-slate-800 rounded-xl mb-3 relative group">
+                    <button @click="removeRelation(index)" class="absolute -top-2 -right-2 text-red-500 opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-circle-x"></i></button>
+                    <select v-model="rel.type" class="w-full bg-transparent text-[10px] font-bold text-blue-400 mb-2 outline-none border-b border-slate-700 pb-1">
+                        <option value="belongsTo">belongsTo</option><option value="hasMany">hasMany</option><option value="belongsToMany">belongsToMany</option>
+                    </select>
+                    <input v-model="rel.model" type="text" placeholder="Model" class="w-full bg-transparent border-none text-[10px] text-white mono p-0">
+                </div>
+            </div>
+        </aside>
+
+        <section class="flex-1 bg-[#020617] p-10 overflow-y-auto custom-scrollbar">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <h2 class="text-3xl font-black text-white tracking-tighter italic">Schema <span class="text-emerald-500">Forge</span></h2>
+                        <p class="text-slate-500 text-sm mt-2">Every field here generates DB, UI, and Server-side logic.</p>
+                    </div>
+                    <button @click="addField" class="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-emerald-600/20 transition-all hover:-translate-y-1">
+                        New Field
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <div v-for="(field, index) in fields" :key="index" class="bg-[#0f172a] border border-slate-800 p-8 rounded-[2rem] relative group hover:border-emerald-500/40 transition-all">
+                        <button @click="removeField(index)" class="absolute top-6 right-8 text-slate-600 hover:text-red-500 transition"><i class="fa-solid fa-trash-can"></i></button>
+                        
+                        <div class="grid grid-cols-12 gap-8 mb-6">
+                            <div class="col-span-4">
+                                <label class="text-[9px] font-black text-slate-500 uppercase mb-2 block tracking-widest">Column Name</label>
+                                <input v-model="field.name" @input="autoSuggest(field)" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white font-bold mono outline-none focus:border-emerald-500">
+                            </div>
+                            <div class="col-span-4">
+                                <label class="text-[9px] font-black text-slate-500 uppercase mb-2 block tracking-widest">Type</label>
+                                <select v-model="field.dbType" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-300 outline-none">
+                                    <option value="string">string</option><option value="text">text</option><option value="foreignId">foreignId</option>
+                                    <option value="integer">integer</option><option value="decimal">decimal</option><option value="boolean">boolean</option><option value="date">date</option>
+                                </select>
+                            </div>
+                            <div class="col-span-4">
+                                <label class="text-[9px] font-black text-emerald-500 uppercase mb-2 block tracking-widest">UI Widget</label>
+                                <select v-model="field.uiType" class="w-full bg-emerald-950/20 border border-emerald-900/40 rounded-xl p-3 text-sm text-emerald-400 font-black outline-none">
+                                    <option value="text">Input</option><option value="textarea">TextArea</option><option value="select">Select</option>
+                                    <option value="image">Image</option><option value="number">Numeric</option><option value="checkbox">Switch</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-12 gap-8 pt-6 border-t border-slate-800/50">
+                            <div class="col-span-8">
+                                <label class="text-[9px] font-black text-pink-500 uppercase mb-2 block tracking-widest">Validation Rules</label>
+                                <input v-model="field.validation" type="text" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-xs text-pink-300 mono outline-none focus:border-pink-500/30">
+                            </div>
+                            <div class="col-span-4 flex items-center justify-around mt-5 bg-slate-900/30 rounded-xl border border-slate-800 px-4 py-2">
+                                <label v-for="flag in ['nullable', 'searchable', 'showInTable']" :key="flag" class="flex flex-col items-center gap-1 cursor-pointer">
+                                    <input v-model="field[flag]" type="checkbox" class="accent-emerald-500 w-3 h-3">
+                                    <span class="text-[8px] font-black text-slate-500 uppercase tracking-tighter">{{ flag }}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="w-2/5 bg-[#0d1117] border-l border-slate-800 flex flex-col min-w-[700px]">
+            <div class="flex overflow-x-auto bg-[#161b22] border-b border-slate-800 sticky top-0 z-20 custom-scrollbar">
+                <button v-for="tab in currentTabs" :key="tab.id" @click="activeTab = tab.id" 
+                    :class="['px-5 py-4 text-[9px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap', activeTab === tab.id ? 'tab-active' : 'text-slate-500 hover:text-slate-300']">
+                    {{ tab.name }}
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-auto p-8 relative custom-scrollbar bg-[#0d1117]">
+                <div class="absolute top-4 right-8 flex gap-2 z-30">
+                    <button @click="copyCode" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-xl text-[10px] font-black shadow-lg shadow-emerald-900/20 transition-all uppercase tracking-widest active:scale-95">
+                        Copy Complete Code
+                    </button>
+                </div>
+                <pre class="font-mono text-[12px] leading-relaxed text-slate-400 code-pre p-6"><code v-html="highlightedCode"></code></pre>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    const { createApp } = Vue;
+    createApp({
+        data() {
+            return {
+                modelName: 'Post', uiFramework: 'tailwind', activeTab: 'migration',
+                options: { pagination: true, softDeletes: true, storageLink: true, apiResources: true, factorySeeder: true },
+                relations: [{ type: 'belongsTo', model: 'Category' }],
+                fields: [
+                    { name: 'category_id', dbType: 'foreignId', uiType: 'select', validation: 'required|exists:categories,id', nullable: false, searchable: false, showInTable: true },
+                    { name: 'title', dbType: 'string', uiType: 'text', validation: 'required|string|max:255', nullable: false, searchable: true, showInTable: true },
+                    { name: 'image', dbType: 'string', uiType: 'image', validation: 'nullable|image|max:2048', nullable: true, searchable: false, showInTable: true },
+                    { name: 'content', dbType: 'text', uiType: 'textarea', validation: 'required', nullable: false, searchable: true, showInTable: false }
+                ],
+                tabs: [
+                    { id: 'migration', name: 'Migration', fw: 'all' },
+                    { id: 'model', name: 'Model Logic', fw: 'all' },
+                    { id: 'request', name: 'Form Request', fw: 'all' },
+                    { id: 'controller', name: 'Controller (Full)', fw: 'all' },
+                    { id: 'routes', name: 'Web/API Routes', fw: 'all' },
+                    { id: 'api', name: 'API Resource', fw: 'all' },
+                    { id: 'factory', name: 'Factory/Seeder', fw: 'all' },
+                    { id: 'v_index', name: 'Index View', fw: ['tailwind', 'bootstrap'] },
+                    { id: 'v_form', name: 'Form View', fw: ['tailwind', 'bootstrap'] },
+                    { id: 'lw_full', name: 'Livewire Full', fw: ['livewire'] },
+                    { id: 'vue_full', name: 'Inertia Full', fw: ['vue'] }
+                ]
+            }
+        },
+        computed: {
+            tableName() { let n = this.modelName.toLowerCase(); return n.endsWith('y') ? n.slice(0, -1) + 'ies' : n + 's'; },
+            modelVar() { return this.modelName.toLowerCase(); },
+            currentTabs() { return this.tabs.filter(t => t.fw === 'all' || t.fw.includes(this.uiFramework)); },
+            
+            generatedCode() {
+                switch(this.activeTab) {
+                    case 'migration': return this.tplMigration();
+                    case 'model': return this.tplModel();
+                    case 'request': return this.tplRequest();
+                    case 'controller': return this.tplController();
+                    case 'routes': return this.tplRoutes();
+                    case 'api': return this.tplApi();
+                    case 'factory': return this.tplFactory();
+                    case 'v_index': return this.uiFramework === 'tailwind' ? this.tplTwIndex() : this.tplBsIndex();
+                    case 'v_form': return this.uiFramework === 'tailwind' ? this.tplTwForm() : this.tplBsForm();
+                    case 'lw_full': return this.tplLwFull();
+                    case 'vue_full': return this.tplVueFull();
+                    default: return '// Select a tab to see full code.';
+                }
+            },
+            highlightedCode() {
+                return this.generatedCode.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                    .replace(/(public|protected|return|class|extends|function|use|namespace|if|foreach|else|static|void|bool|array)/g, '<span class="text-emerald-500 font-bold">$1</span>')
+                    .replace(/(@csrf|@method|@foreach|@endforeach|@if|@endif|@error|@enderror|@section|@extends)/g, '<span class="text-pink-500 font-bold">$1</span>')
+                    .replace(/(\$[a-zA-Z0-9_]+)/g, '<span class="text-blue-300 font-medium">$1</span>');
+            }
+        },
+        methods: {
+            // --- DATABASE & LOGIC ---
+            tplMigration() {
+                let flds = this.fields.map(f => `            $table->${f.dbType}('${f.name}')${f.dbType==='foreignId'?'->constrained()->cascadeOnDelete()':''}${f.nullable?'->nullable()':''};`).join('\n');
+                return `<?php\n\nuse Illuminate\\Database\\Migrations\\Migration;\nuse Illuminate\\Database\\Schema\\Blueprint;\nuse Illuminate\\Support\\Facades\\Schema;\n\nreturn new class extends Migration {\n    public function up(): void {\n        Schema::create('${this.tableName}', function (Blueprint $table) {\n            $table->id();\n${flds}\n${this.options.softDeletes ? '            $table->softDeletes();\n' : ''}            $table->timestamps();\n        });\n    }\n\n    public function down(): void {\n        Schema::dropIfExists('${this.tableName}');\n    }\n};`;
+            },
+            tplModel() {
+                let fill = this.fields.map(f => `'${f.name}'`).join(', ');
+                let rels = this.relations.map(r => `    public function ${r.model.toLowerCase()}() {\n        return $this->${r.type}(${r.model}::class);\n    }`).join('\n\n');
+                return `<?php\n\nnamespace App\\Models;\n\nuse Illuminate\\Database\\Eloquent\\Model;\n${this.options.softDeletes ? 'use Illuminate\\Database\\Eloquent\\SoftDeletes;' : ''}\n\nclass ${this.modelName} extends Model {\n    ${this.options.softDeletes ? 'use SoftDeletes;' : ''}\n    protected $fillable = [${fill}];\n\n${rels}\n}`;
+            },
+            tplRequest() {
+                let rules = this.fields.map(f => `            '${f.name}' => '${f.validation}',`).join('\n');
+                return `<?php\n\nnamespace App\\Http\\Requests;\n\nuse Illuminate\\Foundation\\Http\\FormRequest;\n\nclass ${this.modelName}Request extends FormRequest {\n    public function authorize(): bool { return true; }\n\n    public function rules(): array {\n        return [\n${rules}\n        ];\n    }\n}`;
+            },
+            tplController() {
+                let searchLogic = this.fields.filter(f=>f.searchable).map(f=>`->orWhere('${f.name}', 'like', "%$s%")`).join('');
+                let relationsData = this.fields.filter(f=>f.uiType==='select').map(f=>{
+                    let model = f.name.replace('_id','').charAt(0).toUpperCase() + f.name.replace('_id','').slice(1);
+                    return `$${f.name.replace('_id','s')} = \\App\\Models\\${model}::all();`;
+                }).join('\n        ');
+                let compactNames = this.fields.filter(f=>f.uiType==='select').map(f=>`'${f.name.replace('_id','s')}'`).join(', ');
+
+                return `<?php\n\nnamespace App\\Http\\Controllers;\n\nuse App\\Models\\${this.modelName};\nuse App\\Http\\Requests\\${this.modelName}Request;\nuse Illuminate\\Http\\Request;\n\nclass ${this.modelName}Controller extends Controller {\n    public function index(Request $request) {\n        $query = ${this.modelName}::query();\n        if ($s = $request->search) {\n            $query->where(fn($q) => $q${searchLogic});\n        }\n        $records = $query->latest()->${this.options.pagination ? 'paginate(15)' : 'get()'};\n        return view('${this.tableName}.index', compact('records'));\n    }\n\n    public function create() {\n        ${relationsData}\n        return view('${this.tableName}.create'${compactNames ? ', compact('+compactNames+')' : ''});\n    }\n\n    public function store(${this.modelName}Request $request) {\n        $data = $request->validated();\n        ${this.modelName}::create($data);\n        return redirect()->route('${this.tableName}.index')->with('success', 'Created!');\n    }\n\n    public function edit(${this.modelName} $${this.modelVar}) {\n        ${relationsData}\n        return view('${this.tableName}.edit', compact('${this.modelVar}'${compactNames ? ', '+compactNames : ''}));\n    }\n\n    public function update(${this.modelName}Request $request, ${this.modelName} $${this.modelVar}) {\n        $${this.modelVar}->update($request->validated());\n        return redirect()->route('${this.tableName}.index')->with('success', 'Updated!');\n    }\n\n    public function destroy(${this.modelName} $${this.modelVar}) {\n        $${this.modelVar}->delete();\n        return back()->with('success', 'Deleted!');\n    }\n}`;
+            },
+            tplRoutes() {
+                return `<?php\n\nuse App\\Http\\Controllers\\${this.modelName}Controller;\nuse Illuminate\\Support\\Facades\\Route;\n\n// WEB RESOURCES\nRoute::resource('${this.tableName}', ${this.modelName}Controller::class);\n\n// API ENDPOINTS\nRoute::prefix('api')->group(function() {\n    Route::get('/${this.tableName}', [${this.modelName}Controller::class, 'index']);\n    Route::post('/${this.tableName}', [${this.modelName}Controller::class, 'store']);\n});`;
+            },
+            tplApi() {
+                let map = this.fields.map(f=>`            '${f.name}' => $this->${f.name},`).join('\n');
+                return `<?php\n\nnamespace App\\Http\\Resources;\n\nuse Illuminate\\Http\\Resources\\Json\\JsonResource;\n\nclass ${this.modelName}Resource extends JsonResource {\n    public function toArray($request): array {\n        return [\n            'id' => $this->id,\n${map}\n            'created_at' => $this->created_at->format('Y-m-d H:i'),\n        ];\n    }\n}`;
+            },
+            tplFactory() {
+                let fakerMap = this.fields.map(f => {
+                    let rule = "$this->faker->word()";
+                    if (f.dbType === 'decimal') rule = "$this->faker->randomFloat(2, 0, 1000)";
+                    if (f.dbType === 'integer') rule = "$this->faker->randomNumber()";
+                    if (f.uiType === 'image') rule = "'https://via.placeholder.com/640x480.png'";
+                    if (f.name.includes('title') || f.name.includes('name')) rule = "$this->faker->sentence(3)";
+                    return `            '${f.name}' => ${rule},`;
+                }).join('\n');
+                return `// Factory Code\npublic function definition(): array {\n    return [\n${fakerMap}\n    ];\n}\n\n// Seeder Code (DatabaseSeeder.php)\n${this.modelName}::factory(50)->create();`;
+            },
+
+            // --- BOOTSTRAP (THE COMPLETE FIXED VERSION) ---
+            tplBsIndex() {
+                let ths = this.fields.filter(f=>f.showInTable).map(f=>`<th class="text-uppercase small font-weight-bold text-muted">${f.name}</th>`).join('');
+                let tds = this.fields.filter(f=>f.showInTable).map(f=>`<td>{{ $r->${f.name} }}</td>`).join('');
+                return `@extends('layouts.app')\n\n@section('content')\n<div class="container py-5">\n    <div class="d-flex justify-content-between align-items-center mb-4 text-white">\n        <h2 class="fw-bold">${this.modelName}s Management</h2>\n        <a href="{{ route('${this.tableName}.create') }}" class="btn btn-primary px-4 shadow-sm">Add New Entry</a>\n    </div>\n\n    <div class="card bg-dark border-secondary shadow-lg">\n        <div class="card-header bg-transparent border-secondary py-3">\n            <form action="{{ route('${this.tableName}.index') }}" method="GET" class="d-flex gap-2 w-50">\n                <input type="text" name="search" value="{{ request('search') }}" class="form-control bg-transparent border-secondary text-white" placeholder="Quick search...">\n                <button class="btn btn-outline-secondary">Filter</button>\n            </form>\n        </div>\n        <div class="card-body p-0">\n            <div class="table-responsive">\n                <table class="table table-dark table-hover mb-0">\n                    <thead><tr class="bg-black">${ths}<th></th></tr></thead>\n                    <tbody>\n                        @forelse($records as $r)\n                        <tr>${tds}\n                            <td class="text-end">\n                                <div class="dropdown">\n                                    <button class="btn btn-link text-white" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></button>\n                                    <ul class="dropdown-menu dropdown-menu-dark">\n                                        <li><a class="dropdown-item" href="{{ route('${this.tableName}.edit', $r) }}">Edit</a></li>\n                                        <li><hr class="dropdown-divider"></li>\n                                        <li><form action="{{ route('${this.tableName}.destroy', $r) }}" method="POST">@csrf @method('DELETE') <button class="dropdown-item text-danger">Delete</button></form></li>\n                                    </ul>\n                                </div>\n                            </td>\n                        </tr>\n                        @empty\n                        <tr><td colspan="100%" class="text-center py-5">No records found.</td></tr>\n                        @endforelse\n                    </tbody>\n                </table>\n            </div>\n        </div>\n    </div>\n    <div class="mt-4">{{ $records->links() }}</div>\n</div>\n@endsection`;
+            },
+            tplBsForm() {
+                let inputs = this.fields.map(f => {
+                    let fieldCode = `<input type="text" name="${f.name}" class="form-control bg-dark text-white border-secondary @error('${f.name}') is-invalid @enderror" value="{{ old('${f.name}', $${this.modelVar}->${f.name} ?? '') }}">`;
+                    if(f.uiType === 'textarea') fieldCode = `<textarea name="${f.name}" class="form-control bg-dark text-white border-secondary @error('${f.name}') is-invalid @enderror" rows="5">{{ old('${f.name}', $${this.modelVar}->${f.name} ?? '') }}</textarea>`;
+                    if(f.uiType === 'select') fieldCode = `<select name="${f.name}" class="form-select bg-dark text-white border-secondary">\n                    @foreach($${f.name.replace('_id','s')} as $item)\n                        <option value="{{ $item->id }}" {{ old('${f.name}', $${this.modelVar}->${f.name} ?? '') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>\n                    @endforeach\n                </select>`;
+                    
+                    return `            <div class="mb-4">\n                <label class="form-label text-muted small text-uppercase fw-bold">${f.name}</label>\n                ${fieldCode}\n                @error('${f.name}') <div class="invalid-feedback">{{ $message }}</div> @enderror\n            </div>`;
+                }).join('\n');
+                return `@extends('layouts.app')\n\n@section('content')\n<div class="container py-5">\n    <div class="row justify-content-center">\n        <div class="col-lg-6">\n            <div class="card bg-dark text-white border-secondary shadow-lg">\n                <div class="card-body p-5">\n                    <h3 class="fw-bold mb-4 italic">{{ isset($${this.modelVar}) ? 'Modify Record' : 'Create New ${this.modelName}' }}</h3>\n                    <form action="{{ isset($${this.modelVar}) ? route('${this.tableName}.update', $${this.modelVar}) : route('${this.tableName}.store') }}" method="POST" enctype="multipart/form-data">\n                        @csrf @if(isset($${this.modelVar})) @method('PUT') @endif\n${inputs}\n                        <div class="pt-4 border-top border-secondary">\n                            <button class="btn btn-primary w-100 py-3 fw-bold uppercase">Persist to Database</button>\n                            <a href="{{ route('${this.tableName}.index') }}" class="btn btn-link text-muted w-100 mt-2">Cancel and Go Back</a>\n                        </div>\n                    </form>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n@endsection`;
+            },
+
+            // --- TAILWIND ---
+            tplTwIndex() {
+                let ths = this.fields.filter(f=>f.showInTable).map(f=>`<th class="px-6 py-4 text-left text-[10px] font-black uppercase text-slate-500 tracking-widest">${f.name}</th>`).join('');
+                let tds = this.fields.filter(f=>f.showInTable).map(f=>`<td class="px-6 py-4 text-sm text-slate-300">{{ $r->${f.name} }}</td>`).join('');
+                return `<div class="p-10 bg-slate-950 min-h-screen text-slate-200">\n    <div class="max-w-6xl mx-auto flex justify-between items-center mb-10">\n        <h1 class="text-4xl font-black italic tracking-tighter">${this.modelName}s Hub</h1>\n        <a href="{{ route('${this.tableName}.create') }}" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-3 rounded-2xl font-black text-white shadow-xl shadow-indigo-600/20 transition">Create</a>\n    </div>\n    <div class="bg-slate-900 rounded-[2.5rem] border border-slate-800 overflow-hidden shadow-2xl">\n        <table class="w-full text-left">\n            <thead class="bg-slate-900 border-b border-slate-800"><tr>${ths}<th></th></tr></thead>\n            <tbody class="divide-y divide-slate-800">\n                @foreach($records as $r)\n                <tr class="hover:bg-slate-800/30 transition">${tds}\n                    <td class="px-6 py-4 text-right flex gap-4 justify-end font-bold text-xs uppercase">\n                        <a href="{{ route('${this.tableName}.edit', $r) }}" class="text-indigo-400">Modify</a>\n                        <button class="text-red-500">Purge</button>\n                    </td>\n                </tr>\n                @endforeach\n            </tbody>\n        </table>\n    </div>\n</div>`;
+            },
+            tplTwForm() {
+                let inputs = this.fields.map(f => `        <div class="space-y-2">\n            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">${f.name}</label>\n            <input type="text" name="${f.name}" value="{{ old('${f.name}', $${this.modelVar}->${f.name} ?? '') }}" class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white outline-none focus:border-emerald-500 transition shadow-inner font-bold">\n        </div>`).join('\n');
+                return `<div class="max-w-xl mx-auto py-20">\n    <form class="bg-slate-900 border border-slate-800 p-12 rounded-[3rem] shadow-2xl space-y-8">\n        <h3 class="text-2xl font-black text-white italic underline decoration-emerald-500 decoration-4">Architecting ${this.modelName}</h3>\n${inputs}\n        <button class="w-full bg-emerald-600 py-5 rounded-2xl font-black uppercase text-white shadow-2xl shadow-emerald-600/20 hover:-translate-y-1 transition">Commit Records</button>\n    </form>\n</div>`;
+            },
+
+            // --- FULL VUE / LIVEWIRE ---
+            tplLwFull() {
+                return `// Component: app/Livewire/${this.modelName}Manager.php\nclass ${this.modelName}Manager extends Component {\n    use WithPagination;\n    public $search = '';\n    public function render() {\n        return view('livewire.${this.modelVar}-manager', [\n            'records' => ${this.modelName}::where('title', 'like', '%'.$this->search.'%')->latest()->paginate(10)\n        ]);\n    }\n}\n\n// View: resources/views/livewire/${this.modelVar}-manager.blade.php\n<div>\n    <input wire:model.live="search" class="bg-black text-white p-4 w-full">\n    <table class="w-full mt-4">\n        @foreach($records as $r) <tr> <td>{{ $r->id }}</td> </tr> @endforeach\n    </table>\n</div>`;
+            },
+            tplVueFull() {
+                return `<template>\n  <Layout>\n    <h1 class="text-3xl font-black">${this.modelName} Admin</h1>\n    <div v-for="r in records.data" :key="r.id" class="p-4 border-b border-slate-800 flex justify-between">\n      <span>{{ r.title }}</span>\n      <Link :href="route('${this.tableName}.edit', r.id)" class="text-blue-500 font-bold">Edit</Link>\n    </div>\n    <Pagination :links="records.links" />\n  </Layout>\n</template>\n\n<script setup>\nimport { Link } from '@inertiajs/vue3';\ndefineProps(['records']);\n<\/script>`;
+            },
+
+            // --- UTILS ---
+            addField() { this.fields.push({ name: 'new_field', dbType: 'string', uiType: 'text', validation: 'required', nullable: false, searchable: true, showInTable: true }); },
+            removeField(i) { this.fields.splice(i, 1); },
+            addRelation() { this.relations.push({ type: 'belongsTo', model: 'User' }); },
+            removeRelation(i) { this.relations.splice(i, 1); },
+            autoSuggest(f) {
+                let n = f.name.toLowerCase();
+                if (n.includes('image') || n.includes('photo')) { f.uiType = 'image'; f.validation = 'nullable|image'; f.searchable = false; }
+                if (n.endsWith('_id')) { f.dbType = 'foreignId'; f.uiType = 'select'; f.searchable = false; }
+            },
+            resetFields() { if(confirm('Destructive Action: Wiping Architect Data?')) { this.fields = []; this.relations = []; } },
+            copyCode() { navigator.clipboard.writeText(this.generatedCode); alert('Full Blueprint Copied!'); }
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>
