@@ -1,107 +1,316 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ez-Eldeen A. Y. Mushtaha | Portfolio</title>
-<style>
-body {font-family:'Segoe UI',sans-serif;margin:0;background:#f0f2f5;color:#333;}
-header {background:#1f2937;color:#fff;text-align:center;padding:50px 20px 30px;}
-header img {width:120px;height:120px;border-radius:50%;border:3px solid #fff;margin-bottom:15px;}
-header h1 {margin:10px 0 5px;font-size:2.2em;}
-header p {margin:0;font-size:1.1em;}
-nav {margin-top:15px;}
-nav a {color:#fff;margin:0 15px;text-decoration:none;font-weight:bold;transition:0.3s;}
-nav a:hover {color:#60a5fa;}
-section {max-width:1000px;margin:40px auto;padding:30px;background:#fff;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,0.05);}
-h2 {text-align:center;margin-bottom:30px;color:#111827;}
-.projects {display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;}
-.project-card {background:#f9fafb;border-radius:10px;padding:20px;transition:transform 0.3s,box-shadow 0.3s;border:1px solid #e5e7eb;}
-.project-card:hover {transform:translateY(-7px);box-shadow:0 8px 20px rgba(0,0,0,0.1);}
-.project-card a {color:#1d4ed8;font-weight:bold;text-decoration:none;}
-footer {text-align:center;padding:25px;background:#1f2937;color:#fff;}
-footer a {color:#60a5fa;text-decoration:none;}
-footer a:hover {text-decoration:underline;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ez-Eldeen Mushtaha | Software & Systems Architect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            max-width: 800px;
+            margin: 2rem auto 4rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #1f2937, #374151);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero .title {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #4b5563;
+            margin-bottom: 1rem;
+        }
+
+        .hero .philosophy {
+            font-size: 1.05rem;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1.5rem;
+            font-style: italic;
+        }
+
+        /* Section Headers */
+        .section {
+            margin: 4rem 0;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .section-header a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Cards Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #eef2ff;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.15);
+            border-color: #cbd5e1;
+        }
+
+        .featured-card {
+            border-top: 4px solid #3b82f6;
+            background: #ffffff;
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .card .meta {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-bottom: 0.75rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .card p {
+            color: #4b5563;
+            font-size: 0.9rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .card-link {
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #3b82f6;
+        }
+
+        /* Contact */
+        .contact-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .contact-links a {
+            background: #1f2937;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+        .contact-links a:hover {
+            background: #111827;
+        }
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 2rem; }
+            .section-header h2 { font-size: 1.4rem; }
+            .grid { gap: 1rem; }
+        }
+    </style>
 </head>
 <body>
-
-<header>
-<img src="https://avatars.githubusercontent.com/u/8163584?v=4" alt="Ez-Eldeen A. Y. Mushtaha">
-<h1>Ez-Eldeen A. Y. Mushtaha</h1>
-<p>Software Engineer & Systems Architect</p>
-<nav>
-<a href="#projects">Projects</a>
-<a href="#about">About</a>
-<a href="#contact">Contact</a>
-</nav>
-</header>
-
-<section id="projects">
-    <h2>Projects</h2>
-    <div class="projects">
-
-        <div class="project-card">
-            <h3><a href="https://github.com/ezmu/memory-scanner-poc" target="_blank">memory-scanner-poc</a></h3>
-            <p>Proof of Concept for scanning memory to extract readable text, URLs, and images from allocated memory blocks.</p>
-        </div>
-        <div class="project-card">
-            <h3><a href="https://github.com/ezmu/live-lang-translator" target="_blank">live-lang-translator</a></h3>
-            <p>Inline translation editor for Laravel apps with live preview and modal editor.</p>
-        </div>
-        <div class="project-card">
-            <h3><a href="https://github.com/ezmu/html-to-markdown" target="_blank">html-to-markdown</a></h3>
-            <p>HTML to Markdown Converter.</p>
-        </div>
-        <div class="project-card">
-            <h3><a href="https://github.com/ezmu/tech-articles" target="_blank">tech-articles</a></h3>
-            <p>Collection of technology-related articles.</p>
-        </div>
-        <div class="project-card">
-            <h3><a href="https://github.com/ezmu/ascii-tree-builder" target="_blank">ascii-tree-builder</a></h3>
-            <p>HTML project for building ASCII-style tree structures.</p>
-        </div>
-        <div class="project-card">
-            <h3><a href="https://github.com/ezmu/ModuleGenerator" target="_blank">ModuleGenerator</a></h3>
-            <p>Magento 2 Module Generator.</p>
-        </div>
-        <div class="project-card">
-            <h3><a href="https://github.com/ezmu/Db-Manager" target="_blank">Db-Manager</a></h3>
-            <p>Laravel Database management command.</p>
-        </div>
-        <div class="project-card">
-            <h3><a href="https://github.com/ezmu/API-Tester" target="_blank">API-Tester</a></h3>
-            <p>Lightweight tool to test REST APIs and monitor responses with built-in reports.</p>
-        </div>
-        <div class="project-card">
-            <h3><a href="https://github.com/ezmu/view-hints" target="_blank">view-hints</a></h3>
-            <p>Laravel package to show Blade debugging hints and inline editing.</p>
-        </div>
-        <div class="project-card">
-            <h3><a href="https://github.com/ezmu/docs-generator" target="_blank">docs-generator</a></h3>
-            <p>Laravel Docs Generator.</p>
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Ez-Eldeen A. Y. Mushtaha</h1>
+        <div class="title">Software & Systems Architect</div>
+        <div class="philosophy">
+            "Deconstructing dogmatic models, cosmological dogmas, and messy code. <br>
+            Seeking absolute truth in a world full of systemic deadlocks."
         </div>
     </div>
-</section>
 
-<section id="about">
-<h2>About Me</h2>
-<p>
-Software Engineer & Systems Architect based in Gaza, Palestine. 18+ years experience in ERP, eCommerce, and scalable systems.
-</p>
-</section>
+    <!-- FEATURED WRITING (TCA + top Medium articles) -->
+    <div class="section">
+        <div class="section-header">
+            <h2>📌 Featured Writing</h2>
+        </div>
+        <div class="grid">
+            <!-- TCA Paper -->
+            <div class="card featured-card">
+                <div class="card-icon"><i class="fas fa-microchip"></i></div>
+                <h3>Tiered-Cost Architecture (TCA)</h3>
+                <div class="meta">Research Paper · 2025</div>
+                <p>A comprehensive framework for efficient AI processing using intelligent query routing, ethical compliance, and cost-aware multi-layer inference.</p>
+                <a href="https://ezmu.github.io/tca.html" class="card-link" target="_blank">Read full paper →</a>
+            </div>
+            <!-- Machine Intelligence vs Mechanism Stupidity -->
+            <div class="card featured-card">
+                <div class="card-icon"><i class="fas fa-brain"></i></div>
+                <h3>Machine Intelligence vs Mechanism Stupidity</h3>
+                <div class="meta">Medium · Nov 2025</div>
+                <p>How institutional stupidity became a business model in modern tech, causing technical bloat, lock-in, and draining resources, freedom, and attention.</p>
+                <a href="https://medium.com/@3z.eldeen/machine-intelligence-vs-mechanism-stupidity-3b94f674d2f6" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+            <!-- HTTP Madness -->
+            <div class="card featured-card">
+                <div class="card-icon"><i class="fas fa-globe"></i></div>
+                <h3>HTTP: Digital Madness Factory</h3>
+                <div class="meta">Medium · Aug 2025</div>
+                <p>How a 90s protocol turned into a complexity nightmare through layers of patches, frameworks, and the pursuit of dynamic applications.</p>
+                <a href="https://medium.com/@3z.eldeen/http-how-a-90s-protocol-turned-into-a-digital-madness-factory-251873fddeec" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+        </div>
+    </div>
 
-<section id="contact">
-<h2>Contact</h2>
-<p>Email: <a href="mailto:3z.eldeen@gmail.com">3z.eldeen@gmail.com</a></p>
-<p>GitHub: <a href="https://github.com/ezmu" target="_blank">https://github.com/ezmu</a></p>
-<p>LinkedIn: <a href="https://www.linkedin.com/in/ezmu" target="_blank">https://www.linkedin.com/in/ezmu</a></p>
-<p>Medium: <a href="https://medium.com/@3z.eldeen" target="_blank">https://medium.com/@3z.eldeen</a></p>
-</section>
+    <!-- ALL ARTICLES & RESEARCH -->
+    <div class="section">
+        <div class="section-header">
+            <h2>📄 All Articles & Research</h2>
+            <a href="https://medium.com/@3z.eldeen" target="_blank">Follow on Medium <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <h3>RAM: The Memory That Knows</h3>
+                <div class="meta">Medium · Aug 2025</div>
+                <p>How RAM becomes a mirror of your digital life, and why memory security is critical for developers and users alike.</p>
+                <a href="https://medium.com/@3z.eldeen/ram-the-memory-that-knows-c3ac091d3039" class="card-link" target="_blank">Read →</a>
+            </div>
+            <div class="card">
+                <h3>A Programmer's Inferno (Introduction)</h3>
+                <div class="meta">Medium · 2025</div>
+                <p>First circle of architectural collapse in a programmer's journey through systemic failures.</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-f90302a1ceea" class="card-link" target="_blank">Read →</a>
+            </div>
+            <div class="card">
+                <h3>Programmer's Inferno: Circle One</h3>
+                <div class="meta">Medium · 2025</div>
+                <p>Deep dive into architectural collapse and the layers of complexity that lead to system failure.</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-circle-one-architectural-collapse-67272176deda" class="card-link" target="_blank">Read →</a>
+            </div>
+        </div>
+    </div>
 
-<footer>
-© 2026 Ez-Eldeen A. Y. Mushtaha
-</footer>
+    <!-- SOFTWARE PROJECTS (Selected) -->
+    <div class="section">
+        <div class="section-header">
+            <h2>⚙️ Software Projects</h2>
+            <a href="https://github.com/ezmu" target="_blank">GitHub <i class="fab fa-github"></i></a>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-search"></i></div>
+                <h3>memory-scanner-poc</h3>
+                <p>Scanning memory to extract readable text, URLs, and images from allocated blocks. A security PoC.</p>
+                <a href="https://github.com/ezmu/memory-scanner-poc" class="card-link" target="_blank">Repository →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-language"></i></div>
+                <h3>live-lang-translator</h3>
+                <p>Inline translation editor for Laravel apps with live preview and modal editor.</p>
+                <a href="https://github.com/ezmu/live-lang-translator" class="card-link" target="_blank">Repository →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-code-branch"></i></div>
+                <h3>ascii-tree-builder</h3>
+                <p>Build ASCII-style tree structures visually.</p>
+                <a href="https://github.com/ezmu/ascii-tree-builder" class="card-link" target="_blank">Repository →</a>
+            </div>
+        </div>
+    </div>
 
+    <!-- ABOUT & CONTACT -->
+    <div class="section">
+        <div class="section-header">
+            <h2>👤 About & Contact</h2>
+        </div>
+        <div style="background: #f3f4f6; padding: 1.8rem; border-radius: 1rem; text-align: center;">
+            <p style="max-width: 700px; margin: 0 auto 1.5rem; color: #374151;">
+                Based in Gaza, Palestine. Over 18 years of experience architecting ERP systems, eCommerce platforms, and scalable backend solutions. 
+                I write to challenge dogmatic thinking in software and systems design.
+            </p>
+            <div class="contact-links">
+                <a href="mailto:3z.eldeen@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+                <a href="https://github.com/ezmu" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                <a href="https://www.linkedin.com/in/ezmu" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                <a href="https://medium.com/@3z.eldeen" target="_blank"><i class="fab fa-medium"></i> Medium</a>
+            </div>
+        </div>
+    </div>
+    <footer>
+        © 2025 Ez-Eldeen Mushtaha — Software & Systems Architect
+    </footer>
+</div>
 </body>
 </html>
