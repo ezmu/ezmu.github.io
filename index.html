@@ -15,13 +15,13 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
-            color: #111827;
-            line-height: 1.5;
+            background: #0a0e1a;
+            color: #e2e8f0;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem 1.5rem;
         }
@@ -29,7 +29,7 @@
         /* Hero */
         .hero {
             text-align: center;
-            max-width: 800px;
+            max-width: 900px;
             margin: 2rem auto 4rem;
         }
 
@@ -37,7 +37,7 @@
             font-size: 3rem;
             font-weight: 700;
             letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #1f2937, #374151);
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
@@ -47,16 +47,44 @@
         .hero .title {
             font-size: 1.3rem;
             font-weight: 500;
-            color: #4b5563;
+            color: #94a3b8;
             margin-bottom: 1rem;
         }
 
         .hero .philosophy {
             font-size: 1.05rem;
-            color: #6b7280;
-            border-top: 1px solid #e5e7eb;
+            color: #94a3b8;
+            border-top: 1px solid #1f2937;
             padding-top: 1.5rem;
             font-style: italic;
+        }
+
+        .contact-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .contact-buttons a {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            border: 1px solid #334155;
+        }
+
+        .contact-buttons a:hover {
+            background: #334155;
+            color: white;
+            border-color: #60a5fa;
         }
 
         /* Section Headers */
@@ -70,119 +98,128 @@
             justify-content: space-between;
             flex-wrap: wrap;
             margin-bottom: 2rem;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #1f2937;
+            padding-bottom: 0.75rem;
         }
 
         .section-header h2 {
             font-size: 1.8rem;
             font-weight: 600;
             letter-spacing: -0.01em;
+            color: #f1f5f9;
         }
 
         .section-header a {
-            color: #3b82f6;
+            color: #60a5fa;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
+        }
+
+        .section-header a:hover {
+            color: #a78bfa;
         }
 
         /* Cards Grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
         }
 
         .card {
-            background: white;
+            background: #111827;
             border-radius: 1rem;
             padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid #eef2ff;
+            border: 1px solid #1f2937;
             transition: all 0.2s ease;
         }
 
         .card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.15);
-            border-color: #cbd5e1;
+            border-color: #3b82f6;
+            box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.4);
         }
 
         .featured-card {
             border-top: 4px solid #3b82f6;
-            background: #ffffff;
+            background: #0f172a;
+        }
+
+        .bible-card {
+            border-top: 4px solid #10b981;
+            background: #0a2a1a;
+        }
+
+        .tool-card {
+            border-top: 4px solid #f59e0b;
+            background: #1a1a2a;
         }
 
         .card-icon {
             font-size: 1.8rem;
-            color: #3b82f6;
+            color: #60a5fa;
             margin-bottom: 1rem;
         }
 
         .card h3 {
             font-size: 1.25rem;
             font-weight: 600;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
+            color: #f1f5f9;
         }
 
         .card .meta {
-            font-size: 0.8rem;
-            color: #6b7280;
-            margin-bottom: 0.75rem;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
             display: flex;
             gap: 0.5rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .card p {
-            color: #4b5563;
-            font-size: 0.9rem;
-            margin-bottom: 1.2rem;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
         }
 
         .card-link {
             text-decoration: none;
             font-weight: 500;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: inline-flex;
             align-items: center;
             gap: 0.3rem;
-            color: #3b82f6;
+            color: #60a5fa;
         }
 
-        /* Contact */
-        .contact-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
+        .card-link:hover {
+            color: #a78bfa;
         }
-        .contact-links a {
-            background: #1f2937;
-            color: white;
-            padding: 0.6rem 1.2rem;
+
+        .badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.2rem 0.5rem;
             border-radius: 2rem;
-            text-decoration: none;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: background 0.2s;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: #94a3b8;
         }
-        .contact-links a:hover {
-            background: #111827;
-        }
+
         footer {
             text-align: center;
             margin-top: 4rem;
             padding-top: 2rem;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid #1f2937;
             font-size: 0.8rem;
-            color: #6b7280;
+            color: #64748b;
         }
-        @media (max-width: 640px) {
+
+        @media (max-width: 768px) {
             .hero h1 { font-size: 2rem; }
             .section-header h2 { font-size: 1.4rem; }
             .grid { gap: 1rem; }
@@ -191,126 +228,275 @@
 </head>
 <body>
 <div class="container">
-    <!-- Hero Section -->
+
+    <!-- HERO SECTION -->
     <div class="hero">
         <h1>Ez-Eldeen A. Y. Mushtaha</h1>
         <div class="title">Software & Systems Architect</div>
+        <div class="contact-buttons">
+            <a href="https://github.com/ezmu" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+            <a href="https://www.linkedin.com/in/ezmu" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            <a href="https://medium.com/@3z.eldeen" target="_blank"><i class="fab fa-medium"></i> Medium</a>
+            <a href="mailto:3z.eldeen@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+        </div>
         <div class="philosophy">
-            "Deconstructing dogmatic models, cosmological dogmas, and messy code. <br>
+            "Deconstructing dogmatic models, cosmological dogmas, and messy code.<br>
             Seeking absolute truth in a world full of systemic deadlocks."
         </div>
     </div>
 
-    <!-- FEATURED WRITING (TCA + top Medium articles) -->
+    <!-- ================= THE PERFORMANCE BIBLE ================= -->
     <div class="section">
         <div class="section-header">
-            <h2>📌 Featured Writing</h2>
+            <h2>📖 The Performance Bible — The Architect's Handbook</h2>
+            <a href="https://ezmu.github.io/performance-bible/" target="_blank">Read Full Bible →</a>
         </div>
         <div class="grid">
-            <!-- TCA Paper -->
-            <div class="card featured-card">
-                <div class="card-icon"><i class="fas fa-microchip"></i></div>
-                <h3>Tiered-Cost Architecture (TCA)</h3>
-                <div class="meta">Research Paper · 2025</div>
-                <p>A comprehensive framework for efficient AI processing using intelligent query routing, ethical compliance, and cost-aware multi-layer inference.</p>
-                <a href="https://ezmu.github.io/tca.html" class="card-link" target="_blank">Read full paper →</a>
+            <div class="card bible-card">
+                <div class="card-icon"><i class="fas fa-book"></i></div>
+                <h3>⚡ The Performance Bible</h3>
+                <div class="meta">30 Topics · 800+ Pages Equivalent · 200+ Code Examples</div>
+                <p>The complete guide from code to physics. Covers algorithmic complexity, Laravel optimization, database scaling, distributed systems, and zero-trust architecture. Every pattern is production-ready, battle-tested, and explained with real-world examples.</p>
+                <div class="meta">
+                    <span class="badge">Laravel</span>
+                    <span class="badge">PHP</span>
+                    <span class="badge">Database</span>
+                    <span class="badge">Distributed Systems</span>
+                </div>
+                <a href="https://ezmu.github.io/performance-bible/" class="card-link" target="_blank">Read the Bible →</a>
             </div>
-            <!-- Machine Intelligence vs Mechanism Stupidity -->
+        </div>
+    </div>
+
+    <!-- ================= A PROGRAMMER'S INFERNO SERIES ================= -->
+    <div class="section">
+        <div class="section-header">
+            <h2>🔥 A Programmer's Inferno — Nine Circles of Software Bloat</h2>
+            <a href="https://medium.com/@3z.eldeen" target="_blank">Follow on Medium →</a>
+        </div>
+        <div class="grid">
             <div class="card featured-card">
+                <div class="card-icon"><i class="fas fa-scroll"></i></div>
+                <h3>Circle Nine: The Manifesto</h3>
+                <div class="meta">Return to Simplicity or Die Slowly</div>
+                <p>Our engineering duty to logic, the planet, and dignity.</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-circle-nine-the-manifesto-return-to-simplicity-or-die-slowly-5b4652ab6212" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-globe"></i></div>
+                <h3>Circle Eight: Digital Colonialism</h3>
+                <div class="meta">The Wall of Abstraction</div>
+                <p>How abstraction layers create dependency and lock-in.</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-circle-eight-digital-colonialism-the-wall-of-abstraction-931469a186f1" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-tachometer-alt"></i></div>
+                <h3>Circle Seven: Digital Depravity</h3>
+                <div class="meta">How We Burn Oil to Show a Hair in an Actor's Nostril</div>
+                <p>The environmental cost of over-engineering.</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-circle-seven-digital-depravity-43be91662a6c" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-heart"></i></div>
+                <h3>Circle Six: The Journey of a Like</h3>
+                <div class="meta">How You Kill a Tree with Every Tap</div>
+                <p>The hidden environmental cost of social media engagement.</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-circle-six-the-journey-of-a-like-c9f51c3d8710" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+            <div class="card">
                 <div class="card-icon"><i class="fas fa-brain"></i></div>
-                <h3>Machine Intelligence vs Mechanism Stupidity</h3>
-                <div class="meta">Medium · Nov 2025</div>
-                <p>How institutional stupidity became a business model in modern tech, causing technical bloat, lock-in, and draining resources, freedom, and attention.</p>
-                <a href="https://medium.com/@3z.eldeen/machine-intelligence-vs-mechanism-stupidity-3b94f674d2f6" class="card-link" target="_blank">Read on Medium →</a>
+                <h3>Circle Five: The Psychology of Distraction</h3>
+                <div class="meta">How Skeleton Loaders Lie</div>
+                <p>The dark patterns behind "smooth experiences".</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-circle-five-the-psychology-of-distraction-5f7cd1aa433e" class="card-link" target="_blank">Read on Medium →</a>
             </div>
-            <!-- HTTP Madness -->
-            <div class="card featured-card">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-cloud"></i></div>
+                <h3>Circle Four: Cloud Conspiracy</h3>
+                <div class="meta">Jevons Paradox</div>
+                <p>Why "performance optimization" is a myth sold by those who profit from your sloth.</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-circle-four-cloud-conspiracy-jevons-paradox-acf8de4e4521" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fab fa-docker"></i></div>
+                <h3>Circle Three: The Docker Absurdity</h3>
+                <div class="meta">Why You Ship a Whole Elephant in a Box to Deliver a Fly</div>
+                <p>The over-engineering of containerization.</p>
+                <a href="https://medium.com/@3z.eldeen/circle-three-the-docker-absurdity-c6b63facb48f" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-cubes"></i></div>
+                <h3>Circle Two: Dependency Hell</h3>
+                <div class="meta">Why Importing is-even Requires 17 Packages</div>
+                <p>The nightmare of modern dependency management.</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-circle-two-dependency-hell-50b38915ba64" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-building"></i></div>
+                <h3>Circle One: Architectural Collapse</h3>
+                <div class="meta">Why Your Server Dies When Three Users Show Up</div>
+                <p>The root causes of catastrophic system failures.</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-circle-one-architectural-collapse-67272176deda" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-book-open"></i></div>
+                <h3>Introduction: A Programmer's Inferno</h3>
+                <div class="meta">Nine Circles of Software Bloat</div>
+                <p>The complete manifesto introduction.</p>
+                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-f90302a1ceea" class="card-link" target="_blank">Read on Medium →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= TECHNICAL ARTICLES ================= -->
+    <div class="section">
+        <div class="section-header">
+            <h2>📄 Technical Articles & Essays</h2>
+        </div>
+        <div class="grid">
+            <div class="card">
                 <div class="card-icon"><i class="fas fa-globe"></i></div>
                 <h3>HTTP: Digital Madness Factory</h3>
-                <div class="meta">Medium · Aug 2025</div>
-                <p>How a 90s protocol turned into a complexity nightmare through layers of patches, frameworks, and the pursuit of dynamic applications.</p>
+                <div class="meta">How a 90s Protocol Turned Into a Digital Madness Factory</div>
+                <p>How a simple protocol became a complexity nightmare through layers of patches and frameworks.</p>
                 <a href="https://medium.com/@3z.eldeen/http-how-a-90s-protocol-turned-into-a-digital-madness-factory-251873fddeec" class="card-link" target="_blank">Read on Medium →</a>
             </div>
-        </div>
-    </div>
-
-    <!-- ALL ARTICLES & RESEARCH -->
-    <div class="section">
-        <div class="section-header">
-            <h2>📄 All Articles & Research</h2>
-            <a href="https://medium.com/@3z.eldeen" target="_blank">Follow on Medium <i class="fas fa-arrow-right"></i></a>
-        </div>
-        <div class="grid">
             <div class="card">
-                <h3>RAM: The Memory That Knows</h3>
-                <div class="meta">Medium · Aug 2025</div>
-                <p>How RAM becomes a mirror of your digital life, and why memory security is critical for developers and users alike.</p>
-                <a href="https://medium.com/@3z.eldeen/ram-the-memory-that-knows-c3ac091d3039" class="card-link" target="_blank">Read →</a>
+                <div class="card-icon"><i class="fas fa-microchip"></i></div>
+                <h3>Machine Intelligence vs Mechanism Stupidity</h3>
+                <div class="meta">How institutional stupidity became a business model</div>
+                <p>Technical bloat, lock-in, and draining resources, freedom, and attention.</p>
+                <a href="https://medium.com/@3z.eldeen/machine-intelligence-vs-mechanism-stupidity-3b94f674d2f6" class="card-link" target="_blank">Read on Medium →</a>
             </div>
             <div class="card">
-                <h3>A Programmer's Inferno (Introduction)</h3>
-                <div class="meta">Medium · 2025</div>
-                <p>First circle of architectural collapse in a programmer's journey through systemic failures.</p>
-                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-f90302a1ceea" class="card-link" target="_blank">Read →</a>
-            </div>
-            <div class="card">
-                <h3>Programmer's Inferno: Circle One</h3>
-                <div class="meta">Medium · 2025</div>
-                <p>Deep dive into architectural collapse and the layers of complexity that lead to system failure.</p>
-                <a href="https://medium.com/@3z.eldeen/a-programmers-inferno-circle-one-architectural-collapse-67272176deda" class="card-link" target="_blank">Read →</a>
+                <div class="card-icon"><i class="fas fa-city"></i></div>
+                <h3>Gaza: The Beta Version of the Apocalypse</h3>
+                <div class="meta">When Civilization Ends</div>
+                <p>Reflections on systems collapse and the end of modern infrastructure.</p>
+                <a href="https://medium.com/@3z.eldeen/gaza-the-prototype-of-the-end-of-the-world-the-beginning-when-civilization-ends-72cb7b0c20e2" class="card-link" target="_blank">Read on Medium →</a>
             </div>
         </div>
     </div>
 
-    <!-- SOFTWARE PROJECTS (Selected) -->
+    <!-- ================= TOOLS ================= -->
     <div class="section">
         <div class="section-header">
-            <h2>⚙️ Software Projects</h2>
-            <a href="https://github.com/ezmu" target="_blank">GitHub <i class="fab fa-github"></i></a>
+            <h2>🛠️ Tools</h2>
         </div>
         <div class="grid">
+            <div class="card tool-card">
+                <div class="card-icon"><i class="fas fa-code"></i></div>
+                <h3>HTML to Markdown Converter</h3>
+                <div class="meta">Select Element + CORS Proxy</div>
+                <p>Convert any HTML element from any webpage to clean Markdown. Includes CORS proxy for cross-origin requests.</p>
+                <div class="meta">
+                    <span class="badge">HTML</span>
+                    <span class="badge">JavaScript</span>
+                    <span class="badge">Markdown</span>
+                </div>
+                <a href="https://ezmu.github.io/html-to-markdown/index.html" class="card-link" target="_blank">Open Tool →</a>
+            </div>
+            <div class="card tool-card">
+                <div class="card-icon"><i class="fas fa-vial"></i></div>
+                <h3>API Tester</h3>
+                <div class="meta">REST API Client</div>
+                <p>Test HTTP endpoints with support for all methods (GET, POST, PUT, PATCH, DELETE, OPTIONS). Custom headers, body, and JSON support. Save and export requests.</p>
+                <div class="meta">
+                    <span class="badge">REST</span>
+                    <span class="badge">API</span>
+                    <span class="badge">Testing</span>
+                </div>
+                <a href="https://ezmu.github.io/API-Tester/" class="card-link" target="_blank">Open Tool →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= GITHUB PROJECTS ================= -->
+    <div class="section">
+        <div class="section-header">
+            <h2>⚙️ GitHub Projects</h2>
+            <a href="https://github.com/ezmu" target="_blank"><i class="fab fa-github"></i> All Repositories →</a>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>resource-thief-detector</h3>
+                <div class="meta">Laravel · Performance</div>
+                <p>Performance profiling suite for Laravel. Detect N+1 queries, memory leaks, expensive loops, and hidden performance bottlenecks.</p>
+                <a href="https://github.com/ezmu/resource-thief-detector" class="card-link" target="_blank"><i class="fab fa-github"></i> Repository →</a>
+            </div>
             <div class="card">
                 <div class="card-icon"><i class="fas fa-search"></i></div>
                 <h3>memory-scanner-poc</h3>
-                <p>Scanning memory to extract readable text, URLs, and images from allocated blocks. A security PoC.</p>
-                <a href="https://github.com/ezmu/memory-scanner-poc" class="card-link" target="_blank">Repository →</a>
+                <div class="meta">Python · Security</div>
+                <p>Proof of Concept for scanning memory to extract readable text, URLs, and images from allocated memory blocks.</p>
+                <a href="https://github.com/ezmu/memory-scanner-poc" class="card-link" target="_blank"><i class="fab fa-github"></i> Repository →</a>
             </div>
             <div class="card">
                 <div class="card-icon"><i class="fas fa-language"></i></div>
                 <h3>live-lang-translator</h3>
+                <div class="meta">Laravel Package</div>
                 <p>Inline translation editor for Laravel apps with live preview and modal editor.</p>
-                <a href="https://github.com/ezmu/live-lang-translator" class="card-link" target="_blank">Repository →</a>
+                <a href="https://github.com/ezmu/live-lang-translator" class="card-link" target="_blank"><i class="fab fa-github"></i> Repository →</a>
             </div>
             <div class="card">
                 <div class="card-icon"><i class="fas fa-code-branch"></i></div>
                 <h3>ascii-tree-builder</h3>
+                <div class="meta">HTML/JS</div>
                 <p>Build ASCII-style tree structures visually.</p>
-                <a href="https://github.com/ezmu/ascii-tree-builder" class="card-link" target="_blank">Repository →</a>
+                <a href="https://github.com/ezmu/ascii-tree-builder" class="card-link" target="_blank"><i class="fab fa-github"></i> Repository →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-database"></i></div>
+                <h3>Db-Manager</h3>
+                <div class="meta">Laravel Command</div>
+                <p>Laravel Database management command.</p>
+                <a href="https://github.com/ezmu/Db-Manager" class="card-link" target="_blank"><i class="fab fa-github"></i> Repository →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-code"></i></div>
+                <h3>ModuleGenerator</h3>
+                <div class="meta">Magento 2</div>
+                <p>Magento 2 Module Generator.</p>
+                <a href="https://github.com/ezmu/ModuleGenerator" class="card-link" target="_blank"><i class="fab fa-github"></i> Repository →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-eye"></i></div>
+                <h3>view-hints</h3>
+                <div class="meta">Laravel Package</div>
+                <p>Laravel package to show Blade debugging hints and inline editing.</p>
+                <a href="https://github.com/ezmu/view-hints" class="card-link" target="_blank"><i class="fab fa-github"></i> Repository →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-file-alt"></i></div>
+                <h3>docs-generator</h3>
+                <div class="meta">Laravel Package</div>
+                <p>Laravel Docs Generator.</p>
+                <a href="https://github.com/ezmu/docs-generator" class="card-link" target="_blank"><i class="fab fa-github"></i> Repository →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-code"></i></div>
+                <h3>html-to-markdown</h3>
+                <div class="meta">HTML/JS</div>
+                <p>HTML to Markdown Converter (core library).</p>
+                <a href="https://github.com/ezmu/html-to-markdown" class="card-link" target="_blank"><i class="fab fa-github"></i> Repository →</a>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-vial"></i></div>
+                <h3>API-Tester</h3>
+                <div class="meta">HTML/JS</div>
+                <p>API testing interface.</p>
+                <a href="https://github.com/ezmu/API-Tester" class="card-link" target="_blank"><i class="fab fa-github"></i> Repository →</a>
             </div>
         </div>
     </div>
 
-    <!-- ABOUT & CONTACT -->
-    <div class="section">
-        <div class="section-header">
-            <h2>👤 About & Contact</h2>
-        </div>
-        <div style="background: #f3f4f6; padding: 1.8rem; border-radius: 1rem; text-align: center;">
-            <p style="max-width: 700px; margin: 0 auto 1.5rem; color: #374151;">
-                Based in Gaza, Palestine. Over 18 years of experience architecting ERP systems, eCommerce platforms, and scalable backend solutions. 
-                I write to challenge dogmatic thinking in software and systems design.
-            </p>
-            <div class="contact-links">
-                <a href="mailto:3z.eldeen@gmail.com"><i class="fas fa-envelope"></i> Email</a>
-                <a href="https://github.com/ezmu" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-                <a href="https://www.linkedin.com/in/ezmu" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
-                <a href="https://medium.com/@3z.eldeen" target="_blank"><i class="fab fa-medium"></i> Medium</a>
-            </div>
-        </div>
-    </div>
+    <!-- FOOTER -->
     <footer>
-        © 2025 Ez-Eldeen Mushtaha — Software & Systems Architect
+        <p>© 2025-2026 Ez-Eldeen Mushtaha — Software & Systems Architect</p>
+        <p style="margin-top: 0.5rem;">"The language is just a tool. You don't blame the hammer if you can't build a skyscraper alone."</p>
     </footer>
+
 </div>
 </body>
 </html>
