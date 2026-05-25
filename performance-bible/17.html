@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 17: OpCache & PHP JIT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box {
+            background: #2a0a0a;
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            border: 1px solid #7f1d1d;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume II: Laravel Performance Tuning Kit</div>
+        <h1>⚡ Topic 17: OpCache & PHP JIT</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">PHP's built-in performance superpowers.</p>
+
+        <div class="golden-quote">
+            "Without OpCache, your PHP code is compiled on EVERY request.<br>
+            With OpCache, it's compiled once and stored in memory.<br>
+            The difference is 10-30ms per request. It's free performance.<br>
+            And if you have PHP 8.0+, JIT can make CPU-heavy code 3-5x faster."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE MOST COMMON PRODUCTION MISS</span>
+            <p style="margin-top: 0.75rem;">Many production Laravel servers run with OpCache disabled. This means every single request recompiles every PHP file. <strong>Without OpCache, your Laravel app is 2-3x slower than it should be.</strong> It's the most common and easiest performance fix.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 2: WHAT IS OPCACHE -->
+    <section class="section">
+        <h2>🔍 What is OpCache?</h2>
+
+        <div class="ascii-art">
+WITHOUT OPCACHE (EVERY REQUEST COMPILES)
+═══════════════════════════════════════════════════════════════════
+
+  Request 1:  PHP File → Read from Disk → Compile to Opcodes → Execute → Discard
+  Request 2:  PHP File → Read from Disk → Compile to Opcodes → Execute → Discard
+  Request 3:  PHP File → Read from Disk → Compile to Opcodes → Execute → Discard
+
+  Time per request: 30-50ms (compilation) + execution
+  Disk I/O: Heavy (reading PHP files every request)
+
+WITH OPCACHE (COMPILE ONCE, CACHE FOREVER)
+═══════════════════════════════════════════════════════════════════
+
+  First Request:  PHP File → Read from Disk → Compile to Opcodes → Store in RAM → Execute
+  Request 2:      Opcodes from RAM → Execute (NO compilation!)
+  Request 3:      Opcodes from RAM → Execute (NO compilation!)
+
+  Time per request after first: 1-5ms (just execution)
+  Disk I/O: Minimal (only for changed files)
+
+WHAT ARE OPCODES?
+═══════════════════════════════════════════════════════════════════
+
+  PHP Source Code:     OpCache:           CPU:
+  ┌───────────────┐    ┌───────────────┐   ┌───────────────┐
+  │ &lt;?php          │    │ ZEND_ECHO     │   │ Execute       │
+  │ echo "Hello"; │ → │ ZEND_ADD      │ → │ Opcodes       │
+  │ $a = 1 + 2;   │    │ ZEND_ASSIGN   │   │ Directly      │
+  │ ?&gt;           │    │ ...           │   │ (FAST)        │
+  └───────────────┘    └───────────────┘   └───────────────┘
+
+  OpCache stores the "middle representation" between source code and machine code.
+        </div>
+    </section>
+
+    <!-- SECTION 3: THE NUMBERS -->
+    <section class="section">
+        <h2>📊 Performance Impact of OpCache</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Without OpCache</th>
+                        <th>With OpCache</th>
+                        <th>Improvement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>First request (after clear)</th>
+                        <td class="highlight-red">50ms</th>
+                        <td class="highlight">50ms</th>
+                        <td>Same (must compile once)</th>
+                    </tr>
+                    <tr>
+                        <td>Subsequent requests (cold cache)</th>
+                        <td class="highlight-red">45ms</th>
+                        <td class="highlight">10ms</th>
+                        <td class="highlight">4.5x faster</th>
+                    </tr>
+                    <tr>
+                        <td>Subsequent requests (warm cache)</th>
+                        <td class="highlight-red">45ms</th>
+                        <td class="highlight">3ms</th>
+                        <td class="highlight">15x faster</th>
+                    </tr>
+                    <tr>
+                        <td>100,000 requests/day</th>
+                        <td class="highlight-red">~4,500 seconds CPU</th>
+                        <td class="highlight">~300 seconds CPU</th>
+                        <td class="highlight">93% reduction</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">THE BOTTOM LINE</span>
+            <p><strong>OpCache is not optional for production.</strong> Without it, you're wasting 30-50ms per request on compilation. With it, your server can handle 3-4x more traffic with the same hardware.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 4: OPCACHE CONFIGURATION -->
+    <section class="section">
+        <h2>⚙️ OpCache Configuration (php.ini)</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">MINIMUM PRODUCTION CONFIGURATION</span>
+            <pre><code>; /etc/php/8.2/cli/conf.d/10-opcache.ini
+; OR /etc/php/8.2/fpm/conf.d/10-opcache.ini
+
+[opcache]
+; Enable OpCache (MANDATORY)
+opcache.enable=1
+opcache.enable_cli=0  ; Not needed for CLI (artisan commands)
+
+; Memory settings (adjust based on your app size)
+opcache.memory_consumption=128    ; MB - Laravel needs ~64-128MB
+opcache.interned_strings_buffer=16
+
+; File system validation
+opcache.validate_timestamps=0     ; In production, don't check file changes
+; OR (if you deploy frequently)
+opcache.validate_timestamps=1
+opcache.revalidate_freq=60        ; Check every 60 seconds
+
+; Max accelerated files (enough for Laravel)
+opcache.max_accelerated_files=20000
+
+; Memory efficiency
+opcache.fast_shutdown=1
+opcache.enable_file_override=0
+opcache.optimization_level=0x7FFFBFFF
+
+; JIT (PHP 8.0+)
+opcache.jit=tracing
+opcache.jit_buffer_size=100M</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">⚠️ CRITICAL: validate_timestamps</span>
+            <p>In production, set <code>opcache.validate_timestamps=0</code> for maximum performance. But this means PHP will never see code changes until you restart PHP-FPM or clear OpCache.</p>
+            <p><strong>Alternative:</strong> Set <code>opcache.validate_timestamps=1</code> and <code>opcache.revalidate_freq=60</code>. This checks for file changes every 60 seconds.</p>
+            <p><strong>Deployment best practice:</strong> Run <code>php artisan opcache:clear</code> or restart PHP-FPM after deployment.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 5: WHAT IS PHP JIT -->
+    <section class="section">
+        <h2>🔥 PHP JIT (Just-In-Time Compilation)</h2>
+
+        <div class="ascii-art">
+WHAT IS JIT?
+═══════════════════════════════════════════════════════════════════
+
+  Traditional PHP (without JIT):
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  PHP Source → OpCache (Opcodes) → Zend VM (Interpreter) → CPU  │
+  │                                    ▲                            │
+  │                                    │                            │
+  │                           ┌────────┴────────┐                  │
+  │                           │ SLOW (each      │                  │
+  │                           │ opcode is       │                  │
+  │                           │ interpreted)    │                  │
+  │                           └─────────────────┘                  │
+  └─────────────────────────────────────────────────────────────────┘
+
+  PHP with JIT (PHP 8.0+):
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  PHP Source → OpCache → JIT Compiler → Native Machine Code → CPU│
+  │                              │                 ▲                │
+  │                              │                 │                │
+  │                     ┌────────┴────────┐   ┌────┴────┐          │
+  │                     │ Compiles hot    │   │ FAST   │          │
+  │                     │ code paths to   │   │ (C-like │          │
+  │                     │ native machine  │   │ speed)  │          │
+  │                     │ code            │   └─────────┘          │
+  │                     └─────────────────┘                        │
+  └─────────────────────────────────────────────────────────────────┘
+
+  JIT = Compile PHP code to machine code at runtime
+  Best for: CPU-intensive operations (math, loops, image processing)
+        </div>
+
+        <div class="problem-box">
+            <span class="badge badge-red">JIT IS NOT FOR EVERYONE</span>
+            <p style="margin-top: 0.75rem;"><strong>JIT helps CPU-bound code, not I/O-bound code.</strong> Laravel apps are typically I/O-bound (database, Redis, API calls). For CRUD apps, JIT provides little benefit. For image processing, encryption, or complex calculations, JIT can be 3-5x faster.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 6: JIT CONFIGURATION -->
+    <section class="section">
+        <h2>⚙️ JIT Configuration (PHP 8.0+)</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">JIT SETTINGS FOR PHP 8.0+</span>
+            <pre><code>; /etc/php/8.2/cli/conf.d/10-opcache.ini
+
+[opcache]
+; Enable OpCache (JIT requires OpCache)
+opcache.enable=1
+opcache.memory_consumption=256     ; JIT needs more memory
+opcache.jit_buffer_size=100M       ; JIT buffer (adjust based on app)
+
+; JIT mode: tracing (recommended) or function
+opcache.jit=tracing
+
+; JIT optimization level (1205 is good default)
+; 0 = disabled, 1-9 = more aggressive optimization
+opcache.jit=1250
+
+; Alternative JIT modes:
+; opcache.jit=function   ; JIT only function bodies
+; opcache.jit=tracing    ; JIT hot code paths (recommended)
+; opcache.jit=disable    ; No JIT</code></pre>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">CHECK IF JIT IS WORKING</span>
+            <pre><code># Run this command
+php -i | grep JIT
+
+# Expected output:
+# opcache.jit => tracing => tracing
+# opcache.jit_buffer_size => 100M => 100M</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 7: BENCHMARK COMPARISON -->
+    <section class="section">
+        <h2>📊 OpCache + JIT Benchmark</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operation</th>
+                        <th>No OpCache</th>
+                        <th>OpCache Only</th>
+                        <th>OpCache + JIT</th>
+                        <th>Improvement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Laravel home page (CRUD)</th>
+                        <td class="highlight-red">65ms</th>
+                        <td class="highlight">15ms</th>
+                        <td class="highlight">14ms</th>
+                        <td>4.3x faster (JIT minimal help)</th>
+                    </tr>
+                    <tr>
+                        <td>Image resize (CPU heavy)</th>
+                        <td class="highlight-red">120ms</th>
+                        <td class="highlight">115ms</th>
+                        <td class="highlight">30ms</th>
+                        <td class="highlight">4x faster (JIT helps)</th>
+                    </tr>
+                    <tr>
+                        <td>Array sort (1M items)</th>
+                        <td class="highlight-red">850ms</th>
+                        <td class="highlight">840ms</th>
+                        <td class="highlight">180ms</th>
+                        <td class="highlight">4.7x faster (JIT helps)</th>
+                    </tr>
+                    <tr>
+                        <td>Encryption (AES-256)</th>
+                        <td class="highlight-red">45ms</th>
+                        <td class="highlight">44ms</th>
+                        <td class="highlight">12ms</th>
+                        <td class="highlight">3.7x faster (JIT helps)</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">REALITY CHECK</span>
+            <p><strong>For 90% of Laravel apps (CRUD, API, admin panels), JIT won't make a noticeable difference.</strong> The bottleneck is database, not CPU. Focus on indexes, caching, and query optimization first. Enable OpCache, then consider JIT if you have CPU-intensive operations.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 8: OPCACHE MANAGEMENT COMMANDS -->
+    <section class="section">
+        <h2>🛠️ OpCache Management Commands</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">USEFUL COMMANDS</span>
+            <pre><code># Check OpCache status
+php -v  # Shows if OpCache is enabled
+
+# Clear OpCache (after deployment)
+sudo systemctl restart php8.2-fpm
+
+# Or using Artisan (if package installed)
+composer require laravel/octane  # Includes opcache:clear
+php artisan opcache:clear
+
+# Check OpCache statistics via web
+# Create a route:
+Route::get('/opcache-status', function () {
+    if (!app()->isLocal()) {
+        abort(404);
+    }
+    return '<pre>' . print_r(opcache_get_status(), true) . '</pre>';
+});</code></pre>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">LARAVEL DEPLOYMENT SCRIPT WITH OPCACHE</span>
+            <pre><code>#!/bin/bash
+# deploy.sh
+php artisan down
+git pull origin main
+composer install --no-dev --optimize-autoloader
+php artisan migrate --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+# Clear OpCache so new code is compiled
+sudo systemctl reload php8.2-fpm   # Graceful reload
+# OR
+# sudo systemctl restart php8.2-fpm  # Full restart (faster but kills active requests)
+php artisan up</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 9: TROUBLESHOOTING -->
+    <section class="section">
+        <h2>🔧 Troubleshooting OpCache</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">COMMON PROBLEMS</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>OpCache not enabled:</strong> Check <code>php -i | grep opcache.enable</code></li>
+                <li><strong>Cache full:</strong> Increase <code>opcache.memory_consumption</code></li>
+                <li><strong>Files not cached:</strong> Increase <code>opcache.max_accelerated_files</code> (Laravel needs ~10,000)</li>
+                <li><strong>Old code still running after deployment:</strong> Run <code>sudo systemctl reload php8.2-fpm</code></li>
+                <li><strong>JIT not working:</strong> Ensure <code>opcache.enable=1</code> and <code>opcache.jit_buffer_size > 0</code></li>
+            </ul>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">VERIFY OPCACHE IS WORKING</span>
+            <pre><code># Create a test file
+echo '&lt;?php var_dump(opcache_get_status(false));' | php
+
+# Look for:
+# ["opcache_enabled"]=> bool(true)
+# ["memory_usage"]["used_memory"] => int(12345678)
+# ["opcache_statistics"]["num_cached_scripts"] => int(342)</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 10: SUMMARY -->
+    <section class="section">
+        <h2>📝 Topic 17 Summary: OpCache & PHP JIT</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Purpose</th>
+                        <th>When to Enable</th>
+                        <th>Performance Gain</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>OpCache</th>
+                        <td>Cache compiled PHP opcodes</th>
+                        <td>ALWAYS in production</th>
+                        <td class="highlight">3-5x faster for PHP execution</th>
+                    </tr>
+                    <tr>
+                        <td>OpCache + JIT (tracing)</th>
+                        <td>Compile hot paths to machine code</th>
+                        <td>CPU-intensive apps only</th>
+                        <td class="highlight">3-5x faster for CPU operations</th>
+                    </tr>
+                    <tr>
+                        <td>OpCache + JIT (function)</th>
+                        <td>JIT entire functions</th>
+                        <td>Very specific use cases</th>
+                        <td class="highlight">Variable</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Enable OpCache in production. Always. It's free performance. For JIT, measure first. If your app is CPU-bound (image processing, encryption, complex calculations), enable JIT. If it's a typical CRUD app, OpCache alone is enough.</strong>
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 18: Composer Autoloader Optimization</strong> — classmap-authoritative vs optimize-autoloader. How to make PHP stop searching for files and save 5-10ms per request.</p>
+        </div>
+    </section>
+
+</body>
+</html>

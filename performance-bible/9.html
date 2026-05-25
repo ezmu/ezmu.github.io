@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 9: Database Indexing & EXPLAIN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box {
+            background: #2a0a0a;
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            border: 1px solid #7f1d1d;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        /* Table styles with horizontal scroll */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        /* Full width comparison blocks - NOT grid */
+        .comparison-block {
+            margin: 1.5rem 0;
+        }
+
+        .comparison-bad, .comparison-good {
+            background: #111827;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #1f2937;
+        }
+
+        .comparison-bad {
+            border-left: 5px solid #ef4444;
+        }
+
+        .comparison-good {
+            border-left: 5px solid #10b981;
+        }
+
+        .comparison-bad h4, .comparison-good h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .explain-output {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.7rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: INTRODUCTION                      -->
+    <!-- ============================================ -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume II: Laravel Performance Tuning Kit</div>
+        <h1>🔍 Topic 9: Database Indexing & EXPLAIN</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">The #1 database performance killer (and how to fix it).</p>
+
+        <div class="golden-quote">
+            "You can write the most beautiful Eloquent code in the world.<br>
+            But if your WHERE clause searches an unindexed column, the database reads every single row.<br>
+            Full table scan. Every time. 5 seconds for 1 million rows.<br>
+            And you blame Laravel."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE MOST COMMON DATABASE DISASTER</span>
+            <p style="margin-top: 0.75rem;">A missing index is responsible for <strong>90% of database performance problems</strong> in production Laravel apps. Developers add indexes in development (where they have 100 rows) and forget them in production (where they have 1,000,000 rows). The result: queries that take 5 seconds instead of 0.001 seconds.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: THE PROBLEM (FULL TABLE SCAN)    -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔴 The Problem: Full Table Scan</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">WHAT IS A FULL TABLE SCAN?</span>
+            <p style="margin-top: 0.75rem;">When you query <code>WHERE email = 'user@example.com'</code> and there's NO index on <code>email</code>, the database:</p>
+            <ol style="margin: 0.5rem 0 0 2rem;">
+                <li>Starts at row 1</li>
+                <li>Reads the email column</li>
+                <li>Compares with your value</li>
+                <li>Moves to row 2</li>
+                <li>Repeats for EVERY SINGLE ROW in the table</li>
+            </ol>
+        </div>
+
+        <div class="ascii-art">
+            │
+            │  FULL TABLE SCAN (No Index) — 1,000,000 rows
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  SELECT * FROM users WHERE email = 'john@example.com'
+            │
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  Row 1:    email = 'alice@x.com'     → NO                       │
+            │  │  Row 2:    email = 'bob@x.com'       → NO                       │
+            │  │  Row 3:    email = 'carol@x.com'     → NO                       │
+            │  │  Row 4:    email = 'david@x.com'    → NO                       │
+            │  │  ...                                                             │
+            │  │  Row 500,000: email = 'john@example.com' → YES! Found!         │
+            │  │  ... But the database doesn't know it's the only match...       │
+            │  │  Row 500,001: email = 'kate@x.com'    → NO                      │
+            │  │  ...                                                             │
+            │  │  Row 1,000,000: email = 'zoe@x.com'   → NO                      │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │
+            │  Rows examined: 1,000,000
+            │  Time: ~2-5 seconds
+            │
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  INDEX SCAN (With Index) — 1,000,000 rows
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  Index on email (B-Tree):                                       │
+            │  │                                                                  │
+            │  │                    ┌─────────────┐                              │
+            │  │                    │   'm'       │                              │
+            │  │                 ┌──┴─────────────┴──┐                           │
+            │  │            ┌────┴────┐         ┌────┴────┐                      │
+            │  │            │ 'f'     │         │ 't'     │                      │
+            │  │         ┌──┴──┐   ┌──┴──┐   ┌──┴──┐   ┌──┴──┐                   │
+            │  │      'a'... 'e'... 'j'... 'm'... 's'... 'z'...                  │
+            │  │         │                                                       │
+            │  │         └── 'john@example.com' — found in ~log₂(N) steps       │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │
+            │  Rows examined: ~20 (log₂ of 1,000,000)
+            │  Time: ~0.001 seconds
+            │
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">THE DIFFERENCE</span>
+            <p><strong>1,000,000 rows examined vs 20 rows examined = 50,000x faster.</strong> An index transforms a 5-second query into a 0.0001-second query.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: THE NUMBERS (SCALING)            -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📊 How Query Time Scales With and Without Indexes</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Table Size (rows)</th><th>Without Index (Full Scan)</th><th>With Index (B-Tree)</th><th>Difference</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1,000 rows</th>
+                        <td class="highlight-red">0.005 sec</td>
+                        <td class="highlight">0.0005 sec</td>
+                        <td>10x slower</td>
+                    </tr>
+                    <tr>
+                        <td>10,000 rows</th>
+                        <td class="highlight-red">0.05 sec</td>
+                        <td class="highlight">0.0005 sec</td>
+                        <td>100x slower</td>
+                    </tr>
+                    <tr>
+                        <td>100,000 rows</th>
+                        <td class="highlight-red">0.5 sec</td>
+                        <td class="highlight">0.0005 sec</td>
+                        <td>1,000x slower</td>
+                    </tr>
+                    <tr>
+                        <td>1,000,000 rows</th>
+                        <td class="highlight-red">5 sec</td>
+                        <td class="highlight">0.0005 sec</td>
+                        <td>10,000x slower</td>
+                    </tr>
+                    <tr>
+                        <td>10,000,000 rows</th>
+                        <td class="highlight-red">50 sec</td>
+                        <td class="highlight">0.001 sec</td>
+                        <td>50,000x slower</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">THE TRAGEDY</span>
+            <p><strong>In development with 1,000 rows, you don't notice missing indexes.</strong> Everything is fast. In production with 1,000,000 rows, the same query takes 5 seconds. Your users complain. Your server times out. All because you forgot one <code>CREATE INDEX</code> command.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: THE FIX (CREATE INDEX)           -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>✅ The Fix: CREATE INDEX</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE GOLDEN RULE OF DATABASES</span>
+            <p style="margin-top: 0.75rem;"><strong>Every column in a WHERE clause, JOIN condition, or ORDER BY should have an index.</strong></p>
+        </div>
+
+        <h3>Basic index creation:</h3>
+        <pre><code>-- Single column index
+CREATE INDEX idx_users_email ON users(email);
+
+-- Composite index (multiple columns)
+CREATE INDEX idx_orders_user_status ON orders(user_id, status);
+
+-- Unique index (prevents duplicates + faster lookups)
+CREATE UNIQUE INDEX idx_users_email_unique ON users(email);
+
+-- Full text index (for searching text)
+CREATE FULLTEXT INDEX idx_posts_content ON posts(content);
+
+-- In Laravel migrations:
+Schema::table('users', function (Blueprint $table) {
+    $table->index('email');                    // Simple index
+    $table->unique('email');                   // Unique index
+    $table->index(['user_id', 'status']);      // Composite index
+    $table->fullText('content');               // Full text index
+});</code></pre>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: THE EXPLAIN COMMAND (FULL WIDTH) -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔬 The EXPLAIN Command: Your Best Friend</h2>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">BEFORE ANY QUERY GOES TO PRODUCTION, RUN EXPLAIN</span>
+            <p>EXPLAIN tells you exactly how MySQL will execute your query — before it runs.</p>
+        </div>
+
+        <!-- BAD EXAMPLE - Full width block -->
+        <div class="comparison-bad">
+            <h4>👎 BAD: type = ALL (Full Table Scan)</h4>
+            <div class="explain-output">
+EXPLAIN SELECT * FROM users WHERE email = 'john@example.com';
+
++----+-------------+-------+------+---------------+------+---------+------+---------+-------------+
+| id | select_type | table | type | possible_keys | key  | key_len | ref  | rows    | Extra       |
++----+-------------+-------+------+---------------+------+---------+------+---------+-------------+
+| 1  | SIMPLE      | users | ALL  | NULL          | NULL | NULL    | NULL | 1000000 | Using where |
++----+-------------+-------+------+---------------+------+---------+------+---------+-------------+
+
+🔴 type = ALL → Full table scan! 1,000,000 rows examined!
+            </div>
+            <p><strong>Problem:</strong> No index on <code>email</code>. MySQL scans every single row.</p>
+        </div>
+
+        <!-- GOOD EXAMPLE - Full width block -->
+        <div class="comparison-good">
+            <h4>👍 GOOD: type = ref or range (Index Scan)</h4>
+            <div class="explain-output">
+EXPLAIN SELECT * FROM users WHERE email = 'john@example.com';
+
++----+-------------+-------+------+------------------+------------------+---------+-------+------+-------+
+| id | select_type | table | type | possible_keys    | key              | key_len | ref   | rows | Extra |
++----+-------------+-------+------+------------------+------------------+---------+-------+------+-------+
+| 1  | SIMPLE      | users | ref  | idx_users_email  | idx_users_email  | 1022    | const | 1    | NULL  |
++----+-------------+-------+------+------------------+------------------+---------+-------+------+-------+
+
+✅ type = ref → Index lookup! Only 1 row examined!
+            </div>
+            <p><strong>Solution:</strong> Added <code>INDEX idx_users_email ON users(email)</code>. MySQL now uses binary search.</p>
+        </div>
+
+        <h3>What to look for in EXPLAIN output:</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Column</th><th>Bad Value</th><th>Good Value</th><th>Meaning</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>type</th>
+                        <td class="highlight-red">ALL, index</td>
+                        <td class="highlight">ref, eq_ref, range, const</td>
+                        <td>ALL = full table scan (disaster). ref/range = index used (good).</td>
+                    </tr>
+                    <tr>
+                        <td>key</th>
+                        <td class="highlight-red">NULL</td>
+                        <td class="highlight">index_name</td>
+                        <td>NULL means no index used. Any value means index was used.</td>
+                    </tr>
+                    <tr>
+                        <td>rows</th>
+                        <td class="highlight-red">Large number (100k+)</td>
+                        <td class="highlight">Small number (1-100)</td>
+                        <td>Estimated rows examined. Lower is better.</td>
+                    </tr>
+                    <tr>
+                        <td>Extra</th>
+                        <td class="highlight-red">"Using filesort", "Using temporary"</td>
+                        <td class="highlight">"Using index", NULL</td>
+                        <td>Filesort/temporary = bad (needs index optimization).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: COMPOSITE INDEX ORDER MATTERS    -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📐 Composite Index: Column Order Matters</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE ORDER TRAP</span>
+            <p>A composite index on <code>(user_id, created_at)</code> is NOT the same as <code>(created_at, user_id)</code>. The order determines which queries can use the index.</p>
+        </div>
+
+        <div class="ascii-art">
+            │
+            │  COMPOSITE INDEX: (user_id, created_at)
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  Index structure (simplified):
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  user_id=1, created_at=2024-01-01                               │
+            │  │  user_id=1, created_at=2024-01-02                               │
+            │  │  user_id=1, created_at=2024-01-03                               │
+            │  │  ...                                                             │
+            │  │  user_id=2, created_at=2024-01-01                               │
+            │  │  user_id=2, created_at=2024-01-02                               │
+            │  │  ...                                                             │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │
+            │  Queries that can use this index:
+            │  ✅ WHERE user_id = 123                                    (uses leftmost column)
+            │  ✅ WHERE user_id = 123 AND created_at > '2024-01-01'      (uses both)
+            │  ❌ WHERE created_at > '2024-01-01'                        (cannot use — no user_id)
+            │
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE RULE OF LEFT-MOST PREFIX</span>
+            <p>MySQL can use a composite index only when the query filters on the leftmost column(s). <strong>Put the most selective column first.</strong></p>
+        </div>
+
+        <h3>Examples:</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Index</th><th>Query</th><th>Can use index?</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>(user_id, status, created_at)</code></th>
+                        <td><code>WHERE user_id = 123</code></th>
+                        <td class="highlight">✅ Yes (uses leftmost)</td>
+                    </tr>
+                    <tr>
+                        <td><code>(user_id, status, created_at)</code></th>
+                        <td><code>WHERE user_id = 123 AND status = 'active'</code></th>
+                        <td class="highlight">✅ Yes (uses first two)</td>
+                    </tr>
+                    <tr>
+                        <td><code>(user_id, status, created_at)</code></th>
+                        <td><code>WHERE user_id = 123 AND created_at > '2024-01-01'</code></th>
+                        <td class="highlight">✅ Partial (skips status, less efficient)</td>
+                    </tr>
+                    <tr>
+                        <td><code>(user_id, status, created_at)</code></th>
+                        <td><code>WHERE status = 'active'</code></th>
+                        <td class="highlight-red">❌ No (user_id is missing)</td>
+                    </tr>
+                    <tr>
+                        <td><code>(user_id, status, created_at)</code></th>
+                        <td><code>WHERE created_at > '2024-01-01'</code></th>
+                        <td class="highlight-red">❌ No (leftmost missing)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: INDEX OVERHEAD (THE TRADE-OFF)   -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>⚖️ The Trade-Off: Indexes Speed Up Reads, Slow Down Writes</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th></th><th>Benefits (Reads)</th><th>Costs (Writes)</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>SELECT queries</th>
+                        <td class="highlight">10-50,000x faster</td>
+                        <td class="highlight-red">—</td>
+                    </tr>
+                    <tr>
+                        <td>INSERT</th>
+                        <td class="highlight">—</td>
+                        <td class="highlight-red">10-50% slower (must update indexes)</td>
+                    </tr>
+                    <tr>
+                        <td>UPDATE</th>
+                        <td class="highlight">—</td>
+                        <td class="highlight-red">Slower if indexed columns change</td>
+                    </tr>
+                    <tr>
+                        <td>DELETE</th>
+                        <td class="highlight">—</td>
+                        <td class="highlight-red">Must update indexes</td>
+                    </tr>
+                    <tr>
+                        <td>JOIN operations</th>
+                        <td class="highlight">Much faster with indexes</td>
+                        <td class="highlight-red">—</td>
+                    </tr>
+                    <tr>
+                        <td>Disk space</th>
+                        <td class="highlight">—</td>
+                        <td class="highlight-red">5-10% additional per index</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">THE BALANCE</span>
+            <p><strong>Don't index everything.</strong> Each index makes writes slower and uses disk space. Index only the columns you actually query on.<br>
+            For a typical Laravel app with 90% reads and 10% writes, indexes are almost always worth it.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 8: IDENTIFYING MISSING INDEXES      -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔎 How to Find Missing Indexes</h2>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">METHOD 1: MySQL Slow Query Log</span>
+            <pre><code># Enable slow query log (my.cnf)
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/slow.log
+long_query_time = 2  # Log queries taking > 2 seconds</code></pre>
+            <p>Then analyze: <code>pt-query-digest /var/log/mysql/slow.log</code></p>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">METHOD 2: Laravel Debugbar</span>
+            <p>Install <code>barryvdh/laravel-debugbar</code>. It shows:</p>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li>Number of queries per page</li>
+                <li>Individual query times</li>
+                <li>Duplicate queries</li>
+                <li>EXPLAIN output for each query</li>
+            </ul>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">METHOD 3: MySQL's Missing Index Feature</span>
+            <pre><code>-- MySQL can suggest missing indexes
+SELECT * FROM users WHERE email = 'john@example.com'\G
+
+-- Look at the 'Extra' column for index suggestions</code></pre>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 9: SUMMARY                          -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📝 Topic 9 Summary: Database Indexing & EXPLAIN</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Query Type</th><th>Without Index</th><th>With Index</th><th>How to Identify</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Equality (<code>WHERE col = value</code>)</th>
+                        <td class="highlight-red">Full table scan</td>
+                        <td class="highlight">Index lookup</td>
+                        <td>Simple index on column</td>
+                    </tr>
+                    <tr>
+                        <td>Range (<code>WHERE col > value</code>)</th>
+                        <td class="highlight-red">Full table scan</td>
+                        <td class="highlight">Index range scan</td>
+                        <td>Index on column (range works)</td>
+                    </tr>
+                    <tr>
+                        <td>JOIN (<code>ON t1.col = t2.col</code>)</th>
+                        <td class="highlight-red">Nested loops / full scan</td>
+                        <td class="highlight">Index join</td>
+                        <td>Index on both sides of JOIN</td>
+                    </tr>
+                    <tr>
+                        <td>ORDER BY</th>
+                        <td class="highlight-red">Filesort (temp table)</td>
+                        <td class="highlight">Index scan</td>
+                        <td>Index on ORDER BY column(s)</td>
+                    </tr>
+                    <tr>
+                        <td>GROUP BY</th>
+                        <td class="highlight-red">Temporary table</td>
+                        <td class="highlight">Index group by</td>
+                        <td>Index on GROUP BY column(s)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Run EXPLAIN on every query. If type = ALL, add an index. If Extra = "Using filesort" or "Using temporary", add a composite index. Your database will thank you.</strong><br><br>
+            The difference between a 5-second query and a 0.001-second query is almost always a missing index. Don't be that developer.
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 10: Read/Write Splitting (Master/Replica)</strong> — How to scale your database horizontally. Send writes to master, reads to replicas. Double your capacity without changing a line of application code.</p>
+        </div>
+    </section>
+
+</body>
+</html>

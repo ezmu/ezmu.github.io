@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 30: Zero-Trust Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 500px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.7rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume IV: Distributed Systems</div>
+        <h1>🔐 Topic 30: Zero-Trust Architecture</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">Trust nothing. Verify everything.</p>
+
+        <div class="golden-quote">
+            "The old model: Trust everything inside the network.<br>
+            The new reality: There is no inside. There is no outside.<br>
+            Every request, every service, every user is potentially compromised.<br>
+            Zero-Trust: Never trust, always verify."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE DEATH OF THE PERIMETER</span>
+            <p style="margin-top: 0.75rem;">Traditional security assumed that anything inside the corporate network was safe. But cloud computing, remote work, and microservices have destroyed the perimeter. <strong>Zero-Trust Architecture assumes breach</strong> — every request could be from an attacker. You authenticate, authorize, and encrypt everything, every time.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 2: OLD VS NEW -->
+    <section class="section">
+        <h2>🔴 Old Model (Perimeter Security) vs Zero-Trust</h2>
+
+        <div class="ascii-art">
+TRADITIONAL PERIMETER MODEL (BAD)
+═══════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                    CORPORATE NETWORK                            │
+  │  ┌─────────────────────────────────────────────────────────┐   │
+  │  │  ┌─────────┐  ┌─────────┐  ┌─────────┐                │   │
+  │  │  │ Server1 │  │ Server2 │  │ Server3 │   "Trusted"    │   │
+  │  │  └─────────┘  └─────────┘  └─────────┘                │   │
+  │  │                                                         │   │
+  │  │  Once inside, everything is trusted                    │   │
+  │  │  No authentication between services                    │   │
+  │  │  Lateral movement is easy for attackers               │   │
+  │  └─────────────────────────────────────────────────────────┘   │
+  │                         ▲                                       │
+  │                         │                                       │
+  │                    ┌────┴────┐                                 │
+  │                    │ Firewall│                                 │
+  │                    └────┬────┘                                 │
+  └─────────────────────────┼──────────────────────────────────────┘
+                            │
+                     ┌──────┴──────┐
+                     │   Internet  │
+                     │   (UNSAFE)  │
+                     └─────────────┘
+
+ZERO-TRUST MODEL (GOOD)
+═══════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                                                                  │
+  │   EVERY SERVICE AUTHENTICATES TO EVERY OTHER SERVICE            │
+  │                                                                  │
+  │   ┌─────────┐    mTLS    ┌─────────┐    mTLS    ┌─────────┐   │
+  │   │ Service │◄──────────►│ Service │◄──────────►│ Service │   │
+  │   │    A    │   Token    │    B    │   Token    │    C    │   │
+  │   └─────────┘            └─────────┘            └─────────┘   │
+  │        │                      │                      │         │
+  │        │       Every request:                        │         │
+  │        │       • Authentication                      │         │
+  │        │       • Authorization                       │         │
+  │        │       • Encryption                          │         │
+  │        │       • Rate limiting                       │         │
+  │        │                                            │         │
+  └─────────────────────────────────────────────────────────────────┘
+
+  There is no "trusted network" — every request is verified.
+        </div>
+    </section>
+
+    <!-- SECTION 3: FIVE PILLARS OF ZERO-TRUST -->
+    <section class="section">
+        <h2>🏛️ The Five Pillars of Zero-Trust</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Pillar</th><th>Description</th><th>Implementation</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Identity Verification</strong></th>
+                        <td>Every user and service has a unique identity</th>
+                        <td>OAuth2, OIDC, JWT, API keys, mTLS</th>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Device Verification</strong></th>
+                        <td>Only authorized devices can connect</th>
+                        <td>Device certificates, MDM, hardware attestation</th>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Least Privilege Access</strong></th>
+                        <td>Only the minimum necessary access</th>
+                        <td>Just-in-time (JIT) access, short-lived tokens</th>
+                    </tr>
+                    <tr>
+                        <td><strong>4. Micro-segmentation</strong></th>
+                        <td>Network is broken into small zones</th>
+                        <td>Service mesh (Istio), network policies</th>
+                    </tr>
+                    <tr>
+                        <td><strong>5. Continuous Monitoring</strong></th>
+                        <td>Every access is logged and analyzed</th>
+                        <td>SIEM, UEBA, real-time anomaly detection</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- SECTION 4: ZERO-TRUST IN LARAVEL -->
+    <section class="section">
+        <h2>⚙️ Implementing Zero-Trust in Laravel</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">1. ALWAYS AUTHENTICATE (Even Internal APIs)</span>
+            <pre><code>// routes/api.php - Even internal services must authenticate
+Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
+    Route::get('/internal/users', [UserController::class, 'index']);
+    Route::post('/internal/orders', [OrderController::class, 'store']);
+});
+
+// Service-to-service authentication using API tokens
+class InternalApiMiddleware
+{
+    public function handle($request, $next)
+    {
+        $token = $request->header('X-Service-Token');
+        
+        if (!$token || !ServiceToken::where('token', hash('sha256', $token))->exists()) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        
+        // Also check if the service is allowed to access this endpoint
+        $service = ServiceToken::where('token', hash('sha256', $token))->first();
+        
+        if (!$service->canAccess($request->path())) {
+            return response()->json(['error' => 'Forbidden'], 403);
+        }
+        
+        $request->merge(['service_name' => $service->name]);
+        
+        return $next($request);
+    }
+}</code></pre>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">2. SHORT-LIVED TOKENS (JWT with Expiry)</span>
+            <pre><code>// JWT with short expiry (15 minutes)
+use Tymon\JWTAuth\Facades\JWTAuth;
+
+$token = JWTAuth::customClaims([
+    'exp' => now()->addMinutes(15)->timestamp,
+    'service' => 'order-service',
+    'permissions' => ['read:users', 'write:orders'],
+])->fromUser($serviceAccount);
+
+// Client MUST refresh before expiry
+// No long-lived secrets stored in code</code></pre>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">3. ENCRYPT EVERYTHING (mTLS for service-to-service)</span>
+            <pre><code># Nginx configuration for mTLS
+server {
+    listen 443 ssl;
+    
+    ssl_certificate /etc/nginx/certs/server.crt;
+    ssl_certificate_key /etc/nginx/certs/server.key;
+    
+    # Client certificate validation
+    ssl_client_certificate /etc/nginx/certs/ca.crt;
+    ssl_verify_client on;
+    
+    location / {
+        # Only allow requests with valid client certificates
+        if ($ssl_client_verify != SUCCESS) {
+            return 403;
+        }
+        
+        proxy_pass http://laravel;
+    }
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 5: LEAST PRIVILEGE IN LARAVEL -->
+    <section class="section">
+        <h2>🔑 Least Privilege: Only What's Necessary</h2>
+
+        <div class="ascii-art">
+LEAST PRIVILEGE PRINCIPLE
+═══════════════════════════════════════════════════════════════════
+
+  BAD (Too much access):
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Service A has FULL database access                            │
+  │  Can read, write, delete, and modify schema                    │
+  │  One compromised service → Whole database compromised         │
+  └─────────────────────────────────────────────────────────────────┘
+
+  GOOD (Minimum necessary):
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Service A:                                                    │
+  │  • Database: SELECT only on users table                        │
+  │  • Redis: Read only from cache:users:*                        │
+  │  • Queue: Can dispatch jobs on order:queue                    │
+  │                                                                 │
+  │  Service B:                                                    │
+  │  • Database: INSERT, UPDATE on orders table                    │
+  │  • API: Can call service C but NOT service D                   │
+  └─────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">DATABASE USER WITH LIMITED PERMISSIONS</span>
+            <pre><code>-- Create separate database users for each service
+CREATE USER 'order_service'@'%' IDENTIFIED BY '...';
+GRANT SELECT, INSERT, UPDATE ON mydb.orders TO 'order_service'@'%';
+GRANT SELECT ON mydb.users TO 'order_service'@'%';
+-- NO DELETE, NO ALTER, NO DROP
+
+CREATE USER 'user_service'@'%' IDENTIFIED BY '...';
+GRANT SELECT, INSERT, UPDATE ON mydb.users TO 'user_service'@'%';
+-- NO access to orders table
+
+# Laravel config for different services
+# config/database.php
+'connections' => [
+    'order_db' => [
+        'username' => 'order_service',  // Limited permissions
+        'password' => env('ORDER_DB_PASSWORD'),
+    ],
+    'user_db' => [
+        'username' => 'user_service',   // Different user!
+        'password' => env('USER_DB_PASSWORD'),
+    ],
+],</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 6: MICRO-SEGMENTATION -->
+    <section class="section">
+        <h2>🔪 Micro-segmentation: Small Trust Zones</h2>
+
+        <div class="ascii-art">
+MICRO-SEGMENTATION EXAMPLE
+═══════════════════════════════════════════════════════════════════
+
+  Instead of one big network, isolate everything:
+
+  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+  │  Frontend   │     │   Auth      │     │   Payment   │
+  │  Network    │────►│  Network    │────►│  Network    │
+  │  (Public)   │     │  (Internal) │     │  (PCI)      │
+  └─────────────┘     └─────────────┘     └─────────────┘
+        │                   │                    │
+        ▼                   ▼                    ▼
+  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+  │  API        │     │  Database   │     │  Vault      │
+  │  Gateway    │     │  Network    │     │  Network    │
+  └─────────────┘     └─────────────┘     └─────────────┘
+
+  Rules:
+  • Frontend can ONLY talk to API Gateway
+  • API Gateway can ONLY talk to Auth and Business Logic
+  • Auth can ONLY talk to Database
+  • Payment can ONLY talk to Vault (secrets) and Stripe API
+  • No direct access between Frontend and Database
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">KUBERNETES NETWORK POLICIES</span>
+            <pre><code># Deny all ingress by default
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+
+# Allow frontend to call api-gateway
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-api
+spec:
+  podSelector:
+    matchLabels:
+      app: api-gateway
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    ports:
+    - port: 8080</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 7: CONTINUOUS MONITORING -->
+    <section class="section">
+        <h2>📊 Continuous Monitoring: Assume Breach</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE MINDSET SHIFT</span>
+            <p>Don't ask "Did we get hacked?" Ask "When did we get hacked, and what did they access?" Assume attackers are already inside.</p>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">MONITORING FOR ANOMALIES</span>
+            <pre><code>// Log EVERY access (for audit)
+class SecurityLogger
+{
+    public function logAccess($userId, $resource, $action, $result)
+    {
+        Log::channel('security')->info('Access attempt', [
+            'user_id' => $userId,
+            'resource' => $resource,
+            'action' => $action,
+            'result' => $result,
+            'ip' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'timestamp' => microtime(true),
+        ]);
+    }
+}
+
+// Detect anomalies (simplified)
+class AnomalyDetector
+{
+    public function check($userId, $action)
+    {
+        $recentRequests = Cache::get("user:{$userId}:requests", []);
+        $recentRequests[] = ['action' => $action, 'time' => time()];
+        Cache::put("user:{$userId}:requests", $recentRequests, 300);
+        
+        // Check for rate anomalies
+        if (count($recentRequests) > 100) {
+            Log::channel('security')->alert("Rate anomaly for user {$userId}");
+        }
+        
+        // Check for time anomalies (access at 3 AM)
+        if (date('H') < 5 && $this->userUsuallyWorksAtNight($userId) === false) {
+            Log::channel('security')->alert("Time anomaly for user {$userId}");
+        }
+    }
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 8: JUST-IN-TIME (JIT) ACCESS -->
+    <section class="section">
+        <h2>⏱️ Just-In-Time (JIT) Access</h2>
+
+        <div class="ascii-art">
+JIT ACCESS FLOW
+═══════════════════════════════════════════════════════════════════
+
+  Developer → Requests access to production DB
+       │
+       ▼
+  Approval workflow (manager approval, reason required)
+       │
+       ▼
+  Temporary access granted (1 hour only)
+       │
+       ▼
+  Access automatically revoked after 1 hour
+       │
+       ▼
+  Every action is logged
+
+  NO permanent elevated access!
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">IMPLEMENTING JIT IN LARAVEL</span>
+            <pre><code>// Temporary access token
+class JITAccess
+{
+    public function requestAccess(string $userId, string $resource, int $durationMinutes = 60)
+    {
+        $token = JITToken::create([
+            'user_id' => $userId,
+            'resource' => $resource,
+            'expires_at' => now()->addMinutes($durationMinutes),
+            'reason' => request('reason'),
+            'approved_by' => auth()->id(),
+        ]);
+        
+        return $token;
+    }
+    
+    public function checkAccess(string $userId, string $resource)
+    {
+        $token = JITToken::where('user_id', $userId)
+            ->where('resource', $resource)
+            ->where('expires_at', '>', now())
+            ->first();
+        
+        if (!$token) {
+            Log::channel('security')->warning("Unauthorized access attempt", [
+                'user' => $userId,
+                'resource' => $resource,
+            ]);
+            throw new UnauthorizedException("No JIT access for this resource");
+        }
+        
+        return true;
+    }
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 9: DENIAL OF WALLET PROTECTION -->
+    <section class="section">
+        <h2>💰 Denial of Wallet Protection (Zero-Trust for APIs)</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE CLOUD NIGHTMARE</span>
+            <p>An attacker with a valid API key can run up huge bills by requesting expensive operations (large reports, image processing, AI calls). Zero-Trust includes protecting your wallet.</p>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">RATE LIMITING + COST BUDGETS</span>
+            <pre><code>// API rate limiting per key
+Route::middleware(['throttle:1000,60'])->group(function () {
+    // 1000 requests per minute per API key
+});
+
+// Cost-based rate limiting
+class CostBasedRateLimiter
+{
+    public function check($apiKey, $operationCost)
+    {
+        $dailyCost = Cache::get("api:{$apiKey}:daily_cost", 0);
+        $dailyBudget = 10.00; // $10 per day
+        
+        if ($dailyCost + $operationCost > $dailyBudget) {
+            Log::channel('security')->alert("API key {$apiKey} exceeded budget");
+            throw new BudgetExceededException("Daily budget exceeded");
+        }
+        
+        Cache::increment("api:{$apiKey}:daily_cost", $operationCost);
+        Cache::expire("api:{$apiKey}:daily_cost", 86400);
+        
+        return true;
+    }
+}
+
+// Usage
+$cost = $this->calculateOperationCost($request);
+$rateLimiter->check($request->api_key, $cost);</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 10: SUMMARY -->
+    <section class="section">
+        <h2>📝 Topic 30 Summary: Zero-Trust Architecture</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Principle</th><th>Traditional Security</th><th>Zero-Trust</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Network perimeter</th>
+                        <td class="highlight-red">Trust inside, distrust outside</th>
+                        <td class="highlight">No trusted network</th>
+                    </tr>
+                    <tr>
+                        <td>Authentication</th>
+                        <td class="highlight-red">Once at the edge</th>
+                        <td class="highlight">Every request, every service</th>
+                    </tr>
+                    <tr>
+                        <td>Authorization</th>
+                        <td class="highlight-red">Broad permissions</th>
+                        <td class="highlight">Least privilege, JIT access</th>
+                    </tr>
+                    <tr>
+                        <td>Encryption</th>
+                        <td class="highlight-red">Only external traffic</th>
+                        <td class="highlight">Everywhere (mTLS)</th>
+                    </tr>
+                    <tr>
+                        <td>Monitoring</th>
+                        <td class="highlight-red">Log breaches</th>
+                        <td class="highlight">Assume breach, constant monitoring</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Assume every request could be from an attacker. Authenticate everything. Authorize minimally. Encrypt everywhere. Monitor continuously. There is no "inside" anymore — only varying levels of verification.</strong>
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">EPILOGUE</span>
+            <p><strong>The Performance Bible — Complete.</strong> You now have 30 topics covering everything from algorithms to zero-trust. This is not the end. This is the foundation. Every system you build will teach you something new. Keep learning. Keep optimizing. Keep architecting.</p>
+            <p style="margin-top: 0.75rem;"><em>"The language is just a tool. You don't blame the hammer if you can't build a skyscraper alone."</em></p>
+        </div>
+    </section>
+
+</body>
+</html>

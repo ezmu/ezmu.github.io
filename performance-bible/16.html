@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 16: PHP-FPM Deep Dive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box {
+            background: #2a0a0a;
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            border: 1px solid #7f1d1d;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume II: Laravel Performance Tuning Kit</div>
+        <h1>⚙️ Topic 16: PHP-FPM Deep Dive</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">The real bottleneck nobody talks about.</p>
+
+        <div class="golden-quote">
+            "You optimized your Laravel code. You added indexes. You configured Redis.<br>
+            But your server still crashes under load.<br>
+            Your PHP-FPM settings are killing you."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE SILENT BOTTLENECK</span>
+            <p style="margin-top: 0.75rem;">Most developers never touch PHP-FPM configuration. They keep the defaults (designed for development, not production). When traffic spikes, PHP-FPM either spawns too many processes (memory exhaustion) or too few (request queueing). <strong>Getting these settings right is critical for production.</strong></p>
+        </div>
+    </section>
+
+    <!-- SECTION 2: WHAT IS PHP-FPM -->
+    <section class="section">
+        <h2>🔍 What is PHP-FPM?</h2>
+
+        <div class="ascii-art">
+PHP-FPM (FastCGI Process Manager) is the bridge between your web server (Nginx/Apache) and your PHP code.
+
+HOW IT WORKS:
+═══════════════════════════════════════════════════════════════════
+
+  HTTP Request
+       │
+       ▼
+  ┌─────────────┐
+  │   Nginx     │
+  └──────┬──────┘
+         │ (fastcgi_pass)
+         ▼
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                      PHP-FPM Master Process                      │
+  │                                                                  │
+  │  Manages a pool of worker processes that execute PHP code       │
+  │                                                                  │
+  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐  │
+  │  │ Worker1 │ │ Worker2 │ │ Worker3 │ │ Worker4 │ │ Worker5 │  │
+  │  │ (idle)  │ │ (busy)  │ │ (busy)  │ │ (idle)  │ │ (busy)  │  │
+  │  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘  │
+  │                                                                  │
+  └─────────────────────────────────────────────────────────────────┘
+
+Each worker process handles ONE request at a time.
+If all workers are busy, requests wait in a queue.
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">KEY INSIGHT</span>
+            <p><strong>PHP-FPM workers are persistent processes.</strong> They don't die after each request (unlike CGI). This is good for performance, but bad for memory leaks — a leaking worker stays alive for thousands of requests, accumulating memory until it crashes.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 3: THE SETTINGS EXPLAINED -->
+    <section class="section">
+        <h2>⚙️ The Critical PHP-FPM Settings</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>What It Does</th>
+                        <th>Default</th>
+                        <th>Production Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>pm</code></th>
+                        <td>Process manager type</th>
+                        <td class="highlight-red"><code>dynamic</code></th>
+                        <td class="highlight"><code>dynamic</code> or <code>ondemand</code></th>
+                    </tr>
+                    <tr>
+                        <td><code>pm.max_children</code></th>
+                        <td>Maximum number of worker processes</th>
+                        <td class="highlight-red">5-10 (varies)</th>
+                        <td class="highlight">Calculated based on RAM</th>
+                    </tr>
+                    <tr>
+                        <td><code>pm.start_servers</code></th>
+                        <td>Number of workers created on startup</th>
+                        <td class="highlight-red">2-4 (varies)</th>
+                        <td class="highlight"><code>max_children / 4</code></th>
+                    </tr>
+                    <tr>
+                        <td><code>pm.min_spare_servers</code></th>
+                        <td>Minimum idle workers (dynamic mode)</th>
+                        <td class="highlight-red">1-2 (varies)</th>
+                        <td class="highlight"><code>start_servers</code></th>
+                    </tr>
+                    <tr>
+                        <td><code>pm.max_spare_servers</code></th>
+                        <td>Maximum idle workers (dynamic mode)</th>
+                        <td class="highlight-red">3-6 (varies)</th>
+                        <td class="highlight"><code>max_children / 2</code></th>
+                    </tr>
+                    <tr>
+                        <td><code>pm.max_requests</code></th>
+                        <td>Requests per worker before restart</th>
+                        <td class="highlight-red">0 (unlimited)</th>
+                        <td class="highlight">500-1000</th>
+                    </tr>
+                    <tr>
+                        <td><code>request_terminate_timeout</code></th>
+                        <td>Max execution time per request</th>
+                        <td class="highlight-red">0 (no limit)</th>
+                        <td class="highlight">30-60 seconds</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- SECTION 4: CALCULATING pm.max_children -->
+    <section class="section">
+        <h2>🧮 How to Calculate pm.max_children</h2>
+
+        <div class="ascii-art">
+THE FORMULA:
+═══════════════════════════════════════════════════════════════════
+
+  max_children = (Total RAM - RAM for OS - RAM for MySQL - RAM for Redis)
+                ────────────────────────────────────────────────────────
+                              Average RAM per PHP process
+
+EXAMPLE (8GB server):
+═══════════════════════════════════════════════════════════════════
+
+  Total RAM:           8192 MB
+  - OS + misc:        -1024 MB
+  - MySQL:            -2048 MB  (innodb_buffer_pool_size)
+  - Redis:            - 512 MB
+  ─────────────────────────────────────
+  Available for PHP:   4608 MB
+
+  Average Laravel process: ~40 MB (with OpCache, sessions, etc.)
+
+  max_children = 4608 / 40 = 115 processes
+
+CONFIGURATION:
+═══════════════════════════════════════════════════════════════════
+
+  pm.max_children = 115
+  pm.start_servers = 28        (115 / 4)
+  pm.min_spare_servers = 28    (same as start)
+  pm.max_spare_servers = 57    (115 / 2)
+  pm.max_requests = 500
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">⚠️ WARNING: DON'T GUESS</span>
+            <p>Setting <code>pm.max_children</code> too high → Server runs out of memory, crashes, OOM killer kills processes randomly.<br>
+            Setting <code>pm.max_children</code> too low → Requests queue up, users see 502 errors, response times skyrocket.</p>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">HOW TO MEASURE AVERAGE PROCESS MEMORY</span>
+            <pre><code># Check memory usage of PHP-FPM processes
+ps aux | grep "php-fpm" | awk '{sum+=$6} END {print sum/NR/1024 " MB"}'
+
+# Or with more detail
+watch -n 1 'ps aux | grep "php-fpm" | head -20'</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 5: PROCESS MANAGER MODES -->
+    <section class="section">
+        <h2>🔄 Process Manager Modes: dynamic vs ondemand</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mode</th>
+                        <th>How It Works</th>
+                        <th>Pros</th>
+                        <th>Cons</th>
+                        <th>Best For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>dynamic</code></th>
+                        <td>Maintains min/max spare idle workers</th>
+                        <td>Fast response (workers ready)</th>
+                        <td>Consumes memory even when idle</th>
+                        <td>High-traffic, consistent load</th>
+                    </tr>
+                    <tr>
+                        <td><code>ondemand</code></th>
+                        <td>Creates workers only when needed, kills after idle time</th>
+                         Saves memory during low traffic</th>
+                        <td>Cold start delay on first request</th>
+                        <td>Low-traffic, variable load, cron-heavy apps</th>
+                    </tr>
+                    <tr>
+                        <td><code>static</code></th>
+                        <td>Fixed number of workers (max_children)</th>
+                        <td>Predictable, no spawning overhead</th>
+                        <td>Wastes memory if traffic is low</th>
+                        <td>Very high-traffic, predictable load</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <pre><code># dynamic mode (recommended for most Laravel apps)
+pm = dynamic
+pm.max_children = 100
+pm.start_servers = 25
+pm.min_spare_servers = 25
+pm.max_spare_servers = 50
+pm.max_requests = 500
+
+# ondemand mode (memory saving)
+pm = ondemand
+pm.max_children = 100
+pm.process_idle_timeout = 10s
+pm.max_requests = 500
+
+# static mode (predictable, no spawning)
+pm = static
+pm.max_children = 100
+pm.max_requests = 500</code></pre>
+    </section>
+
+    <!-- SECTION 6: THE MEMORY LEAK PROBLEM -->
+    <section class="section">
+        <h2>💧 The Memory Leak Problem (pm.max_requests)</h2>
+
+        <div class="ascii-art">
+WITH pm.max_requests = 0 (DEFAULT - DANGEROUS)
+═══════════════════════════════════════════════════════════════════
+
+  Worker memory usage over time:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                                                                  │
+  │ 100MB ┤                                              ┌───────────│
+  │  80MB ┤                                          ┌───┘           │
+  │  60MB ┤                                      ┌───┘               │
+  │  40MB ┤                                  ┌───┘                   │
+  │  20MB ┤ ┌───┬───┬───┬───┬───┬───┬───┬───┘                       │
+  │   0MB └┴───┴───┴───┴───┴───┴───┴───┴─────────────────────────────│
+  │        Day1 Day2 Day3 Day4 Day5 Day6 Day7 Day8                   │
+  │                                                                  │
+  │  After 7 days: Worker has 100MB leak. 100 workers = 10GB RAM    │
+  │  Server crashes. Restart. Repeat.                               │
+  └─────────────────────────────────────────────────────────────────┘
+
+WITH pm.max_requests = 500 (PRODUCTION - SAFE)
+═══════════════════════════════════════════════════════════════════
+
+  Worker memory usage over time:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                                                                  │
+  │ 100MB ┤                                                         │
+  │  80MB ┤                                                         │
+  │  60MB ┤                                                         │
+  │  40MB ┤ ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐                           │
+  │  20MB ┤─┘   └─┘   └─┘   └─┘   └─┘   └─                         │
+  │   0MB └┴───┴───┴───┴───┴───┴───┴───┴─────────────────────────────│
+  │                                                                  │
+  │  Worker dies and respawns every 500 requests.                   │
+  │  Memory never accumulates. Server stable.                       │
+  └─────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE GOLDEN RULE OF PHP-FPM</span>
+            <p style="margin-top: 0.75rem;"><strong>Always set <code>pm.max_requests</code> to 500-1000.</strong> This is the single most important PHP-FPM setting for production stability. It prevents memory leaks from killing your server.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 7: REQUEST TERMINATE TIMEOUT -->
+    <section class="section">
+        <h2>⏱️ request_terminate_timeout (The Safety Net)</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE PROBLEM</span>
+            <p style="margin-top: 0.75rem;">A single slow request (e.g., external API timeout, database deadlock) can hang a worker forever. That worker never processes another request. Over time, all workers hang. Server stops responding to ANY request.</p>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE SOLUTION</span>
+            <pre><code># php-fpm.conf
+request_terminate_timeout = 60s
+
+# If a request takes longer than 60 seconds, PHP-FPM kills the worker
+# A new worker is spawned immediately
+# Your server keeps running</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">RELATION TO max_execution_time</span>
+            <p><code>max_execution_time</code> in <code>php.ini</code> is a soft limit (PHP can ignore in some cases).<br>
+            <code>request_terminate_timeout</code> in <code>php-fpm.conf</code> is a hard kill — the process is terminated by the OS.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 8: MONITORING PHP-FPM -->
+    <section class="section">
+        <h2>📊 Monitoring PHP-FPM</h2>
+
+        <h3>Enable status page:</h3>
+        <pre><code># php-fpm.conf
+pm.status_path = /status
+
+# Nginx config
+location ~ ^/status$ {
+    include fastcgi_params;
+    fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+}</code></pre>
+
+        <h3>Check status:</h3>
+        <pre><code>curl http://localhost/status
+
+pool:                 www
+process manager:      dynamic
+start time:           1704067200
+start since:          3600
+accepted conn:        12500
+listen queue:         0      ← If this grows, you need more workers
+max listen queue:     50
+listen queue len:     128
+idle processes:       15
+active processes:     10    ← Currently handling requests
+total processes:      25
+max active processes: 45    ← Peak concurrent requests
+max children reached: 0      ← If >0, increase max_children</code></pre>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">CRITICAL METRICS TO WATCH</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>listen queue</strong> — Should be 0. If it grows, increase <code>max_children</code></li>
+                <li><strong>max children reached</strong> — If >0, your <code>max_children</code> is too low</li>
+                <li><strong>active processes</strong> — Monitor for spikes</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 9: SAMPLE PRODUCTION CONFIGURATION -->
+    <section class="section">
+        <h2>📄 Sample Production Configuration (8GB Server)</h2>
+
+        <pre><code>; /etc/php/8.2/fpm/pool.d/www.conf
+
+[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.2-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+
+; Process manager settings
+pm = dynamic
+pm.max_children = 100
+pm.start_servers = 25
+pm.min_spare_servers = 25
+pm.max_spare_servers = 50
+pm.max_requests = 500
+
+; Request timeout
+request_terminate_timeout = 60s
+request_slowlog_timeout = 5s
+slowlog = /var/log/php8.2-fpm-slow.log
+
+; Status page
+pm.status_path = /status
+ping.path = /ping
+ping.response = pong
+
+; Security
+; Prevent users from seeing environment variables
+clear_env = no
+
+; Child processes
+catch_workers_output = yes
+decorate_workers_output = no</code></pre>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Never use default PHP-FPM settings in production. Calculate pm.max_children based on your RAM. Set pm.max_requests = 500. Enable the status page and monitor it. Your server will survive traffic spikes.</strong>
+        </div>
+    </section>
+
+    <!-- SECTION 10: SUMMARY -->
+    <section class="section">
+        <h2>📝 Topic 16 Summary: PHP-FPM</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>Default (Dev)</th>
+                        <th>Production</th>
+                        <th>Why</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>pm</th>
+                        <td class="highlight-red">dynamic</th>
+                        <td class="highlight">dynamic or ondemand</th>
+                        <td>Depends on traffic pattern</th>
+                    </tr>
+                    <tr>
+                        <td>pm.max_children</th>
+                        <td class="highlight-red">5-10</th>
+                        <td class="highlight">(RAM - other) / 40MB</th>
+                        <td>Prevents OOM and queueing</th>
+                    </tr>
+                    <tr>
+                        <td>pm.max_requests</th>
+                        <td class="highlight-red">0</th>
+                        <td class="highlight">500-1000</th>
+                        <td>Prevents memory leaks</th>
+                    </tr>
+                    <tr>
+                        <td>request_terminate_timeout</th>
+                        <td class="highlight-red">0</th>
+                        <td class="highlight">60s</th>
+                        <td>Kills hung requests</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 17: OpCache & PHP JIT</strong> — PHP's built-in performance superpowers. Why OpCache is mandatory for production. How JIT can make CPU-intensive code 3-5x faster.</p>
+        </div>
+    </section>
+
+</body>
+</html>

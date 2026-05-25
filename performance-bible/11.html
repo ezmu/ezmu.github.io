@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 11: Database Partitioning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box {
+            background: #2a0a0a;
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            border: 1px solid #7f1d1d;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .comparison-block {
+            margin: 1.5rem 0;
+        }
+
+        .comparison-bad, .comparison-good {
+            background: #111827;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #1f2937;
+        }
+
+        .comparison-bad {
+            border-left: 5px solid #ef4444;
+        }
+
+        .comparison-good {
+            border-left: 5px solid #10b981;
+        }
+
+        .comparison-bad h4, .comparison-good h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: INTRODUCTION                      -->
+    <!-- ============================================ -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume II: Laravel Performance Tuning Kit</div>
+        <h1>🗂️ Topic 11: Database Partitioning</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">Vertical & Horizontal — When one table becomes too big for one server.</p>
+
+        <div class="golden-quote">
+            "Your orders table has 100 million rows.<br>
+            Indexes help, but the B-Tree is now 10 levels deep.<br>
+            Every query touches 10 disk pages. Your I/O is screaming.<br>
+            Read replicas won't save you. You need to partition."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE SCALE PROBLEM</span>
+            <p style="margin-top: 0.75rem;">Read/write splitting (Topic 10) scales your read capacity, but <strong>it doesn't reduce the size of your tables</strong>. When a single table reaches 100M+ rows, even with perfect indexes, queries become slow. The B-Tree depth increases, and every query requires more I/O. <strong>Partitioning is the next step.</strong></p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: VERTICAL PARTITIONING            -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📐 Type 1: Vertical Partitioning</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE PROBLEM: WIDE TABLES</span>
+            <p>Some columns are large (TEXT, BLOB, JSON) and rarely accessed. But they still occupy space in every row, slowing down full table scans and wasting buffer pool memory.</p>
+        </div>
+
+        <div class="ascii-art">
+            │
+            │  BEFORE: ONE WIDE TABLE
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+            │  │  users table                                                                        │
+            │  │  ┌────────┬──────────┬─────────────┬──────────┬─────────────┬──────────────────┐  │
+            │  │  │ id     │ name     │ email       │ password │ avatar (BLOB)│ bio (TEXT)       │  │
+            │  │  ├────────┼──────────┼─────────────┼──────────┼─────────────┼──────────────────┤  │
+            │  │  │ 1      │ John     │ j@x.com     │ hash...  │ [500KB]     │ "Lorem ipsum..." │  │
+            │  │  │ 2      │ Jane     │ jn@x.com    │ hash...  │ [500KB]     │ "Dolor sit..."   │  │
+            │  │  │ 3      │ Bob      │ b@x.com     │ hash...  │ [500KB]     │ "Consectetur..." │  │
+            │  │  └────────┴──────────┴─────────────┴──────────┴─────────────┴──────────────────┘  │
+            │  └─────────────────────────────────────────────────────────────────────────────────────┘
+            │
+            │  PROBLEM: SELECT id, name, email FROM users WHERE active = 1
+            │  → MySQL still reads the 500KB avatar and 10KB bio from disk!
+            │  → Wasted I/O. Slow queries.
+            │
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  AFTER: VERTICAL PARTITIONING
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  ┌─────────────────────────────────────┐   ┌─────────────────────────────────────────┐
+            │  │  users_main (lean)                  │   │  users_profile (large columns)          │
+            │  │  ┌────────┬──────────┬─────────────┐│   │  ┌─────────┬─────────────┬──────────────┐│
+            │  │  │ id     │ name     │ email       ││   │  │ user_id │ avatar      │ bio          ││
+            │  │  ├────────┼──────────┼─────────────┼│   │  ├─────────┼─────────────┼──────────────┤│
+            │  │  │ 1      │ John     │ j@x.com     ││   │  │ 1       │ [500KB]     │ "Lorem..."    ││
+            │  │  │ 2      │ Jane     │ jn@x.com    ││   │  │ 2       │ [500KB]     │ "Dolor..."    ││
+            │  │  │ 3      │ Bob      │ b@x.com     ││   │  │ 3       │ [500KB]     │ "Consect..."  ││
+            │  │  └────────┴──────────┴─────────────┘│   │  └─────────┴─────────────┴──────────────┘│
+            │  └─────────────────────────────────────┘   └─────────────────────────────────────────┘
+            │
+            │  BENEFIT: SELECT id, name, email FROM users_main WHERE active = 1
+            │  → Only reads the small table! 10x faster, 10x less I/O!
+            │
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">VERTICAL PARTITIONING IN LARAVEL</span>
+            <pre><code>// Model for main user data (frequently accessed)
+class User extends Model
+{
+    protected $table = 'users_main';
+    protected $fillable = ['id', 'name', 'email', 'password'];
+    
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class, 'user_id');
+    }
+}
+
+// Model for large/binary data (rarely accessed)
+class UserProfile extends Model
+{
+    protected $table = 'users_profile';
+    protected $fillable = ['user_id', 'avatar', 'bio'];
+}
+
+// Usage: When you need avatar, eager load
+$user = User::with('profile')->find(1);
+$avatar = $user->profile->avatar;
+
+// Usage: When you only need basic info (no avatar)
+$users = User::select('id', 'name', 'email')->get();  // Fast! No large columns!</code></pre>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">WHEN TO USE VERTICAL PARTITIONING</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li>Table has large TEXT, BLOB, or JSON columns</li>
+                <li>These large columns are rarely accessed</li>
+                <li>You frequently query only the small columns</li>
+                <li>You want to reduce buffer pool pressure</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: HORIZONTAL PARTITIONING (SHARDING) -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📊 Type 2: Horizontal Partitioning (Sharding)</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE PROBLEM: TOO MANY ROWS</span>
+            <p>Your table has 500 million rows. Even with perfect indexes, the B-Tree is too deep. Writes are slow. Maintenance (ALTER TABLE) takes hours. Backups take days.</p>
+        </div>
+
+        <div class="ascii-art">
+            │
+            │  BEFORE: ONE MASSIVE TABLE
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+            │  │  orders table (500 million rows)                                                    │
+            │  │  ┌─────────┬─────────────┬────────────┬──────────────┬─────────────────────────┐  │
+            │  │  │ id      │ user_id     │ amount     │ status       │ created_at               │  │
+            │  │  ├─────────┼─────────────┼────────────┼──────────────┼─────────────────────────┤  │
+            │  │  │ 1       │ 123         │ $99.99     │ completed    │ 2020-01-01 00:00:00     │  │
+            │  │  │ 2       │ 456         │ $49.99     │ pending      │ 2020-01-01 00:01:00     │  │
+            │  │  │ ...     │ ...         │ ...        │ ...          │ ...                     │  │
+            │  │  │ 500M    │ 789         │ $19.99     │ completed    │ 2024-01-01 23:59:59     │  │
+            │  │  └─────────┴─────────────┴────────────┴──────────────┴─────────────────────────┘  │
+            │  └─────────────────────────────────────────────────────────────────────────────────────┘
+            │
+            │  PROBLEM:
+            │  • SELECT queries scanning months of data are slow
+            │  • DELETE old data is impossible (locks table for hours)
+            │  • ALTER TABLE ADD COLUMN takes 2 hours (rebuilds entire table)
+            │  • Backups are 500GB+
+            │
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  AFTER: HORIZONTAL PARTITIONING (BY DATE)
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  ┌─────────────────────────┐ ┌─────────────────────────┐ ┌─────────────────────────┐
+            │  │  orders_2024            │ │  orders_2025            │ │  orders_2026            │
+            │  │  (Jan-Dec 2024)         │ │  (Jan-Dec 2025)         │ │  (Jan-Dec 2026)         │
+            │  │  ┌───────┬───────┬─────┐│ │  ┌───────┬───────┬─────┐│ │  ┌───────┬───────┬─────┐│
+            │  │  │ id    │ user  │ amt ││ │  │ id    │ user  │ amt ││ │  │ id    │ user  │ amt ││
+            │  │  ├───────┼───────┼─────┤│ │  ├───────┼───────┼─────┤│ │  ├───────┼───────┼─────┤│
+            │  │  │ 1     │ 123   │ $99 ││ │  │ 1M    │ 456   │ $49 ││ │  │ 2M    │ 789   │ $19 ││
+            │  │  │ ...   │ ...   │ ... ││ │  │ ...   │ ...   │ ... ││ │  │ ...   │ ...   │ ... ││
+            │  │  └───────┴───────┴─────┘│ │  └───────┴───────┴─────┘│ │  └───────┴───────┴─────┘│
+            │  └─────────────────────────┘ └─────────────────────────┘ └─────────────────────────┘
+            │
+            │  BENEFITS:
+            │  • Query only the partition you need (WHERE created_at BETWEEN '2025-01-01' AND '2025-12-31')
+            │  • Drop old partitions instantly (DROP TABLE orders_2020)
+            │  • ALTER TABLE affects only one partition (seconds, not hours)
+            │  • Backups can be partitioned
+            │
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: SHARDING BY USER ID              -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>👥 Sharding by User ID (Multi-Tenant)</h2>
+
+        <div class="ascii-art">
+            │
+            │  SHARDING BY USER_ID (Horizontal Scaling Across Servers)
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  Application Layer (Laravel)
+            │  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+            │  │  $shard = $user_id % 4;                                                            │
+            │  │  DB::connection("shard_$shard")->table('user_data')->where('user_id', $user_id);   │
+            │  └─────────────────────────────────────────────────────────────────────────────────────┘
+            │                    │                    │                    │
+            │                    ▼                    ▼                    ▼                    ▼
+            │          ┌─────────────┐      ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+            │          │  Shard 1    │      │  Shard 2    │      │  Shard 3    │      │  Shard 4    │
+            │          │  (users 0-   │      │  (users     │      │  (users     │      │  (users     │
+            │          │   2.5M)     │      │   2.5M-5M)  │      │   5M-7.5M)  │      │   7.5M-10M) │
+            │          └─────────────┘      └─────────────┘      └─────────────┘      └─────────────┘
+            │
+            │  BENEFITS:
+            │  • Each shard is 1/4 the size (2.5M rows instead of 10M)
+            │  • Queries only hit one shard (4x faster)
+            │  • Can add more shards as users grow (rebalancing is hard)
+            │  • Each shard can be on a different server (horizontal scaling)
+            │
+            │  TRADE-OFFS:
+            │  • Cross-shard queries are impossible (e.g., COUNT(*) across all shards)
+            │  • Need a routing layer (application logic)
+            │  • Rebalancing when adding shards is complex
+            │
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">SHARDING IN LARAVEL (Dynamic Connection)</span>
+            <pre><code>// config/database.php
+'connections' => [
+    'shard_1' => ['host' => 'db1.example.com', ...],
+    'shard_2' => ['host' => 'db2.example.com', ...],
+    'shard_3' => ['host' => 'db3.example.com', ...],
+    'shard_4' => ['host' => 'db4.example.com', ...],
+],
+
+// AppServiceProvider or custom class
+class ShardManager
+{
+    public static function getConnection($userId)
+    {
+        $shard = $userId % 4 + 1;  // 1-4
+        return DB::connection("shard_$shard");
+    }
+    
+    public static function getTable($userId)
+    {
+        $shard = $userId % 4 + 1;
+        return DB::connection("shard_$shard")->table('user_data');
+    }
+}
+
+// Usage in controller
+$userData = ShardManager::getTable($userId)
+    ->where('user_id', $userId)
+    ->first();</code></pre>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: DATE-BASED PARTITIONING (MYSQL NATIVE) -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📅 Date-Based Partitioning (MySQL Native)</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">MYSQL'S BUILT-IN PARTITIONING (EASIER)</span>
+            <p>MySQL supports partitioning natively. You don't need multiple tables or connections. One logical table, multiple physical partitions.</p>
+        </div>
+
+        <pre><code>-- Create partitioned table by year
+CREATE TABLE orders (
+    id INT NOT NULL,
+    user_id INT NOT NULL,
+    amount DECIMAL(10,2),
+    status VARCHAR(20),
+    created_at DATE NOT NULL
+)
+PARTITION BY RANGE (YEAR(created_at)) (
+    PARTITION p2022 VALUES LESS THAN (2023),
+    PARTITION p2023 VALUES LESS THAN (2024),
+    PARTITION p2024 VALUES LESS THAN (2025),
+    PARTITION p2025 VALUES LESS THAN (2026),
+    PARTITION p2026 VALUES LESS THAN (2027),
+    PARTITION p_future VALUES LESS THAN MAXVALUE
+);
+
+-- Query automatically uses only relevant partition
+SELECT * FROM orders WHERE created_at BETWEEN '2024-01-01' AND '2024-12-31';
+-- MySQL only scans p2024 partition!
+
+-- Drop old data instantly (no DELETE)
+ALTER TABLE orders DROP PARTITION p2022;  -- Seconds, not hours!
+
+-- Add new partition for next year
+ALTER TABLE orders ADD PARTITION (PARTITION p2027 VALUES LESS THAN (2028));</code></pre>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">MYSQL PARTITIONING: PROS & CONS</span>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Pros</th><th>Cons</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Transparent to application (no code changes)</td><td>All partitions on same server (no horizontal scaling)</td></tr>
+                        <tr><td>Instant partition drop (DROP PARTITION)</td><td>Partition key must be in every UNIQUE index</td></tr>
+                        <tr><td>Automatic partition pruning</td><td>Some limitations on foreign keys</td></tr>
+                        <tr><td>Easier than manual sharding</td><td>Not supported by all storage engines (InnoDB works)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: THE NUMBERS (PERFORMANCE GAINS)  -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📊 Performance Gains from Partitioning</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Without Partitioning</th>
+                        <th>With Partitioning</th>
+                        <th>Improvement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Query by date (1 year of 10M rows)</td>
+                        <td class="highlight-red">Scans 10M rows</td>
+                        <td class="highlight">Scans 1M rows</td>
+                        <td class="highlight">10x faster</td>
+                    </tr>
+                    <tr>
+                        <td>DELETE old data (3 years old)</td>
+                        <td class="highlight-red">Locks table for hours (DELETE millions)</td>
+                        <td class="highlight">DROP PARTITION in seconds</td>
+                        <td class="highlight">1,000x faster</td>
+                    </tr>
+                    <tr>
+                        <td>ALTER TABLE ADD COLUMN on 100M rows</td>
+                        <td class="highlight-red">1-2 hours (rebuilds whole table)</td>
+                        <td class="highlight">Minutes (affects only active partitions)</td>
+                        <td class="highlight">10-20x faster</td>
+                    </tr>
+                    <tr>
+                        <td>Backup size</td>
+                        <td class="highlight-red">500GB (all data)</td>
+                        <td class="highlight">50GB per partition (can backup separately)</td>
+                        <td class="highlight">10x smaller per backup</td>
+                    </tr>
+                    <tr style="background: #0a2a1a;">
+                        <td><strong>Query by user_id (sharded across 4 servers)</strong></td>
+                        <td class="highlight-red">Scans 40M rows on 1 server</td>
+                        <td class="highlight">Scans 10M rows on 1 of 4 servers</td>
+                        <td class="highlight"><strong>4x faster + 4x capacity</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: WHEN TO USE WHICH                -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🎯 Choosing the Right Partitioning Strategy</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Situation</th>
+                        <th>Solution</th>
+                        <th>Complexity</th>
+                        <th>When to Apply</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Wide table (large TEXT/BLOB columns)</td>
+                        <td class="highlight">Vertical Partitioning</td>
+                        <td>Low</td>
+                        <td>As soon as you notice large columns</td>
+                    </tr>
+                    <tr>
+                        <td>Time-series data (logs, events, orders)</td>
+                        <td class="highlight">MySQL Native Range Partitioning (by date)</td>
+                        <td>Low</td>
+                        <td>When table > 10M rows</td>
+                    </tr>
+                    <tr>
+                        <td>Multi-tenant SaaS (data per customer)</td>
+                        <td class="highlight">Sharding by tenant_id (multiple databases)</td>
+                        <td>Medium</td>
+                        <td>When single database can't fit all tenants</td>
+                    </tr>
+                    <tr>
+                        <td>User data for millions of users</td>
+                        <td class="highlight">Sharding by user_id (multiple servers)</td>
+                        <td>High</td>
+                        <td>When table > 50M rows or > 500GB</td>
+                    </tr>
+                    <tr>
+                        <td>Need to keep old data but query rarely</td>
+                        <td class="highlight">Archive table + Partitioning</td>
+                        <td>Medium</td>
+                        <td>When you have compliance requirements</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem;">
+            🔴 THE RULE: <strong>Start simple. Use indexes. Add read replicas. Then vertical partitioning. Then MySQL range partitioning. Only when all else fails, implement application-level sharding.</strong><br><br>
+            Premature partitioning adds complexity. Measure first, then partition.
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 8: DOWNSIDES OF PARTITIONING        -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>⚠️ The Downsides You Must Know</h2>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">MYSQL PARTITIONING LIMITATIONS</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Max 8192 partitions</strong> per table (but you'll never need that many)</li>
+                <li><strong>Partition key must be in every UNIQUE index</strong> (including PRIMARY KEY)</li>
+                <li><strong>Foreign keys not supported</strong> with partitioning (you have to manage manually)</li>
+                <li><strong>Full-text indexes not supported</strong> on partitioned tables</li>
+                <li><strong>ALTER TABLE ... REBUILD PARTITION</strong> still locks the partition</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">APPLICATION-LEVEL SHARDING DRAWBACKS</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Cross-shard queries are impossible</strong> (e.g., SELECT COUNT(*) across all users)</li>
+                <li><strong>Rebalancing is a nightmare</strong> (moving data between shards)</li>
+                <li><strong>JOINs across shards don't work</strong> (you need denormalization or application-side joins)</li>
+                <li><strong>Transactions across shards are complex</strong> (2-phase commit needed)</li>
+                <li><strong>Your application code becomes more complex</strong> (routing logic everywhere)</li>
+            </ul>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">RECOMMENDATION</span>
+            <p><strong>Use MySQL native partitioning first.</strong> It's transparent to your application and solves 80% of use cases. Only implement application-level sharding when you've exhausted all other options (indexes, replicas, vertical partitioning, MySQL partitioning).</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 9: SUMMARY                          -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📝 Topic 11 Summary: Database Partitioning</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>What</th>
+                        <th>When to Use</th>
+                        <th>Complexity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="highlight">Vertical</td>
+                        <td>Split wide tables by column groups</td>
+                        <td>Large TEXT/BLOB columns rarely accessed</td>
+                        <td>Low</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">MySQL Range</td>
+                        <td>Split by date or numeric range (native)</td>
+                        <td>Time-series data, logs, events</td>
+                        <td>Low</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">MySQL Hash</td>
+                        <td>Split by hash of a key (native)</td>
+                        <td>Even distribution across partitions</td>
+                        <td>Low</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight-red">Application Sharding</td>
+                        <td>Split across multiple database servers</td>
+                        <td>Massive data (100M+ rows), need horizontal scaling</td>
+                        <td>High</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Vertical partitioning first (separate large columns). Then MySQL range partitioning (by date). Then MySQL hash partitioning. Only then consider application-level sharding.</strong><br><br>
+            Partitioning is powerful but adds complexity. Don't do it until you need it. When you do need it, start with the simplest solution.
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 12: Statelessness Doctrine</strong> — Why your server must be killable. Move sessions to Redis. Move files to S3. Move config to env vars. Scale horizontally without fear.</p>
+        </div>
+    </section>
+
+</body>
+</html>

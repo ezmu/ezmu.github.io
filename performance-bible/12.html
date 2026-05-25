@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 12: Statelessness Doctrine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box {
+            background: #2a0a0a;
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            border: 1px solid #7f1d1d;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .comparison-block {
+            margin: 1.5rem 0;
+        }
+
+        .comparison-bad, .comparison-good {
+            background: #111827;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #1f2937;
+        }
+
+        .comparison-bad {
+            border-left: 5px solid #ef4444;
+        }
+
+        .comparison-good {
+            border-left: 5px solid #10b981;
+        }
+
+        .comparison-bad h4, .comparison-good h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: INTRODUCTION                      -->
+    <!-- ============================================ -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume III: Advanced Architecture</div>
+        <h1>🌊 Topic 12: Statelessness Doctrine</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">Your server must be killable at any moment. Design for failure.</p>
+
+        <div class="golden-quote">
+            "Your server is not special. It will die.<br>
+            When it does, your users shouldn't notice.<br>
+            If they do, you failed the Statelessness Doctrine."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE HORIZONTAL SCALING KILLER</span>
+            <p style="margin-top: 0.75rem;">The #1 reason Laravel apps can't scale horizontally? <strong>State stored on the server.</strong> Sessions in files. Images on local disk. Logs on local disk. Config in .env (not cached). When you try to run 10 servers behind a load balancer, each server has different data. Users get logged out randomly. Uploaded images disappear. <strong>Statelessness is the foundation of scalability.</strong></p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: THE PROBLEM (STATE ON SERVER)    -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔴 The Problem: State Stored Locally</h2>
+
+        <div class="ascii-art">
+            │
+            │  STATEFUL ARCHITECTURE (CANNOT SCALE)
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    Load Balancer
+            │         │
+            │    ┌────┴────┬─────────┬─────────┐
+            │    ▼         ▼         ▼         ▼
+            │  ┌─────┐   ┌─────┐   ┌─────┐   ┌─────┐
+            │  │Server│   │Server│   │Server│   │Server│
+            │  │  1   │   │  2   │   │  3   │   │  4   │
+            │  │      │   │      │   │      │   │      │
+            │  │Session│  │Session│  │Session│  │Session│
+            │  │ Files │  │ Files │  │ Files │  │ Files │
+            │  │       │  │       │  │       │  │       │
+            │  │Uploads│  │Uploads│  │Uploads│  │Uploads│
+            │  │(local)│  │(local)│  │(local)│  │(local)│
+            │  └─────┘   └─────┘   └─────┘   └─────┘
+            │
+            │  PROBLEMS:
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  • User logs in on Server 1 → Session saved on Server 1        │
+            │  │  • Next request goes to Server 2 → No session → User logged out│
+            │  │  • User uploads avatar to Server 3 → Image on Server 3         │
+            │  │  • Next request goes to Server 1 → Avatar not found → 404      │
+            │  │  • Server 2 dies → All sessions on Server 2 are GONE forever   │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │
+        </div>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE STATEFUL SINS (What NOT to do)</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Sessions in files</strong> (default Laravel) — Each server has its own sessions</li>
+                <li><strong>Uploaded files in <code>storage/app/public</code></strong> — Files live on one server only</li>
+                <li><strong>Logs in <code>storage/logs</code></strong> — Cannot centralize debugging</li>
+                <li><strong>Cache in files</strong> (default Laravel) — Each server has its own cache</li>
+                <li><strong>Environment variables mixed with code</strong> — Config changes require redeploy</li>
+                <li><strong>Database sessions on master</strong> — Better than files, but still not stateless</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: THE SOLUTION (STATELESS)         -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>✅ The Solution: Stateless Architecture</h2>
+
+        <div class="ascii-art">
+            │
+            │  STATELESS ARCHITECTURE (SCALES HORIZONTALLY)
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    Load Balancer
+            │         │
+            │    ┌────┴────┬─────────┬─────────┐
+            │    ▼         ▼         ▼         ▼
+            │  ┌─────┐   ┌─────┐   ┌─────┐   ┌─────┐
+            │  │Server│   │Server│   │Server│   │Server│
+            │  │  1   │   │  2   │   │  3   │   │  4   │
+            │  │      │   │      │   │      │   │      │
+            │  │      │   │      │   │      │   │      │
+            │  │ (No  │   │ (No  │   │ (No  │   │ (No  │
+            │  │local │   │local │   │local │   │local │
+            │  │state)│   │state)│   │state)│   │state)│
+            │  └───┬──┘   └───┬──┘   └───┬──┘   └───┬──┘
+            │      │          │          │          │
+            │      └──────────┼──────────┼──────────┘
+            │                 │          │
+            │         ┌───────┴──────┐   │
+            │         │   Redis      │   │
+            │         │  (Sessions   │   │
+            │         │   & Cache)   │   │
+            │         └──────────────┘   │
+            │                            │
+            │         ┌──────────────────┴──────────────────┐
+            │         │   S3 / Object Storage               │
+            │         │   (Uploaded Files)                  │
+            │         └─────────────────────────────────────┘
+            │
+            │  BENEFITS:
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  • Any server can handle any request                            │
+            │  │  • Add/remove servers anytime (auto-scaling)                    │
+            │  │  • Server dies? No problem — other servers take over           │
+            │  │  • Zero-downtime deployments (drain one server at a time)      │
+            │  │  • Global scale (Redis and S3 are shared across regions)       │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE GOLDEN RULE OF STATELESSNESS</span>
+            <p style="margin-top: 0.75rem;"><strong>Every server must be able to die at any moment without affecting users.</strong> All state must live in external services (Redis, S3, Database).</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: THE STATELESS CHECKLIST          -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📋 The Statelessness Checklist</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Stateful (BAD)</th>
+                        <th>Stateless (GOOD)</th>
+                        <th>Why</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sessions</td>
+                        <td class="highlight-red">File driver (default)</td>
+                        <td class="highlight">Redis driver</td>
+                        <td>Sessions must be shared across all servers</td>
+                    </tr>
+                    <tr>
+                        <td>Cache</td>
+                        <td class="highlight-red">File driver (default)</td>
+                        <td class="highlight">Redis or Memcached</td>
+                        <td>Cache must be consistent across servers</td>
+                    </tr>
+                    <tr>
+                        <td>Uploaded Files</td>
+                        <td class="highlight-red"><code>storage/app/public</code></td>
+                        <td class="highlight">S3, R2, or GCS</td>
+                        <td>Files must be accessible from any server</td>
+                    </tr>
+                    <tr>
+                        <td>Logs</td>
+                        <td class="highlight-red"><code>storage/logs</code> (local)</td>
+                        <td class="highlight">CloudWatch, ELK, Papertrail</td>
+                        <td>Centralized debugging across servers</td>
+                    </tr>
+                    <tr>
+                        <td>Configuration</td>
+                        <td class="highlight-red">Hardcoded or <code>.env</code> only</td>
+                        <td class="highlight">Environment variables + <code>config:cache</code></td>
+                        <td>Config changes without redeploy</td>
+                    </tr>
+                    <tr>
+                        <td>Queue Workers</td>
+                        <td class="highlight-red">Local <code>php artisan queue:work</code></td>
+                        <td class="highlight">Redis + Supervisor on dedicated workers</td>
+                        <td>Workers can run anywhere, scale independently</td>
+                    </tr>
+                    <tr>
+                        <td>Scheduled Tasks</td>
+                        <td class="highlight-red">Cron on one server</td>
+                        <td class="highlight"><code>php artisan schedule:run</code> on all servers + mutex</td>
+                        <td>Prevents duplicate task execution</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: LARAVEL STATELESS CONFIGURATION  -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>⚙️ Making Laravel Stateless (Step by Step)</h2>
+
+        <h3>1. Move Sessions to Redis</h3>
+        <pre><code># .env
+SESSION_DRIVER=redis
+SESSION_CONNECTION=default
+
+# config/session.php (already configured for Redis)</code></pre>
+
+        <h3>2. Move Cache to Redis</h3>
+        <pre><code># .env
+CACHE_DRIVER=redis
+
+# config/cache.php
+'default' => env('CACHE_DRIVER', 'redis'),</code></pre>
+
+        <h3>3. Move Files to S3</h3>
+        <pre><code># .env
+FILESYSTEM_DRIVER=s3
+AWS_ACCESS_KEY_ID=your-key
+AWS_SECRET_ACCESS_KEY=your-secret
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=your-bucket
+
+# In your code
+$path = Storage::disk('s3')->put('avatars', $request->file('avatar'));
+$url = Storage::disk('s3')->url($path);</code></pre>
+
+        <h3>4. Move Logs to Centralized Service</h3>
+        <pre><code># config/logging.php
+'channels' => [
+    'cloudwatch' => [
+        'driver' => 'custom',
+        'via' => \App\Logging\CloudWatchLogger::class,
+    ],
+],
+
+# .env
+LOG_CHANNEL=cloudwatch</code></pre>
+
+        <h3>5. Ensure Config is Cached</h3>
+        <pre><code># After every deployment
+php artisan config:cache
+
+# Never use env() outside config files
+// Wrong: env('APP_NAME')
+// Right: config('app.name')</code></pre>
+
+        <h3>6. Handle Scheduled Tasks with Mutex</h3>
+        <pre><code>// app/Console/Kernel.php
+protected function schedule(Schedule $schedule)
+{
+    // With onOneServer(), tasks run only once across all servers
+    $schedule->command('reports:generate')
+        ->daily()
+        ->onOneServer();  // ← Uses Redis/Cache for mutex
+    
+    $schedule->command('emails:send')
+        ->hourly()
+        ->onOneServer();
+}
+
+// For Laravel 8+, you need to set:
+// config/schedule.php
+'schedule_cache_driver' => 'redis',</code></pre>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: HORIZONTAL SCALING WITH LOAD BALANCER -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔄 Horizontal Scaling: Adding More Servers</h2>
+
+        <div class="ascii-art">
+            │
+            │  AUTO-SCALING WITH STATELESS SERVERS
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    Traffic increases (Black Friday)
+            │           │
+            │           ▼
+            │    Load Balancer detects high CPU
+            │           │
+            │           ▼
+            │    Auto-scaling group: Add 5 more servers
+            │           │
+            │           ▼
+            │    ┌─────────────────────────────────────────────────────────────────┐
+            │    │  New servers boot, join the pool                               │
+            │    │  • No data to sync (stateless!)                                │
+            │    │  • Sessions already in Redis                                   │
+            │    │  • Files already in S3                                         │
+            │    │  • Ready in 30 seconds                                         │
+            │    └─────────────────────────────────────────────────────────────────┘
+            │           │
+            │           ▼
+            │    Traffic handled. Users unaffected.
+            │
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  ZERO-DOWNTIME DEPLOYMENT
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  Step 1: Add new servers with new code (in parallel)
+            │  Step 2: Wait for them to be ready
+            │  Step 3: Drain connections from old servers (no new requests)
+            │  Step 4: Remove old servers from load balancer
+            │  Step 5: Terminate old servers
+            │
+            │  Result: Users never see a "down for maintenance" page.
+            │
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">REAL-WORLD EXAMPLE</span>
+            <p>Laravel Forge + AWS Auto-scaling Group + Load Balancer:</p>
+            <pre><code># Forge recipe for stateless servers
+- 1 GB swap (no session files)
+- Nginx + PHP-FPM
+- .env with Redis/S3 credentials
+- Deployment script:
+    git pull
+    composer install --no-dev --optimize-autoloader
+    php artisan migrate --force
+    php artisan config:cache
+    php artisan route:cache
+    php artisan view:cache
+    php artisan queue:restart
+    sudo systemctl reload php8.2-fpm</code></pre>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: THE DOWNSIDES (COST & COMPLEXITY) -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>⚠️ The Downsides of Statelessness</h2>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">COST</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Redis</strong> — Additional server/service cost (but worth it)</li>
+                <li><strong>S3</strong> — Storage cost + API request costs</li>
+                <li><strong>Logging services</strong> — CloudWatch, Datadog, etc. have costs</li>
+                <li><strong>Multiple servers</strong> — More servers = more cost</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">COMPLEXITY</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Debugging is harder</strong> — A request may go to any server</li>
+                <li><strong>Cache invalidation is distributed</strong> — Redis helps, but still complex</li>
+                <li><strong>Scheduled tasks need mutex</strong> — <code>onOneServer()</code> must be used carefully</li>
+                <li><strong>Local development differs from production</strong> — Need Redis/S3 locally too</li>
+            </ul>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">BUT THE BENEFITS OUTWEIGH THE COSTS</span>
+            <p>For any application that expects growth, the ability to scale horizontally is worth the added complexity. Start stateless from day one. It's much harder to retrofit later.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 8: CHECKING IF YOUR APP IS STATELESS -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔍 How to Check If Your App Is Stateless</h2>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">THE ULTIMATE TEST</span>
+            <p><strong>Kill a random server during peak traffic.</strong> If users notice, you have state somewhere.</p>
+        </div>
+
+        <h3>Automated statelessness audit:</h3>
+        <pre><code>#!/bin/bash
+# audit-statelessness.sh
+
+echo "Checking for stateful patterns..."
+
+# Check session driver
+grep "SESSION_DRIVER=file" .env && echo "❌ Sessions in files! Use Redis."
+
+# Check cache driver
+grep "CACHE_DRIVER=file" .env && echo "❌ Cache in files! Use Redis."
+
+# Check filesystem
+grep "FILESYSTEM_DRIVER=local" .env && echo "❌ Files on local disk! Use S3."
+
+# Check for env() in app code (outside config)
+grep -r "env(" --include="*.php" --exclude-dir=vendor \
+  --exclude-dir=config | grep -v "config/" && \
+  echo "❌ env() found outside config/! Use config()."
+
+# Check for hardcoded paths
+grep -r "storage/app/public" --include="*.php" --exclude-dir=vendor && \
+  echo "❌ Hardcoded storage path! Use Storage facade."
+
+echo "Audit complete."</code></pre>
+
+        <div class="golden-quote" style="font-size: 1rem;">
+            🔴 THE RULE: <strong>Run the audit before every deployment. Fix stateful violations immediately. Statelessness is not optional for production.</strong>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 9: SUMMARY                          -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📝 Topic 12 Summary: Statelessness Doctrine</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Stateful (BAD)</th>
+                        <th>Stateless (GOOD)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sessions</td>
+                        <td class="highlight-red">File database</td>
+                        <td class="highlight">Redis</td>
+                    </tr>
+                    <tr>
+                        <td>Cache</td>
+                        <td class="highlight-red">File database</td>
+                        <td class="highlight">Redis Memcached</td>
+                    </tr>
+                    <tr>
+                        <td>Files</td>
+                        <td class="highlight-red">Local disk (<code>storage/</code>)</td>
+                        <td class="highlight">S3 R2 GCS</td>
+                    </tr>
+                    <tr>
+                        <td>Logs</td>
+                        <td class="highlight-red">Local disk</td>
+                        <td class="highlight">CloudWatch ELK Papertrail</td>
+                    </tr>
+                    <tr>
+                        <td>Config</td>
+                        <td class="highlight-red"><code>.env</code> + <code>env()</code> calls</td>
+                        <td class="highlight"><code>config:cache</code> + <code>config()</code></td>
+                    </tr>
+                    <tr>
+                        <td>Scheduled Tasks</td>
+                        <td class="highlight-red">Cron on single server</td>
+                        <td class="highlight"><code>onOneServer()</code> + Redis mutex</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Your server must be disposable. If you can't terminate it at any moment without user impact, you are not stateless. Fix sessions, files, logs, and cache first. Then scale horizontally with confidence.</strong><br><br>
+            Statelessness is the foundation of cloud-native applications. Start stateless from day one.
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 13: Event-Driven Architecture (EDA)</strong> — Stop making users wait. Dispatch events, return 202 Accepted, process in background. How to go from 500ms response time to 20ms.</p>
+        </div>
+    </section>
+
+</body>
+</html>

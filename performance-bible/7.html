@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 7: Service Container & Reflection Cost</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: #111827;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-card {
+            background: #111827;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            border: 1px solid #1f2937;
+        }
+
+        .comparison-card.bad {
+            border-top: 4px solid #ef4444;
+        }
+
+        .comparison-card.good {
+            border-top: 4px solid #10b981;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: INTRODUCTION                      -->
+    <!-- ============================================ -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume II: Laravel Performance Tuning Kit</div>
+        <h1>🪞 Topic 7: Service Container & Reflection Cost</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">Why auto-wiring is expensive and how to fix it.</p>
+
+        <div class="golden-quote">
+            "Laravel's service container is magical. But magic has a cost.<br>
+            Every time you let the container 'figure things out', it uses Reflection — reading your code at runtime.<br>
+            Reflection is CPU-intensive. And it happens on every single request."
+        </div>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE HIDDEN COST</span>
+            <p style="margin-top: 0.75rem;">Laravel's auto-wiring is beautiful for development. You just type-hint a dependency, and Laravel figures out what to give you. But behind the scenes, it uses <strong>PHP's Reflection API</strong> to read your constructor signatures — on every request.</p>
+            <p style="margin-top: 0.75rem;">Reflection is <strong>10-100x slower</strong> than direct instantiation. In a typical Laravel request, the container may resolve 20-50 dependencies. That's hundreds of Reflection operations per request.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: WHAT IS REFLECTION?              -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔍 What Is Reflection?</h2>
+
+        <div class="ascii-art">
+            │
+            │  REFLECTION = CODE READING CODE AT RUNTIME
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  When you write:
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  class UserController                                            │
+            │  │  {                                                              │
+            │  │      public function __construct(                               │
+            │  │          UserService $service,                                  │
+            │  │          Logger $logger,                                        │
+            │  │          Cache $cache                                           │
+            │  │      ) {}                                                        │
+            │  │  }                                                              │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │           │
+            │           ▼
+            │  Laravel's container says: "I need to figure out what to pass."
+            │           │
+            │           ▼
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  $reflection = new ReflectionClass(UserController::class);      │
+            │  │  $constructor = $reflection->getConstructor();                  │
+            │  │  $parameters = $constructor->getParameters();                   │
+            │  │                                                                  │
+            │  │  foreach ($parameters as $param) {                              │
+            │  │      $type = $param->getType();                                 │
+            │  │      $className = $type->getName();  // "UserService"          │
+            │  │      // Then recursively resolve UserService...                 │
+            │  │  }                                                               │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │
+            │  THIS HAPPENS ON EVERY REQUEST!
+            │
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">WHY IS REFLECTION SLOW?</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li>It reads class files from disk (I/O)</li>
+                <li>It parses PHP code to understand type hints</li>
+                <li>It builds in-memory representations of classes</li>
+                <li>It cannot be cached between requests (by default)</li>
+            </ul>
+            <p style="margin-top: 0.75rem;"><strong>Cost per Reflection operation:</strong> ~0.1-1ms. With 50 operations per request = 5-50ms of pure overhead.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: THE NUMBERS (REFLECTION COST)    -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📊 The Real Cost of Auto-Wiring</h2>
+
+        <h3>Benchmark: Resolving a simple service with 3 dependencies</h3>
+
+        <div class="comparison-grid">
+            <div class="comparison-card bad">
+                <h4>👎 AUTO-WIRING (Reflection)</h4>
+                <pre><code>// Controller
+class OrderController
+{
+    public function __construct(
+        OrderService $orderService,
+        PaymentService $paymentService,
+        Logger $logger,
+        Cache $cache,
+        Mailer $mailer
+    ) {}
+}
+
+// Resolved via container
+$controller = app()->make(OrderController::class);</code></pre>
+                <p><strong>Cost per request:</strong> ~2-5ms (Reflection on 5 dependencies)</p>
+            </div>
+            <div class="comparison-card good">
+                <h4>👍 MANUAL INSTANTIATION</h4>
+                <pre><code>// Controller
+class OrderController
+{
+    public function __construct(
+        private OrderService $orderService,
+        private PaymentService $paymentService,
+        private Logger $logger,
+        private Cache $cache,
+        private Mailer $mailer
+    ) {}
+}
+
+// Create manually
+$controller = new OrderController(
+    new OrderService(),
+    new PaymentService(),
+    new Logger(),
+    app('cache'),
+    new Mailer()
+);</code></pre>
+                <p><strong>Cost per request:</strong> ~0.05ms (no Reflection)</p>
+            </div>
+        </div>
+
+        <h3>Real-world impact on a typical Laravel app (50 controllers, 20 services each):</h3>
+        <table>
+            <thead>
+                <tr><th>Approach</th><th>Reflection ops per request</th><th>Time per request</th><th>10k requests/day</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Full Auto-Wiring (default)</td>
+                    <td class="highlight-red">~200-500</td>
+                    <td class="highlight-red">20-50ms</td>
+                    <td class="highlight-red">200-500 seconds CPU</td>
+                </tr>
+                <tr>
+                    <td>Singletons + Explicit Binding</td>
+                    <td class="highlight">~20-50</td>
+                    <td class="highlight">2-5ms</td>
+                    <td class="highlight">20-50 seconds CPU</td>
+                </tr>
+                <tr style="background: #0a2a1a;">
+                    <td><strong>Manual Instantiation (ideal)</strong></td>
+                    <td class="highlight">0</td>
+                    <td class="highlight">0ms overhead</td>
+                    <td class="highlight">0 seconds overhead</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">BUT MANUAL INSTANTIATION IS PAINFUL</span>
+            <p>You don't need to go full manual. There's a middle ground: <strong>Singletons + Explicit Binding</strong>.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: THE FIX (SINGLETONS & EXPLICIT BINDING) -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>✅ The Fix: Singletons + Explicit Binding</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE GOLDEN RULE OF SERVICE CONTAINER</span>
+            <p style="margin-top: 0.75rem;"><strong>If a service has no request-specific state, make it a singleton.</strong> It will be resolved once and reused for all requests.</p>
+        </div>
+
+        <h3>Step 1: Register Singletons in AppServiceProvider</h3>
+        <pre><code>// app/Providers/AppServiceProvider.php
+public function register(): void
+{
+    // BAD: Transient (new instance every time)
+    $this->app->bind(UserService::class, function ($app) {
+        return new UserService($app->make(Logger::class));
+    });
+    
+    // GOOD: Singleton (one instance, reused)
+    $this->app->singleton(UserService::class, function ($app) {
+        return new UserService($app->make(Logger::class));
+    });
+    
+    // BEST: Explicit binding with type hints
+    $this->app->when(UserController::class)
+        ->needs(UserService::class)
+        ->give(function ($app) {
+            return $app->make(UserService::class);
+        });
+}</code></pre>
+
+        <h3>Step 2: Understand Singleton vs Transient</h3>
+        <table>
+            <thead>
+                <tr><th>Aspect</th><th>Transient (bind)</th><th>Singleton</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Instantiated per request?</td>
+                    <td class="highlight-red">Yes — every time</td>
+                    <td class="highlight">No — once for all requests</td>
+                </tr>
+                <tr>
+                    <td>Reflection cost per request?</td>
+                    <td class="highlight-red">Yes — on every resolution</td>
+                    <td class="highlight">Only on first resolution</td>
+                </tr>
+                <tr>
+                    <td>Memory per request?</td>
+                    <td class="highlight-red">N instances</td>
+                    <td class="highlight">1 instance</td>
+                </tr>
+                <tr>
+                    <td>When to use</td>
+                    <td>Services with request-specific state (e.g., CartService)</td>
+                    <td>Stateless services (e.g., PaymentGateway, Mailer, Logger)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">⚠️ SINGLETON WARNING</span>
+            <p><strong>Only use singletons for stateless services.</strong> If your service stores request-specific data (like a shopping cart), making it a singleton will cause data leakage between users!</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: THE ASCII VISUALIZATION           -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🎨 Transient vs Singleton (Visualized)</h2>
+
+        <div class="ascii-art">
+            │
+            │  TRANSIENT (bind) — New instance every request
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    Request 1:  ┌─────────────────────────────────────────────────┐
+            │    │           │  new UserService() ← Reflection + instantiation │
+            │    │           │  new Logger()      ← Reflection + instantiation │
+            │    │           │  new Cache()       ← Reflection + instantiation │
+            │    │           └─────────────────────────────────────────────────┘
+            │    Request 2:  ┌─────────────────────────────────────────────────┐
+            │    │           │  new UserService() ← Reflection + instantiation │
+            │    │           │  new Logger()      ← Reflection + instantiation │
+            │    │           │  new Cache()       ← Reflection + instantiation │
+            │    │           └─────────────────────────────────────────────────┘
+            │    Request 3:  ┌─────────────────────────────────────────────────┐
+            │    │           │  new UserService() ← Reflection + instantiation │
+            │    │           │  new Logger()      ← Reflection + instantiation │
+            │    │           │  new Cache()       ← Reflection + instantiation │
+            │    │           └─────────────────────────────────────────────────┘
+            │
+            │    TOTAL: 3 instances. 9 Reflection operations.
+            │
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  SINGLETON — One instance for all requests
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    First request:  ┌─────────────────────────────────────────────────┐
+            │    │               │  new UserService() ← Reflection + instantiation │
+            │    │               │  new Logger()      ← Reflection + instantiation │
+            │    │               │  new Cache()       ← Reflection + instantiation │
+            │    │               └─────────────────────────────────────────────────┘
+            │    Request 2:      ┌─────────────────────────────────────────────────┐
+            │    │               │  reuse UserService() ← No Reflection           │
+            │    │               │  reuse Logger()      ← No Reflection           │
+            │    │               │  reuse Cache()       ← No Reflection           │
+            │    │               └─────────────────────────────────────────────────┘
+            │    Request 3:      ┌─────────────────────────────────────────────────┐
+            │    │               │  reuse UserService() ← No Reflection           │
+            │    │               │  reuse Logger()      ← No Reflection           │
+            │    │               │  reuse Cache()       ← No Reflection           │
+            │    │               └─────────────────────────────────────────────────┘
+            │
+            │    TOTAL: 1 instance. 3 Reflection operations total.
+            │
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: EXPLICIT BINDING FOR AUTO-WIRING  -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔗 Explicit Binding: Tell Laravel What to Do</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">AUTO-WIRING IS SLOW</span>
+            <p>Every time Laravel sees a type-hint it hasn't seen before, it uses Reflection to figure out what to inject.</p>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">EXPLICIT BINDING = NO REFLECTION</span>
+            <p>When you explicitly tell Laravel what to inject, it doesn't need to reflect.</p>
+        </div>
+
+        <pre><code>// app/Providers/AppServiceProvider.php
+public function register(): void
+{
+    // Instead of letting Laravel figure this out via Reflection:
+    // public function __construct(UserService $service, Logger $logger)
+    
+    // Tell Laravel explicitly:
+    $this->app->when(UserController::class)
+        ->needs(UserService::class)
+        ->give(function ($app) {
+            return $app->make(UserService::class);
+        });
+    
+    $this->app->when(UserController::class)
+        ->needs(Logger::class)
+        ->give(function ($app) {
+            return $app->make(Logger::class);
+        });
+    
+    // For interfaces, always use explicit binding
+    $this->app->bind(PaymentGatewayInterface::class, StripeGateway::class);
+    $this->app->bind(NotificationInterface::class, SmsNotification::class);
+}</code></pre>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">BENEFIT</span>
+            <p>Laravel skips Reflection entirely for explicitly bound dependencies. It goes directly to the closure you provided.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: AVOID MAKE() INSIDE LOOPS        -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>⛔ Avoid make() Inside Loops</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE WORST PATTERN</span>
+            <pre><code>foreach ($users as $user) {
+    $service = app()->make(ProcessorService::class);  // 💀 Reflection N times!
+    $service->process($user);
+}</code></pre>
+            <p>If you have 10,000 users, this runs Reflection 10,000 times. Your server will cry.</p>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE FIX: MOVE make() OUTSIDE</span>
+            <pre><code>$service = app()->make(ProcessorService::class);  // ✅ Once
+foreach ($users as $user) {
+    $service->process($user);
+}</code></pre>
+        </div>
+
+        <div class="comparison-grid">
+            <div class="comparison-card bad">
+                <h4>👎 BEFORE (10,000 iterations)</h4>
+                <pre><code>foreach ($users as $user) {
+    $service = app()->make(Service::class);
+    // Reflection 10,000 times
+}
+// Time: 5-10 seconds</code></pre>
+            </div>
+            <div class="comparison-card good">
+                <h4>👍 AFTER (1 iteration)</h4>
+                <pre><code>$service = app()->make(Service::class);
+foreach ($users as $user) {
+    $service->process($user);
+}
+// Time: 0.5-1 second</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 8: COMPILED VS RUNTIME               -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>⚙️ Compiled vs Runtime: Octane Changes Everything</h2>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">WITH LARAVEL OCTANE</span>
+            <p><strong>The service container is resolved ONCE when the application boots, not per request.</strong> Reflection cost drops to near zero.</p>
+        </div>
+
+        <div class="ascii-art">
+            │
+            │  WITHOUT OCTANE (Traditional PHP-FPM)
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    Request 1: Boot app → Resolve all services → Handle → Die
+            │    Request 2: Boot app → Resolve all services → Handle → Die
+            │    Request 3: Boot app → Resolve all services → Handle → Die
+            │
+            │    Reflection cost: EACH REQUEST
+            │
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  WITH OCTANE (Swoole/RoadRunner)
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    Application Start: Boot once → Resolve all services → Stay alive
+            │    Request 1: Use cached services → Handle
+            │    Request 2: Use cached services → Handle
+            │    Request 3: Use cached services → Handle
+            │
+            │    Reflection cost: ONCE EVER
+            │
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">OCTANE WARNING</span>
+            <p>With Octane, memory leaks become permanent. If you have a singleton that accumulates data, it will keep growing until the server restarts. Always ensure your singletons are truly stateless.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 9: SUMMARY                          -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📝 Topic 7 Summary: Service Container & Reflection</h2>
+
+        <table>
+            <thead>
+                <tr><th>Pattern</th><th>Reflection per Request</th><th>Speed</th><th>When to Use</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Full Auto-Wiring (default)</td>
+                    <td class="highlight-red">Many (200-500)</td>
+                    <td class="highlight-red">Slow</td>
+                    <td>Development only</td>
+                </tr>
+                <tr>
+                    <td>Transient (bind)</td>
+                    <td class="highlight-red">Per resolution</td>
+                    <td class="highlight-red">Slow</td>
+                    <td>Request-specific state</td>
+                </tr>
+                <tr>
+                    <td>Singleton</td>
+                    <td class="highlight">Once total</td>
+                    <td class="highlight">Fast</td>
+                    <td>Stateless services</td>
+                </tr>
+                <tr>
+                    <td>Explicit Binding</td>
+                    <td class="highlight">None (direct)</td>
+                    <td class="highlight">Fastest</td>
+                    <td>Critical paths, interfaces</td>
+                </tr>
+                <tr style="background: #0a2a1a;">
+                    <td>Octane (persistent app)</td>
+                    <td class="highlight">Once ever</td>
+                    <td class="highlight">Lightning</td>
+                    <td>Production with Swoole/RoadRunner</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Make stateless services singletons. Bind interfaces explicitly. Never call make() inside loops. Use Octane for persistent applications.</strong><br><br>
+            Reflection is expensive. Every time you avoid it, your CPU thanks you.
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 8: Middleware Selectivity</strong> — Why every request runs 10 middleware classes. How to create specialized middleware groups and save 5-10ms per request.</p>
+        </div>
+    </section>
+
+</body>
+</html>

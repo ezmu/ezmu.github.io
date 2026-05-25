@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 10: Read/Write Splitting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box {
+            background: #2a0a0a;
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            border: 1px solid #7f1d1d;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .comparison-block {
+            margin: 1.5rem 0;
+        }
+
+        .comparison-bad, .comparison-good {
+            background: #111827;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #1f2937;
+        }
+
+        .comparison-bad {
+            border-left: 5px solid #ef4444;
+        }
+
+        .comparison-good {
+            border-left: 5px solid #10b981;
+        }
+
+        .comparison-bad h4, .comparison-good h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: INTRODUCTION                      -->
+    <!-- ============================================ -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume II: Laravel Performance Tuning Kit</div>
+        <h1>📊 Topic 10: Read/Write Splitting</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">Double your database capacity without changing a single line of application code.</p>
+
+        <div class="golden-quote">
+            "Your database does two things: reads and writes.<br>
+            Reads are 90% of your traffic. Writes are 10%.<br>
+            So why are you running them on the same machine?<br>
+            Separate them. Watch your capacity double overnight."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE BOTTLENECK</span>
+            <p style="margin-top: 0.75rem;">Most Laravel apps use a single database server. Every query — SELECT, INSERT, UPDATE, DELETE — hits the same machine. When traffic grows, the database becomes the bottleneck. <strong>Read/write splitting is the first step to database scaling.</strong></p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: THE PROBLEM (SINGLE DATABASE)    -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔴 The Problem: One Database Does Everything</h2>
+
+        <div class="ascii-art">
+            │
+            │  SINGLE DATABASE ARCHITECTURE (BAD)
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │                    ┌─────────────────────────────────────┐
+            │                    │         APPLICATION SERVER          │
+            │                    │         (Laravel / PHP-FPM)         │
+            │                    └─────────────────┬───────────────────┘
+            │                                      │
+            │                    ┌─────────────────▼───────────────────┐
+            │                    │          MASTER DATABASE             │
+            │                    │    (Handles ALL queries)             │
+            │                    │                                      │
+            │                    │  SELECT queries  (90% of traffic)   │
+            │                    │  INSERT/UPDATE/DELETE (10%)          │
+            │                    │                                      │
+            │                    │  💀 CPU: 100%                        │
+            │                    │  💀 I/O: Maxed out                   │
+            │                    │  💀 Memory: Contended                │
+            │                    └──────────────────────────────────────┘
+            │
+            │  RESULT:
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  • SELECT queries compete with INSERT for CPU and I/O          │
+            │  │  • Heavy reports slow down user registrations                  │
+            │  │  • One machine to rule them all → One point of failure        │
+            │  │  • When it dies, everything dies                               │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │
+        </div>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE NUMBERS</span>
+            <p style="margin-top: 0.75rem;">For a typical Laravel app:</p>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>90%</strong> of database queries are <code>SELECT</code> (reads)</li>
+                <li><strong>10%</strong> are <code>INSERT/UPDATE/DELETE</code> (writes)</li>
+                <li>But both compete for the same CPU, memory, and disk I/O</li>
+                <li>A complex report can lock tables and block user registrations</li>
+                <li>When your single database dies, your entire app dies</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: THE SOLUTION (READ/WRITE SPLITTING) -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>✅ The Solution: Master + Replicas</h2>
+
+        <div class="ascii-art">
+            │
+            │  READ/WRITE SPLITTING ARCHITECTURE (GOOD)
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │                              ┌─────────────────────────────────────┐
+            │                              │         APPLICATION SERVER          │
+            │                              │         (Laravel / PHP-FPM)         │
+            │                              └───────────────┬─────────────────────┘
+            │                                              │
+            │                    ┌─────────────────────────┼─────────────────────────┐
+            │                    │                         │                         │
+            │                    │ (WRITES)                │ (READS)                 │
+            │                    ▼                         ▼                         ▼
+            │          ┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
+            │          │  MASTER DB      │       │  REPLICA 1      │       │  REPLICA 2      │
+            │          │  (Primary)      │       │  (Read-only)    │       │  (Read-only)    │
+            │          │                 │       │                 │       │                 │
+            │          │  INSERT         │◄──────│  REPLICATION    │──────►│  REPLICATION    │
+            │          │  UPDATE         │       │  (async)        │       │  (async)        │
+            │          │  DELETE         │       │                 │       │                 │
+            │          │                 │       │  SELECT 1       │       │  SELECT 2       │
+            │          │                 │       │  SELECT 3       │       │  SELECT 4       │
+            │          └─────────────────┘       └─────────────────┘       └─────────────────┘
+            │
+            │  BENEFITS:
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  • Reads distributed across multiple replicas                   │
+            │  │  • Writes only hit the master (10% of traffic)                  │
+            │  │  • Replicas can be added/removed without downtime              │
+            │  │  • Master can be dedicated to writes (faster transactions)     │
+            │  │  • If one replica dies, others still serve reads               │
+            │  │  • Horizontal scaling: add replicas as traffic grows           │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE GOLDEN RULE OF DATABASE SCALING</span>
+            <p style="margin-top: 0.75rem;"><strong>Writes go to master. Reads go to replicas. Laravel handles the routing automatically.</strong></p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: THE NUMBERS (SCALING)            -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📊 Capacity Comparison</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Architecture</th>
+                        <th>Max Reads/sec</th>
+                        <th>Max Writes/sec</th>
+                        <th>Cost</th>
+                        <th>Failure Tolerance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Single Database</td>
+                        <td class="highlight-red">1,000</td>
+                        <td class="highlight-red">500</td>
+                        <td>1 server</td>
+                        <td class="highlight-red">None (single point of failure)</td>
+                    </tr>
+                    <tr>
+                        <td>1 Master + 1 Replica</td>
+                        <td class="highlight">2,000 (2x)</td>
+                        <td class="highlight">500</td>
+                        <td>2 servers</td>
+                        <td>Replica can fail, master still works</td>
+                    </tr>
+                    <tr>
+                        <td>1 Master + 3 Replicas</td>
+                        <td class="highlight">4,000 (4x)</td>
+                        <td class="highlight">500</td>
+                        <td>4 servers</td>
+                        <td>Multiple replicas can fail</td>
+                    </tr>
+                    <tr>
+                        <td>1 Master + 10 Replicas</td>
+                        <td class="highlight">11,000 (11x)</td>
+                        <td class="highlight">500</td>
+                        <td>11 servers</td>
+                        <td>High fault tolerance</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">THE BOTTOM LINE</span>
+            <p><strong>Read capacity scales linearly with number of replicas.</strong> With 10 replicas, you can handle 10x the read traffic. Write capacity stays the same (but that's fine because writes are only 10% of traffic).</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: LARAVEL CONFIGURATION            -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>⚙️ Laravel Configuration (Zero Code Change)</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE BEST PART: NO APPLICATION CODE CHANGES</span>
+            <p>Laravel handles read/write splitting <strong>automatically</strong>. You just configure it in <code>config/database.php</code>.</p>
+        </div>
+
+        <h3>Step 1: Configure your connections</h3>
+        <pre><code>// config/database.php
+'connections' => [
+    'mysql' => [
+        // Write connection (Master)
+        'write' => [
+            'host' => env('DB_HOST_WRITE', 'master.db.example.com'),
+        ],
+        
+        // Read connections (Replicas) — Laravel randomly picks one
+        'read' => [
+            'host' => [
+                env('DB_HOST_READ_1', 'replica1.db.example.com'),
+                env('DB_HOST_READ_2', 'replica2.db.example.com'),
+                env('DB_HOST_READ_3', 'replica3.db.example.com'),
+            ],
+        ],
+        
+        // Common settings (shared by both)
+        'port' => env('DB_PORT', '3306'),
+        'database' => env('DB_DATABASE', 'forge'),
+        'username' => env('DB_USERNAME', 'forge'),
+        'password' => env('DB_PASSWORD', ''),
+        'driver' => 'mysql',
+    ],
+],</code></pre>
+
+        <h3>Step 2: Set environment variables</h3>
+        <pre><code># .env
+DB_HOST_WRITE=master.db.example.com
+DB_HOST_READ_1=replica1.db.example.com
+DB_HOST_READ_2=replica2.db.example.com
+DB_HOST_READ_3=replica3.db.example.com
+DB_PORT=3306
+DB_DATABASE=myapp
+DB_USERNAME=myuser
+DB_PASSWORD=mypassword</code></pre>
+
+        <h3>Step 3: That's it. Your code stays the same.</h3>
+        <pre><code>// Your existing code — NO CHANGES NEEDED
+$users = DB::table('users')->get();        // ✅ Automatically uses a replica
+$user = User::find(123);                   // ✅ Automatically uses a replica
+$user->name = 'New Name';                  // ✅ Automatically uses master for writes
+$user->save();                             // ✅ Master
+
+// Eloquent works the same way
+User::where('active', true)->get();        // ✅ Replica
+User::create([...]);                       // ✅ Master
+
+// Transactions always go to master
+DB::transaction(function () {
+    // All queries inside transaction → Master
+});</code></pre>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: THE TRADE-OFF (REPLICATION LAG)  -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>⚠️ The Trade-Off: Replication Lag</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">ASYNC REPLICATION = EVENTUAL CONSISTENCY</span>
+            <p>MySQL replication is <strong>asynchronous</strong>. When you write to the master, there's a small delay (milliseconds to seconds) before the replica receives the change.</p>
+        </div>
+
+        <div class="ascii-art">
+            │
+            │  REPLICATION LAG SCENARIO
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  Time 0ms:  User creates post (INSERT into master)
+            │             │
+            │             ▼
+            │  Time 1ms:  Master has post. Replica does NOT have it yet.
+            │             │
+            │             ▼
+            │  Time 2ms:  User refreshes page (SELECT from replica)
+            │             │
+            │             ▼
+            │  Time 2ms:  Replica → No post found! (User thinks their post disappeared!)
+            │             │
+            │             ▼
+            │  Time 50ms: Replication catches up. Post appears.
+            │
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  THIS IS CALLED "READ-AFTER-WRITE INCONSISTENCY"
+            │
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">FIX 1: Use session stickiness (not recommended)</span>
+            <p>Force the user to always read from master for a few seconds after writing. Laravel doesn't do this automatically.</p>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">FIX 2: Critical reads go to master</span>
+            <p>For operations where consistency is critical, explicitly use the master connection:</p>
+            <pre><code>// Force a read to use master (not replica)
+$post = DB::connection('mysql_write')
+    ->table('posts')
+    ->where('user_id', $userId)
+    ->get();
+
+// Or in Eloquent
+$post = DB::connection('mysql_write')
+    ->table('posts')
+    ->find($postId);</code></pre>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">FIX 3: Accept eventual consistency (most apps)</span>
+            <p>For most Laravel apps (forums, social media, blogs), a 50ms delay is acceptable. Users won't notice. Only use master reads for critical operations like payments.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: SETTING UP REPLICATION           -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🛠️ How to Set Up MySQL Replication (Summary)</h2>
+
+        <h3>On the Master (my.cnf):</h3>
+        <pre><code>[mysqld]
+server-id = 1
+log_bin = /var/log/mysql/mysql-bin.log
+binlog_do_db = myapp_database
+binlog_format = ROW</code></pre>
+
+        <h3>On the Replica (my.cnf):</h3>
+        <pre><code>[mysqld]
+server-id = 2
+relay-log = /var/log/mysql/mysql-relay-bin.log
+log_bin = /var/log/mysql/mysql-bin.log
+read_only = 1  # Important! Prevents writes to replica</code></pre>
+
+        <h3>Create replication user on Master:</h3>
+        <pre><code>CREATE USER 'replication'@'%' IDENTIFIED BY 'password';
+GRANT REPLICATION SLAVE ON *.* TO 'replication'@'%';</code></pre>
+
+        <h3>Configure replica to connect to master:</h3>
+        <pre><code>CHANGE MASTER TO
+    MASTER_HOST='master.db.example.com',
+    MASTER_USER='replication',
+    MASTER_PASSWORD='password',
+    MASTER_LOG_FILE='mysql-bin.000001',
+    MASTER_LOG_POS=0;
+START SLAVE;</code></pre>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">PRO TIP: Use Managed Services</span>
+            <p>AWS RDS, DigitalOcean Managed Databases, and Laravel Forge have <strong>one-click read replica creation</strong>. No manual configuration needed.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 8: MONITORING REPLICATION           -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📈 Monitoring Replication Health</h2>
+
+        <h3>Check replica status:</h3>
+        <pre><code>SHOW SLAVE STATUS\G
+
+-- Look for:
+-- Slave_IO_Running: Yes
+-- Slave_SQL_Running: Yes
+-- Seconds_Behind_Master: 0 (or small number)</code></pre>
+
+        <h3>Laravel health check for replicas:</h3>
+        <pre><code>// routes/health.php
+Route::get('/health/database', function () {
+    try {
+        $replicas = config('database.connections.mysql.read.host', []);
+        $results = [];
+        
+        foreach ($replicas as $replica) {
+            $start = microtime(true);
+            DB::connection('mysql')->select('SELECT 1');
+            $time = (microtime(true) - $start) * 1000;
+            $results[$replica] = ['status' => 'ok', 'latency_ms' => $time];
+        }
+        
+        return response()->json($results);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});</code></pre>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 9: SUMMARY                          -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📝 Topic 10 Summary: Read/Write Splitting</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Concept</th>
+                        <th>Single Database</th>
+                        <th>Master + Replicas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Read capacity</td>
+                        <td class="highlight-red">1x (bottleneck)</td>
+                        <td class="highlight">Nx (number of replicas)</td>
+                    </tr>
+                    <tr>
+                        <td>Write capacity</td>
+                        <td class="highlight-red">1x</td>
+                        <td class="highlight">1x (master only)</td>
+                    </tr>
+                    <tr>
+                        <td>Read/write contention</td>
+                        <td class="highlight-red">High (reads block writes)</td>
+                        <td class="highlight">None (separate servers)</td>
+                    </tr>
+                    <tr>
+                        <td>Fault tolerance</td>
+                        <td class="highlight-red">None (single point of failure)</td>
+                        <td class="highlight">High (replicas can fail)</td>
+                    </tr>
+                    <tr>
+                        <td>Laravel code changes</td>
+                        <td class="highlight">None</td>
+                        <td class="highlight">None (just config)</td>
+                    </tr>
+                    <tr style="background: #0a2a1a;">
+                        <td><strong>Best for</strong></td>
+                        <td>Small apps (&lt; 1000 req/sec)</td>
+                        <td><strong>Medium to large apps</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>When your database CPU hits 70%, add a read replica. Laravel will automatically use it. No code changes. No downtime. Instant capacity boost.</strong><br><br>
+            Read/write splitting is the cheapest, easiest way to scale your database. One replica doubles your read capacity. Three replicas quadruple it. Start with one replica today.
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 11: Database Partitioning (Vertical & Horizontal)</strong> — When even replicas aren't enough. How to split massive tables across multiple servers. Sharding by user_id or date.</p>
+        </div>
+    </section>
+
+</body>
+</html>

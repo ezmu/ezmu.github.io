@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 29: Observability</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 500px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.7rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume IV: Distributed Systems</div>
+        <h1>👁️ Topic 29: Observability</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">The Three Pillars: Logging, Metrics, Tracing</p>
+
+        <div class="golden-quote">
+            "You cannot improve what you cannot measure.<br>
+            Logs tell you WHAT happened.<br>
+            Metrics tell you HOW OFTEN it happens.<br>
+            Traces tell you WHERE time was lost.<br>
+            Observability is the foundation of performance tuning."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE OBSERVABILITY GAP</span>
+            <p style="margin-top: 0.75rem;">Most Laravel developers rely solely on logs. Logs tell you something went wrong, but not why. They don't tell you about trends, patterns, or where time is being lost across microservices. <strong>True observability requires three pillars: Logging, Metrics, and Tracing.</strong> Without all three, you're flying blind.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 2: THE THREE PILLARS -->
+    <section class="section">
+        <h2>🔍 The Three Pillars of Observability</h2>
+
+        <div class="ascii-art">
+THE THREE PILLARS
+═══════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                                                                  │
+  │   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐        │
+  │   │   LOGGING   │    │   METRICS   │    │   TRACING   │        │
+  │   │             │    │             │    │             │        │
+  │   │  "User 123  │    │  "500       │    │  "Request   │        │
+  │   │   logged    │    │   errors    │    │   A → B →   │        │
+  │   │   in at     │    │   per       │    │   C → D     │        │
+  │   │   10:05"    │    │   minute"   │    │   12ms"     │        │
+  │   └─────────────┘    └─────────────┘    └─────────────┘        │
+  │                                                                  │
+  │   WHAT happened?    HOW OFTEN?         WHERE did time go?       │
+  │                                                                  │
+  └─────────────────────────────────────────────────────────────────┘
+
+  EXAMPLE: User reports "page is slow"
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Logs:     Show errors, warnings, user actions                 │
+  │  Metrics:  Show 95th percentile latency spiked to 5 seconds    │
+  │  Traces:   Show that database query X took 4.8 seconds         │
+  │                                                                 │
+  │  → You fix the slow query. Problem solved.                     │
+  └─────────────────────────────────────────────────────────────────┘
+
+  WITHOUT tracing: You know the page is slow, but not why.
+  WITHOUT metrics: You don't know it's getting worse.
+  WITHOUT logs: You can't see the error messages.
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pillar</th>
+                        <th>Question Answered</th>
+                        <th>Example</th>
+                        <th>Tools</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Logging</strong></th>
+                        <td>What happened? (discrete events)</th>
+                        <td>"User 123 failed to process order"</th>
+                        <td>Laravel Logs, ELK Stack, Loki</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Metrics</strong></th>
+                        <td>How often / how much? (aggregated)</th>
+                        <td>"500 errors increased to 50 per minute"</th>
+                        <td>Prometheus, Datadog, New Relic</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Tracing</strong></th>
+                        <td>Where did time go? (distributed request flow)</th>
+                        <td>"Database query took 4.8 seconds out of 5s total"</th>
+                        <td>Jaeger, Zipkin, OpenTelemetry</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- SECTION 3: LOGGING (THE BASICS) -->
+    <section class="section">
+        <h2>📝 Logging: What Happened?</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">BAD LOGGING PATTERNS</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li>Logging inside loops (10,000 I/O operations)</li>
+                <li>Logging sensitive data (passwords, tokens)</li>
+                <li>Inconsistent log formats (hard to parse)</li>
+                <li>No correlation IDs across requests</li>
+                <li>Logging to local files in distributed systems</li>
+            </ul>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">GOOD LOGGING PATTERNS</span>
+            <pre><code>// Structured logging (JSON) - machine readable
+Log::channel('stack')->info('User registered', [
+    'user_id' => $user->id,
+    'ip' => $request->ip(),
+    'user_agent' => $request->userAgent(),
+    'correlation_id' => $this->correlationId,
+]);
+
+// With context (Laravel 11+)
+Log::withContext([
+    'user_id' => auth()->id(),
+    'correlation_id' => $this->correlationId,
+    'request_id' => request()->id(),
+]);
+
+Log::info('Processing order');
+Log::info('Order processed');  // Both include context
+
+// Always include correlation ID for distributed tracing
+$correlationId = request()->header('X-Correlation-ID', Str::uuid());
+Log::shareContext(['correlation-id' => $correlationId]);</code></pre>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">CENTRALIZED LOGGING IN LARAVEL</span>
+            <pre><code># config/logging.php
+'channels' => [
+    'cloudwatch' => [
+        'driver' => 'custom',
+        'via' => App\Logging\CloudWatchLogger::class,
+        'level' => env('LOG_LEVEL', 'error'),
+    ],
+    'paper-trail' => [
+        'driver' => 'monolog',
+        'handler' => \Monolog\Handler\SyslogUdpHandler::class,
+        'url' => env('PAPERTRAIL_URL'),
+        'port' => env('PAPERTRAIL_PORT'),
+    ],
+],
+
+# .env
+LOG_CHANNEL=cloudwatch</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 4: METRICS (THE NUMBERS) -->
+    <section class="section">
+        <h2>📊 Metrics: How Often / How Much?</h2>
+
+        <div class="ascii-art">
+TYPES OF METRICS
+═══════════════════════════════════════════════════════════════════
+
+  Counter:   Always increases (never decreases)
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  • Total requests received                                      │
+  │  • Total errors                                                 │
+  │  • Total orders placed                                          │
+  └─────────────────────────────────────────────────────────────────┘
+
+  Gauge:     Can go up and down
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  • Current memory usage                                         │
+  │  • Active users                                                 │
+  │  • Queue size                                                   │
+  └─────────────────────────────────────────────────────────────────┘
+
+  Histogram: Distribution of values
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  • Request duration (p50, p95, p99)                            │
+  │  • Database query time                                          │
+  │  • Response size                                                │
+  └─────────────────────────────────────────────────────────────────┘
+
+  Timer:     Specialized histogram for durations
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  • API call latency                                             │
+  │  • Job processing time                                          │
+  │  • Cache hit/miss latency                                       │
+  └─────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">METRICS IN LARAVEL (with Prometheus)</span>
+            <pre><code>// Install package
+composer require ssmdd/laravel-prometheus-exporter
+
+// Create a metric
+use Prometheus\Facades\Prometheus;
+
+// Counter
+Prometheus::counter('http_requests_total', 'Total HTTP requests')
+    ->labels(['method' => $request->method(), 'path' => $request->path()])
+    ->inc();
+
+// Histogram (request duration)
+$duration = microtime(true) - LARAVEL_START;
+Prometheus::histogram('http_request_duration_seconds', 'Request duration in seconds')
+    ->labels(['method' => $request->method()])
+    ->observe($duration);
+
+// Gauge (active users)
+Prometheus::gauge('active_users', 'Currently active users')
+    ->set(Cache::get('active_users_count', 0));
+
+// Export metrics endpoint
+Route::get('/metrics', fn() => Prometheus::render());</code></pre>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">CRITICAL METRICS FOR LARAVEL</span>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Metric</th><th>Why It Matters</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>HTTP request duration (p95, p99)</th><td>User experience threshold</td></tr>
+                        <tr><td>Database query count per request</th><td>N+1 detection</td></tr>
+                        <tr><td>Error rate (500s per minute)</th><td>Service health</td></tr>
+                        <tr><td>Queue size and processing time</th><td>Background job health</td></tr>
+                        <tr><td>Cache hit ratio</th><td>Cache effectiveness</td></tr>
+                        <tr><td>PHP-FPM active processes</th><td>Server capacity</td></tr>
+                        <tr><td>Redis memory usage</th><td>Cache health</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: TRACING (THE JOURNEY) -->
+    <section class="section">
+        <h2>🔗 Tracing: Where Did Time Go?</h2>
+
+        <div class="ascii-art">
+DISTRIBUTED TRACING (Request Flow Across Services)
+═══════════════════════════════════════════════════════════════════
+
+  User Request: GET /api/order/123
+
+  Timeline:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  [Frontend] ─────┬─────────────────────────────────────────────│
+  │  Nginx (2ms)     │                                             │
+  │  Laravel (15ms)  ├───┬─────────────────────────────────────────│
+  │    │             │   │                                         │
+  │    ├─DB (10ms)   │   │                                         │
+  │    ├─Redis (2ms) │   │                                         │
+  │    └─API (50ms)  │   │                                         │
+  │                  │   │                                         │
+  └──────────────────┴───┴─────────────────────────────────────────┘
+
+  WITHOUT tracing: You see "total 79ms" but don't know the API call took 50ms
+  WITH tracing: You see exactly where time is lost
+
+COMPONENTS:
+═══════════════════════════════════════════════════════════════════
+
+  Trace:  The entire request journey
+  Span:   One operation within the trace (DB query, API call, etc.)
+  Trace ID: Unique ID for the entire request (shared across services)
+  Span ID: Unique ID for each operation
+  Parent Span ID: Links spans together
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">TRACING IN LARAVEL (with OpenTelemetry)</span>
+            <pre><code>// Install OpenTelemetry
+composer require open-telemetry/opentelemetry
+composer require open-telemetry/exporter-jaeger
+
+// app/Http/Middleware/TracingMiddleware.php
+use OpenTelemetry\API\Trace\TracerInterface;
+use OpenTelemetry\API\Trace\SpanKind;
+
+class TracingMiddleware
+{
+    public function handle($request, $next)
+    {
+        $tracer = app(TracerInterface::class);
+        
+        $span = $tracer->spanBuilder('HTTP ' . $request->method())
+            ->setSpanKind(SpanKind::KIND_SERVER)
+            ->startSpan();
+        
+        $scope = $span->activate();
+        
+        $response = $next($request);
+        
+        $span->setAttribute('http.method', $request->method());
+        $span->setAttribute('http.url', $request->fullUrl());
+        $span->setAttribute('http.status_code', $response->getStatusCode());
+        $span->end();
+        
+        $scope->detach();
+        
+        return $response;
+    }
+}
+
+// Manual tracing in code
+use OpenTelemetry\API\Trace\Span;
+
+$span = Span::getCurrent();
+$span->setAttribute('user.id', $user->id);
+
+// Create nested span for database query
+$dbSpan = $tracer->spanBuilder('DB Query')
+    ->setParent($span->getContext())
+    ->startSpan();
+
+try {
+    $users = DB::table('users')->get();
+    $dbSpan->setAttribute('db.statement', 'SELECT * FROM users');
+} finally {
+    $dbSpan->end();
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 6: CORRELATION IDS -->
+    <section class="section">
+        <h2>🔗 Correlation IDs: Connecting Logs, Metrics, and Traces</h2>
+
+        <div class="ascii-art">
+WITHOUT CORRELATION ID:
+═══════════════════════════════════════════════════════════════════
+
+  Log: "Payment failed"
+  Log: "User 123"
+  Log: "Order 456"
+
+  → Are they related? Unknown. Debugging nightmare.
+
+WITH CORRELATION ID:
+═══════════════════════════════════════════════════════════════════
+
+  Log: [correlation-id=abc-123] "Processing payment for user 123"
+  Log: [correlation-id=abc-123] "Calling payment gateway..."
+  Log: [correlation-id=abc-123] "Payment gateway returned error: insufficient funds"
+
+  Trace: [correlation-id=abc-123] Total time: 250ms
+         [correlation-id=abc-123] ├─ Payment gateway API: 200ms
+         [correlation-id=abc-123] └─ Database update: 5ms
+
+  → Everything connected. Easy debugging.
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">CORRELATION ID IN LARAVEL</span>
+            <pre><code>// app/Http/Middleware/CorrelationIdMiddleware.php
+class CorrelationIdMiddleware
+{
+    public function handle($request, $next)
+    {
+        $correlationId = $request->header('X-Correlation-Id', (string) Str::uuid());
+        
+        // Share with logging
+        Log::shareContext(['correlation-id' => $correlationId]);
+        
+        // Share with application
+        app()->instance('correlation-id', $correlationId);
+        
+        $response = $next($request);
+        
+        $response->header('X-Correlation-Id', $correlationId);
+        
+        return $response;
+    }
+}
+
+// Usage in code
+$correlationId = app('correlation-id');
+Log::info("Processing order {$orderId}", ['correlation-id' => $correlationId]);
+
+// Pass to external services
+Http::withHeaders([
+    'X-Correlation-Id' => $correlationId
+])->post('https://api.payment.com', $data);</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 7: LARAVEL TELESCOPE (DEVELOPMENT) -->
+    <section class="section">
+        <h2>🔭 Laravel Telescope (Local/Staging Observability)</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">INSTALL AND CONFIGURE</span>
+            <pre><code>composer require laravel/telescope --dev
+php artisan telescope:install
+php artisan migrate
+
+// config/telescope.php
+'enabled' => env('TELESCOPE_ENABLED', true),
+
+// .env (development)
+TELESCOPE_ENABLED=true
+
+// .env (production) - use sparingly
+TELESCOPE_ENABLED=false  # Never enable in high-traffic production
+</code></pre>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">WHAT TELESCOPE SHOWS</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Requests</strong> — All HTTP requests with timing</li>
+                <li><strong>Queries</strong> — All database queries with N+1 detection</li>
+                <li><strong>Jobs</strong> — Queue job execution and failures</li>
+                <li><strong>Logs</strong> — All log entries</li>
+                <li><strong>Mail</strong> — Sent emails</li>
+                <li><strong>Notifications</strong> — Sent notifications</li>
+                <li><strong>Cache</strong> — Cache operations</li>
+                <li><strong>Redis</strong> — Redis commands</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">⚠️ TELESCOPE IN PRODUCTION</span>
+            <p>Telescope stores EVERYTHING in the database. In high-traffic production, this will fill your database and kill performance. <strong>Use Telescope only in development/staging, or use filtered mode for production</strong> (sample 1% of requests).</p>
+        </div>
+    </section>
+
+    <!-- SECTION 8: OPENSOURCE STACKS -->
+    <section class="section">
+        <h2>📦 Complete OpenSource Observability Stacks</h2>
+
+        <div class="comparison-grid">
+            <div class="comparison-card">
+                <h4>🟢 LGTM Stack (Grafana)</h4>
+                <ul style="margin: 0.5rem 0 0 1.5rem;">
+                    <li><strong>L</strong>oki — Logging</li>
+                    <li><strong>G</strong>rafana — Visualization</li>
+                    <li><strong>T</strong>empo — Tracing</li>
+                    <li><strong>M</strong>imir — Metrics</li>
+                    <li><strong>Best for:</strong> Grafana users, single pane of glass</li>
+                </ul>
+            </div>
+            <div class="comparison-card">
+                <h4>🔵 ELK Stack</h4>
+                <ul style="margin: 0.5rem 0 0 1.5rem;">
+                    <li><strong>E</strong>lasticsearch — Storage</li>
+                    <li><strong>L</strong>ogstash — Processing</li>
+                    <li><strong>K</strong>ibana — Visualization</li>
+                    <li>Plus: APM for tracing, Beats for metrics</li>
+                    <li><strong>Best for:</strong> Logging-first observability</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">DOCKER-COMPOSE FOR LGTM STACK</span>
+            <pre><code># docker-compose.yml
+version: '3'
+services:
+  loki:
+    image: grafana/loki:latest
+  tempo:
+    image: grafana/tempo:latest
+  mimir:
+    image: grafana/mimir:latest
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_FEATURE_TOGGLES_ENABLE=tempoLokiSearch</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 9: KEY METRICS TO MONITOR -->
+    <section class="section">
+        <h2>📈 Key Metrics Every Laravel App Should Monitor</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Category</th><th>Metric</th><th>Alert Threshold</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td rowspan="3">Application</td><td>Response time (p95)</td><td class="highlight-red">&gt; 500ms</td></tr>
+                    <tr><td>Error rate (5xx)</td><td class="highlight-red">&gt; 1%</td></tr>
+                    <tr><td>Request per second (RPS)</td><td>Monitor baseline</td></tr>
+                    <tr><td rowspan="3">Database</td><td>Slow queries (&gt; 100ms)</td><td class="highlight-red">&gt; 10 per minute</td></tr>
+                    <tr><td>Connection count</td><td class="highlight-red">&gt; 80% of max</td></tr>
+                    <tr><td>Replication lag</td><td class="highlight-red">&gt; 5 seconds</td></tr>
+                    <tr><td rowspan="3">Queue</td><td>Queue size</td><td class="highlight-red">&gt; 1000</td></tr>
+                    <tr><td>Failed jobs</td><td class="highlight-red">&gt; 5 per minute</td></tr>
+                    <tr><td>Job processing time (p95)</td><td class="highlight-red">&gt; 60 seconds</td></tr>
+                    <tr><td rowspan="3">Infra</td><td>CPU usage</td><td class="highlight-red">&gt; 80%</td></tr>
+                    <tr><td>Memory usage</td><td class="highlight-red">&gt; 90%</td></tr>
+                    <tr><td>Disk usage</td><td class="highlight-red">&gt; 85%</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- SECTION 10: SUMMARY -->
+    <section class="section">
+        <h2>📝 Topic 29 Summary: Observability</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>Pillar</th><th>Purpose</th><th>Tools</th><th>Cost</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Logging</strong></th>
+                        <td>Debugging, audits, security</th>
+                        <td>ELK, Loki, CloudWatch</th>
+                        <td>Storage & ingestion</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Metrics</strong></th>
+                        <td>Trends, alerts, capacity planning</th>
+                        <td>Prometheus, Datadog</th>
+                        <td>Storage & query</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Tracing</strong></th>
+                        <td>Performance bottlenecks, dependencies</th>
+                        <td>Jaeger, Tempo, Zipkin</th>
+                        <td>Sampling (1-10% of traffic)</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Logging tells you what happened. Metrics tell you how often. Tracing tells you where time went. You need all three to truly understand your system. Start with logs, add metrics, then add tracing when you need to debug distributed performance issues.</strong>
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 30: Zero-Trust Architecture</strong> — Trust nothing, verify everything. How to build systems that don't rely on internal network security. The future of cloud-native applications.</p>
+        </div>
+    </section>
+
+</body>
+</html>

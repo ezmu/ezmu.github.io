@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 4: Eloquent N+1 Killer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box {
+            background: #2a0a0a;
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            border: 1px solid #7f1d1d;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: #111827;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-card {
+            background: #111827;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            border: 1px solid #1f2937;
+        }
+
+        .comparison-card.bad {
+            border-top: 4px solid #ef4444;
+        }
+
+        .comparison-card.good {
+            border-top: 4px solid #10b981;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        .command-line {
+            background: #0d1117;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            border: 1px solid #30363d;
+            margin: 1rem 0;
+        }
+
+        .command-line::before {
+            content: "$ ";
+            color: #4ade80;
+        }
+
+        .query-count {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: INTRODUCTION                      -->
+    <!-- ============================================ -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume II: Laravel Performance Tuning Kit</div>
+        <h1>🗄️ Topic 4: Eloquent N+1 Killer</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">The #1 performance disaster in Laravel (and every ORM).</p>
+
+        <div class="golden-quote">
+            "101 queries when 2 would suffice.<br>
+            Your database is drowning. And you don't even know it."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE #1 DISASTER</span>
+            <p style="margin-top: 0.75rem;"><strong>N+1 is responsible for 80% of slow Laravel applications.</strong> It's invisible in development (because you have 10 users), but kills production (when you have 10,000 users). Every senior Laravel developer has debugged this at 3 AM.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: THE PROBLEM (WHAT IS N+1)        -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔴 The Problem: What is N+1?</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">N+1 EXPLAINED</span>
+            <p style="margin-top: 0.75rem;">You fetch <strong>N</strong> records from the database (1 query). Then, for <strong>each</strong> of those N records, you run <strong>another query</strong> to fetch related data (N additional queries).</p>
+            <p style="margin-top: 0.75rem;"><strong>Total queries = 1 + N</strong></p>
+            <p style="margin-top: 0.75rem;">If N = 100 users, that's <strong>101 queries</strong> to the database.</p>
+        </div>
+
+        <h3>The Classic Example: Users and Their Posts</h3>
+
+        <div class="comparison-grid">
+            <div class="comparison-card bad">
+                <h4>👎 THE BAD CODE (N+1)</h4>
+                <pre><code>// Controller
+$users = User::all();  // Query 1: SELECT * FROM users
+
+// Blade view (or loop)
+@foreach ($users as $user)
+    &lt;h2&gt;{{ $user->name }}&lt;/h2&gt;
+    &lt;p&gt;Posts: {{ $user->posts->count() }}&lt;/p&gt;
+    //   ↑ Query N: SELECT * FROM posts WHERE user_id = ?
+    //   Runs 100 times for 100 users!
+@endforeach
+
+// TOTAL QUERIES: 1 + 100 = 101</code></pre>
+            </div>
+            <div class="comparison-card good">
+                <h4>👍 THE GOOD CODE (Eager Loading)</h4>
+                <pre><code>// Controller
+$users = User::with('posts')->get();
+// Query 1: SELECT * FROM users
+// Query 2: SELECT * FROM posts WHERE user_id IN (1,2,3,...,100)
+
+// Blade view
+@foreach ($users as $user)
+    &lt;h2&gt;{{ $user->name }}&lt;/h2&gt;
+    &lt;p&gt;Posts: {{ $user->posts->count() }}&lt;/p&gt;
+    //   ↑ No new query! Data already loaded.
+@endforeach
+
+// TOTAL QUERIES: 2</code></pre>
+            </div>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">THE DIFFERENCE</span>
+            <div class="query-count">
+                🔴 101 queries (bad) &nbsp;&nbsp;→&nbsp;&nbsp; 🟢 2 queries (good)
+            </div>
+            <p style="text-align: center;"><strong>50x fewer database round trips!</strong></p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: THE ASCII VISUALIZATION           -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🎨 What N+1 Looks Like (Visualized)</h2>
+
+        <div class="ascii-art">
+            │
+            │  N+1 QUERIES (BAD) — 100 users = 101 queries
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    User request arrives
+            │           │
+            │           ▼
+            │    ┌─────────────────────────────────────────────────────────────┐
+            │    │  Query 1:  SELECT * FROM users                              │
+            │    │            ↓                                                │
+            │    │            Returns 100 users                                │
+            │    └─────────────────────────────────────────────────────────────┘
+            │           │
+            │           ▼  (Loop through users)
+            │    ┌─────────────────────────────────────────────────────────────┐
+            │    │  Query 2:  SELECT * FROM posts WHERE user_id = 1           │
+            │    │  Query 3:  SELECT * FROM posts WHERE user_id = 2           │
+            │    │  Query 4:  SELECT * FROM posts WHERE user_id = 3           │
+            │    │  ...                                                        │
+            │    │  Query 101: SELECT * FROM posts WHERE user_id = 100        │
+            │    └─────────────────────────────────────────────────────────────┘
+            │           │
+            │           ▼
+            │    Response sent (after 101 database round trips)
+            │    TIME: ~500ms (5ms per query)
+            │
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  EAGER LOADING (GOOD) — 100 users = 2 queries
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    User request arrives
+            │           │
+            │           ▼
+            │    ┌─────────────────────────────────────────────────────────────┐
+            │    │  Query 1:  SELECT * FROM users                              │
+            │    │            ↓                                                │
+            │    │            Returns 100 users                                │
+            │    └─────────────────────────────────────────────────────────────┘
+            │           │
+            │           ▼
+            │    ┌─────────────────────────────────────────────────────────────┐
+            │    │  Query 2:  SELECT * FROM posts WHERE user_id IN (1,2,...,100)│
+            │    │            ↓                                                │
+            │    │            Returns ALL posts in ONE query                   │
+            │    │            Laravel automatically maps them to users        │
+            │    └─────────────────────────────────────────────────────────────┘
+            │           │
+            │           ▼
+            │    Response sent (after 2 database round trips)
+            │    TIME: ~10ms
+            │
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: THE NUMBERS (COST OF N+1)        -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📊 The Real Cost of N+1</h2>
+
+        <h3>Time per query (assuming 5ms database latency):</h3>
+        <table>
+            <thead>
+                <tr><th>Number of Users (N)</th><th>Without Eager Loading (N+1 queries)</th><th>With Eager Loading (2 queries)</th><th>Difference</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>10 users</td>
+                    <td class="highlight-red">11 queries = 55ms</td>
+                    <td class="highlight">2 queries = 10ms</td>
+                    <td>5.5x slower</td>
+                </tr>
+                <tr>
+                    <td>100 users</td>
+                    <td class="highlight-red">101 queries = 505ms</td>
+                    <td class="highlight">2 queries = 10ms</td>
+                    <td>50x slower</td>
+                </tr>
+                <tr>
+                    <td>1,000 users</td>
+                    <td class="highlight-red">1,001 queries = 5,005ms (5 seconds!)</td>
+                    <td class="highlight">2 queries = 10ms</td>
+                    <td>500x slower</td>
+                </tr>
+                <tr style="background: #0a2a1a;">
+                    <td><strong>10,000 users</strong></td>
+                    <td class="highlight-red"><strong>10,001 queries = 50 seconds!</strong></td>
+                    <td class="highlight"><strong>2 queries = 10ms</strong></td>
+                    <td class="highlight"><strong>5,000x slower — SERVER TIMEOUT</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">REAL WORLD IMPACT</span>
+            <p>Most production Laravel apps have multiple N+1 bugs. A page that loads in 200ms on your local machine (with 10 users) can take <strong>20 seconds</strong> in production (with 10,000 users). Your users don't wait. They leave. Your server runs out of connections. The site dies.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: THE FIX (PREVENT LAZY LOADING)   -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>✅ The Fix: Two Lines of Code That Save Your Life</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE RADAR (DEVELOPMENT ONLY)</span>
+            <p style="margin-top: 0.75rem;">Put this in <code>app/Providers/AppServiceProvider.php</code>:</p>
+            <pre><code>use Illuminate\Database\Eloquent\Model;
+
+public function boot(): void
+{
+    // THROW AN EXCEPTION if lazy loading happens
+    Model::preventLazyLoading(!$this->app->isProduction());
+}</code></pre>
+            <p style="margin-top: 0.75rem;"><strong>What this does:</strong> In your local development environment, if you accidentally do <code>$user->posts</code> without <code>with('posts')</code>, Laravel will <strong>throw an exception</strong> and show you exactly where the N+1 is.</p>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1.1rem;">
+            🔴 THE GOLDEN RULE OF ELOQUENT:<br>
+            <strong>Never access a relationship without eager loading it first.</strong><br>
+            <code>preventLazyLoading()</code> enforces this rule automatically.
+        </div>
+
+        <div class="comparison-grid">
+            <div class="comparison-card good">
+                <h4>✅ EAGER LOADING PATTERNS</h4>
+                <pre><code>// One relationship
+User::with('posts')->get();
+
+// Multiple relationships
+User::with(['posts', 'comments', 'likes'])->get();
+
+// Nested relationships
+User::with(['posts.comments'])->get();
+
+// Conditional loading
+User::with(['posts' => function ($query) {
+    $query->where('published', true);
+}])->get();
+
+// Load count only (no data)
+User::withCount('posts')->get();
+// Then: $user->posts_count</code></pre>
+            </div>
+            <div class="comparison-card good">
+                <h4>✅ LAZY EAGER LOADING (after the fact)</h4>
+                <pre><code>// Sometimes you can't eager load initially
+$users = User::where('active', true)->get();
+
+// But you realize you need posts
+// Instead of $user->posts (N+1)...
+$users->load('posts');  // One extra query for ALL users
+
+// Or load multiple
+$users->load(['posts', 'comments']);
+
+// Load only counts
+$users->loadCount('posts');</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: THE HIDDEN N+1 IN VIEWS          -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🎭 The Hidden N+1: When You Think You're Safe</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE TRICKY CASE</span>
+            <p style="margin-top: 0.75rem;">You used <code>with()</code> in your controller. You're safe, right? <strong>WRONG.</strong> What if inside your view, you access a <strong>different</strong> relationship?</p>
+        </div>
+
+        <div class="comparison-grid">
+            <div class="comparison-card bad">
+                <h4>👎 THE HIDDEN N+1</h4>
+                <pre><code>// Controller
+$users = User::with('posts')->get();
+// You loaded posts, but NOT profiles
+
+// Blade view
+@foreach ($users as $user)
+    {{ $user->name }}
+    {{ $user->posts->count() }}  // ✅ Already loaded
+    {{ $user->profile->bio }}    // 💀 N+1! Not loaded!
+@endforeach
+
+// TOTAL QUERIES: 1 (users) + 1 (posts) + N (profiles)
+// = 2 + N queries!</code></pre>
+            </div>
+            <div class="comparison-card good">
+                <h4>👍 THE FIX</h4>
+                <pre><code>// Controller
+$users = User::with(['posts', 'profile'])->get();
+// Load everything you need upfront
+
+// Blade view
+@foreach ($users as $user)
+    {{ $user->name }}
+    {{ $user->posts->count() }}  // ✅ Already loaded
+    {{ $user->profile->bio }}    // ✅ Already loaded
+@endforeach
+
+// TOTAL QUERIES: 3 queries total</code></pre>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">THIS IS WHY preventLazyLoading() IS CRITICAL</span>
+            <p>Without <code>preventLazyLoading()</code>, the hidden N+1 above would work in development (slowly, but you wouldn't notice with 10 users). In production with 10,000 users, it would add 10,000 extra queries and kill your database.</p>
+            <p><strong>With <code>preventLazyLoading()</code> enabled in development, Laravel throws an exception immediately:</strong> <code>"Attempted to lazy load [profile] on model [User] but lazy loading is disabled."</code></p>
+            <p>You fix it before deployment. Production stays fast.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: DEEP NESTED N+1                   -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🐇 The Rabbit Hole: Deeply Nested N+1</h2>
+
+        <div class="ascii-art">
+            │
+            │  DEEP NESTED RELATIONSHIPS
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  User → hasMany → Post → hasMany → Comment → belongsTo → Author
+            │
+            │  Without proper eager loading:
+            │
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  Query 1:  SELECT * FROM users (N users)                       │
+            │  │  Query 2:  SELECT * FROM posts WHERE user_id IN (1..N)         │
+            │  │  Query 3:  SELECT * FROM comments WHERE post_id IN (1..M)      │
+            │  │  Query 4:  SELECT * FROM authors WHERE id IN (1..K)            │
+            │  │  TOTAL: 4 queries                                              │
+            │  │  (This is actually GOOD — eager loading works!)                │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │
+            │  But if you forget one level:
+            │
+            │  ┌─────────────────────────────────────────────────────────────────┐
+            │  │  $users = User::with('posts.comments')->get();                 │
+            │  │  // posts AND comments are loaded                              │
+            │  │  // but NOT authors!                                           │
+            │  │                                                                 │
+            │  │  @foreach ($users as $user)                                    │
+            │  │      @foreach ($user->posts as $post)                          │
+            │  │          @foreach ($post->comments as $comment)                │
+            │  │              {{ $comment->author->name }}  // 💀 N+1!          │
+            │  │  // Each comment triggers a query for its author              │
+            │  └─────────────────────────────────────────────────────────────────┘
+            │
+            │  TOTAL QUERIES: 3 + (Number of comments) = DISASTER
+            │
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">DEEP EAGER LOADING</span>
+            <pre><code>// Load everything at once, as deep as you need
+$users = User::with(['posts.comments.author'])->get();
+
+// Or with constraints
+$users = User::with(['posts' => function ($query) {
+    $query->where('published', true)
+          ->with(['comments' => function ($query) {
+              $query->with('author');
+          }]);
+}])->get();
+
+// Now NO lazy loading anywhere.
+// Total queries = number of distinct tables (4-5)
+// Regardless of how many records.</code></pre>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 8: THE DEBUGGING TOOLS               -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔍 How to Find N+1 Bugs in Your Code</h2>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">TOOL 1: Laravel Debugbar</span>
+            <p style="margin-top: 0.75rem;">Install <code>barryvdh/laravel-debugbar</code>. It shows you:</p>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Number of queries</strong> executed on each page</li>
+                <li><strong>Duplicate queries</strong> (the same query running multiple times)</li>
+                <li><strong>Query time</strong> for each individual query</li>
+                <li><strong>N+1 warnings</strong> (Debugbar highlights them)</li>
+            </ul>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">TOOL 2: Clockwork (Alternative)</span>
+            <p>Similar to Debugbar. Install <code>itsgoingd/clockwork</code>. Excellent UI, shows timeline of all queries.</p>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">TOOL 3: Laravel Telescope (Production-safe)</span>
+            <p>For production monitoring. Shows you the worst-performing queries, including N+1 patterns.</p>
+            <div class="command-line">php artisan telescope:install</div>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">MANUAL CHECK</span>
+            <p>Add this temporarily to see all queries:</p>
+            <pre><code>// At the top of your controller or route
+\DB::enableQueryLog();
+
+// After your code
+dd(\DB::getQueryLog());  // Shows every query executed</code></pre>
+            <p><strong>⚠️ NEVER leave this in production!</strong> It stores all queries in memory and will cause OOM crashes.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 9: SUMMARY                          -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📝 Topic 4 Summary: Eloquent N+1 Killer</h2>
+
+        <table>
+            <thead>
+                <tr><th>Concept</th><th>Without Eager Loading</th><th>With Eager Loading</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Number of queries for N users</td>
+                    <td class="highlight-red">1 + N</td>
+                    <td class="highlight">1 + number of relationships</td>
+                </tr>
+                <tr>
+                    <td>100 users + posts</td>
+                    <td class="highlight-red">101 queries (~500ms)</td>
+                    <td class="highlight">2 queries (~10ms)</td>
+                </tr>
+                <tr>
+                    <td>How to enforce</td>
+                    <td class="highlight-red">Nothing (silent performance killer)</td>
+                    <td class="highlight"><code>Model::preventLazyLoading()</code></td>
+                </tr>
+                <tr style="background: #0a2a1a;">
+                    <td>Syntax</td>
+                    <td>—</td>
+                    <td class="highlight"><code>User::with('posts')->get()</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="golden-quote" style="font-size: 1.1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Never trust that you don't have N+1. Always verify with Debugbar. Always use preventLazyLoading() in development. Always eager load everything you need.</strong><br><br>
+            One N+1 bug can take your 100ms page to 10 seconds. Don't be that developer.
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 5: Hydration Hell (DB::table() vs Eloquent)</strong> — Why Eloquent consumes 5-10x more memory than the Query Builder. When to use Eloquent and when to abandon it for read-only operations.</p>
+        </div>
+    </section>
+
+</body>
+</html>

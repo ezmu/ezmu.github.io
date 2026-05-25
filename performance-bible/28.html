@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 28: Distributed Locking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 500px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.7rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-card {
+            background: #111827;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            border: 1px solid #1f2937;
+        }
+
+        .comparison-card.bad {
+            border-top: 4px solid #ef4444;
+        }
+
+        .comparison-card.good {
+            border-top: 4px solid #10b981;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume IV: Distributed Systems</div>
+        <h1>🔒 Topic 28: Distributed Locking</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">Cache::lock is not enough for multi-server environments.</p>
+
+        <div class="golden-quote">
+            "In a single-server app, a mutex (lock) is simple.<br>
+            In a distributed system with 10 servers, a lock becomes a nightmare.<br>
+            Redis locks fail during network partitions.<br>
+            Database locks are slow.<br>
+            You need a distributed locking algorithm — Redlock, ZooKeeper, or etcd."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE DISTRIBUTED LOCKING TRAP</span>
+            <p style="margin-top: 0.75rem;">Many Laravel developers assume <code>Cache::lock()</code> is sufficient for distributed locking. In a single-server environment, it works fine. But in a multi-server setup with network partitions, <strong>Redis locks can fail in subtle ways</strong> — two servers can acquire the same lock simultaneously. Understanding distributed locking is essential for reliable distributed systems.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 2: THE PROBLEM (WHY LOCAL LOCKS FAIL) -->
+    <section class="section">
+        <h2>🔴 The Problem: Why Local Locks Fail in Distributed Systems</h2>
+
+        <div class="ascii-art">
+SINGLE SERVER (LOCKS WORK FINE)
+═══════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                        ONE SERVER                               │
+  │  ┌─────────────────────────────────────────────────────────┐   │
+  │  │  Process A: lock acquired ✓                             │   │
+  │  │  Process B: wait (blocked)                              │   │
+  │  │  Process C: wait (blocked)                              │   │
+  │  └─────────────────────────────────────────────────────────┘   │
+  └─────────────────────────────────────────────────────────────────┘
+
+  Works perfectly. One source of truth.
+
+MULTIPLE SERVERS (LOCKS ARE DANGEROUS)
+═══════════════════════════════════════════════════════════════════
+
+  ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
+  │    Server 1      │    │    Server 2      │    │    Server 3      │
+  │                  │    │                  │    │                  │
+  │  Lock acquired ✓ │    │  Lock acquired ✓ │    │  Lock acquired ✓ │
+  │  (thinks it's    │    │  (thinks it's    │    │  (thinks it's    │
+  │   the only one)  │    │   the only one)  │    │   the only one)  │
+  └──────────────────┘    └──────────────────┘    └──────────────────┘
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                       REDIS (Single)                            │
+  │                                                                  │
+  │  Server 1: SET lock:user:123 "server1" NX EX 10 → SUCCESS      │
+  │  Server 2: SET lock:user:123 "server2" NX EX 10 → FAIL (locked) │
+  │  Server 3: SET lock:user:123 "server3" NX EX 10 → FAIL (locked) │
+  │                                                                  │
+  │  ✅ Redis as single source of truth — works!                    │
+  └─────────────────────────────────────────────────────────────────┘
+
+BUT WHAT HAPPENS DURING NETWORK PARTITION?
+═══════════════════════════════════════════════════════════════════
+
+  ┌──────────────────┐         ┌──────────────────┐
+  │    Server 1      │  ✗✗✗    │    Server 2      │
+  │  (can reach      │         │  (can't reach    │
+  │   Redis)         │         │   Redis)         │
+  └──────────────────┘         └──────────────────┘
+         │                             │
+         ▼                             ▼
+  ┌─────────────┐               ┌─────────────┐
+  │   Redis     │               │   (No       │
+  │   Alive     │               │   Redis)    │
+  └─────────────┘               └─────────────┘
+
+  Server 1: Can acquire locks normally
+  Server 2: Can't acquire locks (Redis unreachable) → But what if it THINKS it can?
+
+  Without proper distributed locking, Server 2 might assume the lock is free
+  and acquire it locally — now TWO servers have the lock!
+        </div>
+    </section>
+
+    <!-- SECTION 3: LARAVEL'S CACHE::LOCK -->
+    <section class="section">
+        <h2>🔍 Laravel's Cache::lock (What It Is, What It Isn't)</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">LARAVEL CACHE LOCK (SINGLE SERVER OK, DISTRIBUTED RISKY)</span>
+            <pre><code>// Laravel's atomic lock using Redis
+$lock = Cache::lock('processing.user.123', 10);
+
+if ($lock->get()) {
+    // Process the user
+    $this->processUser(123);
+    
+    $lock->release();
+}
+
+// This works perfectly in single-server or when Redis is always reachable
+// But during network partitions, it can fail</code></pre>
+        </div>
+
+        <div class="problem-box">
+            <span class="badge badge-red">LIMITATIONS OF Cache::lock</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Single point of failure</strong> — If Redis goes down, no locks work</li>
+                <li><strong>No automatic failover</strong> — Doesn't handle Redis cluster failover gracefully</li>
+                <li><strong>No fencing tokens</strong> — Can't detect if a lock was held by a dead process</li>
+                <li><strong>No safety during GC pauses</strong> — In some languages, but less relevant for PHP</li>
+                <li><strong>Redis replication is async</strong> — Lock might be lost during master failover</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 4: THE REDLOCK ALGORITHM -->
+    <section class="section">
+        <h2>🔴 The Redlock Algorithm (Redis Distributed Lock)</h2>
+
+        <div class="ascii-art">
+REDLOCK: ACQUIRE LOCK FROM MULTIPLE REDIS INSTANCES
+═══════════════════════════════════════════════════════════════════
+
+  Instead of one Redis, use 5 independent Redis masters:
+
+  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐
+  │ Redis 1 │  │ Redis 2 │  │ Redis 3 │  │ Redis 4 │  │ Redis 5 │
+  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘
+       │            │            │            │            │
+       └────────────┴────────────┼────────────┴────────────┘
+                                 │
+                          ┌──────▼──────┐
+                          │  Server 1   │
+                          │  tries to   │
+                          │  acquire    │
+                          └─────────────┘
+
+  Algorithm:
+  1. Generate unique lock ID (UUID)
+  2. Try to acquire lock from ALL 5 Redis instances
+  3. Use a short timeout (e.g., 5ms per Redis)
+  4. If lock acquired from MAJORITY (≥3 Redis instances):
+     → Lock is acquired successfully
+  5. If not, release any locks you have and retry
+
+  Why it's more reliable:
+  • Even if 2 Redis instances die, you still have majority (3/5)
+  • Network partition affecting 2 instances won't break the lock
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">REDLOCK IN LARAVEL (WITH PACKAGE)</span>
+            <pre><code>// Install package
+composer require redlock-php/redlock
+
+use RedLock\RedLock;
+
+$servers = [
+    ['host' => 'redis1.example.com', 'port' => 6379],
+    ['host' => 'redis2.example.com', 'port' => 6379],
+    ['host' => 'redis3.example.com', 'port' => 6379],
+    ['host' => 'redis4.example.com', 'port' => 6379],
+    ['host' => 'redis5.example.com', 'port' => 6379],
+];
+
+$redlock = new RedLock($servers);
+
+$lock = $redlock->lock('user_processing_123', 10000); // 10 seconds TTL
+
+if ($lock) {
+    try {
+        // Perform critical operation
+        $this->processUser(123);
+    } finally {
+        $redlock->unlock($lock);
+    }
+}</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">⚠️ REDLOCK CONTROVERSY</span>
+            <p>Redlock has been criticized by distributed systems experts (including Martin Kleppmann). It's not perfectly safe under all conditions (clock drift, GC pauses). But for 99% of Laravel applications, it's "good enough" and much better than a single Redis lock.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 5: ZOOKEEPER (STRONG CONSISTENCY) -->
+    <section class="section">
+        <h2>🦓 ZooKeeper (The Gold Standard for Distributed Locks)</h2>
+
+        <div class="ascii-art">
+ZOOKEEPER: STRONGLY CONSISTENT DISTRIBUTED LOCKS
+═══════════════════════════════════════════════════════════════════
+
+  ZooKeeper uses the ZAB protocol (ZooKeeper Atomic Broadcast) for strong consistency:
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                    ZooKeeper Ensemble (3/5 nodes)              │
+  │  ┌─────────┐  ┌─────────┐  ┌─────────┐                        │
+  │  │ Leader  │  │Follower │  │Follower │                        │
+  │  └────┬────┘  └────┬────┘  └────┬────┘                        │
+  │       │            │            │                              │
+  │       └────────────┴────────────┘                              │
+  │                    │                                            │
+  │            Consensus (ZAB)                                     │
+  └────────────────────┼────────────────────────────────────────────┘
+                       │
+              ┌────────▼────────┐
+              │   Application   │
+              │   Server 1..N   │
+              └─────────────────┘
+
+  Guarantees:
+  • Linearizable writes (strong consistency)
+  • Sequential consistency for reads
+  • No split-brain (network partition? writes stop)
+  • Fencing tokens (prevent lock from dead processes)
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">ZOOKEEPER LOCK IN LARAVEL</span>
+            <pre><code>// Install PHP ZooKeeper extension
+sudo apt-get install php-zookeeper
+
+use Zookeeper;
+
+class ZooKeeperLock
+{
+    private Zookeeper $zk;
+    
+    public function __construct(string $hosts)
+    {
+        $this->zk = new Zookeeper($hosts);
+    }
+    
+    public function acquireLock(string $lockName, int $timeout = 30): bool
+    {
+        $lockPath = "/locks/{$lockName}";
+        
+        // Create sequential, ephemeral node
+        $path = $this->zk->create(
+            $lockPath . '/lock-',
+            '',
+            Zookeeper::EPHEMERAL | Zookeeper::SEQUENCE
+        );
+        
+        // Check if this is the smallest sequence number
+        $children = $this->zk->getChildren($lockPath);
+        sort($children);
+        
+        if (basename($path) === $children[0]) {
+            return true;  // We have the lock
+        }
+        
+        // Wait for the previous lock to be released
+        // ... watch implementation omitted for brevity
+        
+        return false;
+    }
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 6: ETCD (MODERN ALTERNATIVE) -->
+    <section class="section">
+        <h2>⚡ etcd (Used by Kubernetes, Modern Alternative)</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">ETCD DISTRIBUTED LOCK</span>
+            <pre><code>// Install etcd PHP client
+composer require otevrel/etcd-php
+
+use Etcd\Client;
+
+$client = new Client('http://localhost:2379');
+
+// Acquire a distributed lock
+$lock = $client->lock('user_processing_123');
+
+if ($lock->acquire(10)) {  // 10 second timeout
+    try {
+        // Process the user
+        $this->processUser(123);
+    } finally {
+        $lock->release();
+    }
+}
+
+// etcd also supports:
+// - Watch for lock changes
+// - Lease-based locks (TTL)
+// - Re-entrant locks</code></pre>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">ETCD VS ZOOKEEPER VS REDIS</span>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Feature</th><th>Redis (Single)</th><th>Redlock</th><th>ZooKeeper</th><th>etcd</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Consistency</td><td class="highlight-red">Weak</td><td class="highlight-red">Best-effort</td><td class="highlight">Strong</td><td class="highlight">Strong</td></tr>
+                        <tr><td>Fencing tokens</td><td class="highlight-red">No</td><td class="highlight-red">No</td><td class="highlight">Yes</td><td class="highlight">Yes</td></tr>
+                        <tr><td>Split-brain safe</td><td class="highlight-red">No</td><td class="highlight">Partial</td><td class="highlight">Yes</td><td class="highlight">Yes</td></tr>
+                        <tr><td>Performance</td><td class="highlight">Very Fast</td><td class="highlight">Fast</td><td class="highlight">Medium</td><td class="highlight">Fast</td></tr>
+                        <tr><td>Complexity</td><td class="highlight">Low</td><td class="highlight">Medium</td><td class="highlight">High</td><td class="highlight">Medium</td></tr>
+                        <tr><td>Best for</td><td>Single server</td><td>Most distributed apps</td><td>Critical systems</td><td>K8s, modern stacks</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: FENCING TOKENS (PREVENTING GHOST LOCKS) -->
+    <section class="section">
+        <h2>🛡️ Fencing Tokens (The Hidden Requirement)</h2>
+
+        <div class="ascii-art">
+THE GHOST LOCK PROBLEM (No Fencing Token)
+═══════════════════════════════════════════════════════════════════
+
+  Time 0ms:  Process A acquires lock (token=1) and starts processing
+  Time 100ms: Process A has GC pause (or network delay)
+  Time 200ms: Lock expires, Process B acquires lock (token=2)
+  Time 300ms: Process A wakes up, continues processing
+  Time 400ms: Process A and Process B both think they have lock!
+
+  Result: CORRUPTED DATA!
+
+WITH FENCING TOKEN (Solution):
+═══════════════════════════════════════════════════════════════════
+
+  Time 0ms:  Process A acquires lock (token=1) and starts processing
+  Time 100ms: Process A has GC pause
+  Time 200ms: Lock expires, Process B acquires lock (token=2)
+  Time 300ms: Process A wakes up, tries to write to database
+              Database rejects write because token=1 < current token=2
+  Time 400ms: Only Process B writes. Data is safe!
+
+  LARAVEL IMPLEMENTATION (with ZooKeeper/etcd):
+        </div>
+
+        <pre><code>// Fencing token in action
+class FencedResource
+{
+    private int $currentToken;
+    
+    public function write(string $data, int $fencingToken): void
+    {
+        if ($fencingToken < $this->currentToken) {
+            throw new \Exception("Fencing token expired. Write rejected.");
+        }
+        
+        // Perform write with current token
+        DB::table('resource')->update([
+            'data' => $data,
+            'last_write_token' => $fencingToken,
+        ]);
+        
+        $this->currentToken = $fencingToken;
+    }
+}</code></pre>
+    </section>
+
+    <!-- SECTION 8: DATABASE-BASED DISTRIBUTED LOCKS -->
+    <section class="section">
+        <h2>🗄️ Database-Based Distributed Locks (Slow but Reliable)</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">MYSQL GET_LOCK (Simple but Works)</span>
+            <pre><code>// MySQL named locks (server-wide, not cross-database)
+use Illuminate\Support\Facades\DB;
+
+$lockName = 'user_processing_123';
+
+// Acquire lock (returns 1 on success, 0 on timeout)
+$acquired = DB::select('SELECT GET_LOCK(?, 10)', [$lockName]);
+
+if ($acquired[0]->{'GET_LOCK(?, 10)'} === 1) {
+    try {
+        // Process the user
+        $this->processUser(123);
+    } finally {
+        DB::select('SELECT RELEASE_LOCK(?)', [$lockName]);
+    }
+}</code></pre>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">DATABASE LOCK LIMITATIONS</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li>Locks are per MySQL server (not cluster-wide unless using Galera)</li>
+                <li>Can be slow (10-50ms per lock)</li>
+                <li>Lock is released when database connection closes</li>
+                <li>Not suitable for high-frequency locking</li>
+                <li>MySQL 8.0+ has improved locking, but still slower than Redis</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 9: CHOOSING THE RIGHT SOLUTION -->
+    <section class="section">
+        <h2>🎯 Choosing the Right Distributed Lock for Your Laravel App</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Requirement</th>
+                        <th>Recommendation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Single server, simple locking</th>
+                        <td><code>Cache::lock()</code> is fine</th>
+                    </tr>
+                    <tr>
+                        <td>Multiple servers, network delays acceptable</th>
+                        <td>Redlock (Redis 5+ instances) or etcd</th>
+                    </tr>
+                    <tr>
+                        <td>Strong consistency required (financial)</th>
+                        <td>ZooKeeper or etcd with fencing tokens</th>
+                    </tr>
+                    <td>High performance, low latency</th>
+                        <td>Redlock (5 Redis instances)</th>
+                    </tr>
+                    <tr>
+                        <td>Running on Kubernetes</th>
+                        <td>etcd (Kubernetes uses it natively)</th>
+                    </tr>
+                    <tr>
+                        <td>Simple setup, no new infrastructure</th>
+                        <td>MySQL GET_LOCK (but understand limits)</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem;">
+            📌 THE RULE: <strong>Start with Cache::lock(). If you outgrow single server, move to Redlock with 5 Redis instances. For financial or safety-critical systems, use ZooKeeper or etcd with fencing tokens. Never assume a single Redis instance is safe for distributed locking.</strong>
+        </div>
+    </section>
+
+    <!-- SECTION 10: SUMMARY -->
+    <section class="section">
+        <h2>📝 Topic 28 Summary: Distributed Locking</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Solution</th>
+                        <th>Safety</th>
+                        <th>Performance</th>
+                        <th>Complexity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cache::lock (single Redis)</th>
+                        <td class="highlight-red">⚠️ Low (network partition risk)</th>
+                        <td class="highlight">Very High</th>
+                        <td class="highlight">Low</th>
+                    </tr>
+                    <tr>
+                        <td>Redlock (5+ Redis)</th>
+                        <td class="highlight">Medium</th>
+                        <td class="highlight">High</th>
+                        <td class="highlight">Medium</th>
+                    </tr>
+                    <tr>
+                        <td>ZooKeeper</th>
+                        <td class="highlight">High (with fencing)</th>
+                        <td class="highlight">Medium</th>
+                        <td class="highlight">High</th>
+                    </tr>
+                    <tr>
+                        <td>etcd</th>
+                        <td class="highlight">High</th>
+                        <td class="highlight">High</th>
+                        <td class="highlight">Medium</th>
+                    </tr>
+                    <tr>
+                        <td>MySQL GET_LOCK</th>
+                        <td class="highlight">Medium</th>
+                        <td class="highlight">Low</th>
+                        <td class="highlight">Low</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>In distributed systems, every lock can fail. Design your system to handle lock failures gracefully. Use fencing tokens to prevent ghost locks. And never, ever assume a lock is perfectly safe.</strong>
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 29: Observability (Logging, Metrics, Tracing)</strong> — You can't improve what you can't measure. The three pillars of observability: Logs (what happened), Metrics (how often), Traces (where time went).</p>
+        </div>
+    </section>
+
+</body>
+</html>

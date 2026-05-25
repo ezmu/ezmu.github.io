@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Complete Index</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .hero {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            border-radius: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid #334155;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero .tagline {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero .golden-quote {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #fbbf24;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 1rem;
+            border-top: 1px solid #334155;
+            border-bottom: 1px solid #334155;
+        }
+
+        /* Author Credit */
+        .author-credit {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+
+        .author-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+        }
+
+        .author-title {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 0.75rem;
+        }
+
+        .author-links a {
+            color: #a78bfa;
+            text-decoration: none;
+            margin: 0 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .author-links a:hover {
+            color: #fbbf24;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .stat-card span {
+            color: #60a5fa;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 2rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #3b82f6;
+            display: inline-block;
+        }
+
+        /* Grid */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Topic Card */
+        .topic-card {
+            background: #111827;
+            border-radius: 1rem;
+            border: 1px solid #1f2937;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .topic-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-3px);
+        }
+
+        .topic-number {
+            background: #1e293b;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #60a5fa;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .topic-title {
+            padding: 1rem 1rem 0.5rem 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .topic-description {
+            padding: 0 1rem;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 0.75rem;
+        }
+
+        .topic-points {
+            padding: 0 1rem 1rem 1rem;
+            list-style: none;
+        }
+
+        .topic-points li {
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            padding: 0.2rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .topic-points li::before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+        }
+
+        .topic-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            background: #1e293b;
+            text-align: center;
+            text-decoration: none;
+            color: #60a5fa;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border-top: 1px solid #1f2937;
+            transition: background 0.2s;
+        }
+
+        .topic-link:hover {
+            background: #2d3a5e;
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid #1f2937;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- HERO SECTION -->
+        <div class="hero">
+            <h1>⚡ The Performance Bible</h1>
+            <p class="tagline">The Architect's Handbook: From Code to Physics</p>
+            <div class="golden-quote">
+                "The language is just a tool. You don't blame the hammer if you can't build a skyscraper alone."
+            </div>
+            <div class="stats">
+                <div class="stat-card">📚 <span>30</span> Topics</div>
+                <div class="stat-card">📖 <span>800+</span> Pages Equivalent</div>
+                <div class="stat-card">💻 <span>200+</span> Code Examples</div>
+            </div>
+        </div>
+
+        <!-- AUTHOR CREDIT SECTION -->
+        <div class="author-credit">
+            <div class="author-name">👤 EzEldeen A. Y. Mushtaha </div>
+            <div class="author-title">Software Architect & Performance Engineer</div>
+            <div class="author-links">
+                <a href="https://github.com/ezmu/">🐙 GitHub</a> •
+                
+                <a href="https://www.linkedin.com/in/ezmush/">💼 LinkedIn</a> •
+                <a href="mailto:3z.edeen@gmail.com">📧 Email</a>
+            </div>
+            <p style="font-size: 0.8rem; margin-top: 0.75rem; color: #64748b;">
+                📅 Originally compiled: 2026 • All content based on real-world production experience
+            </p>
+        </div>
+
+        <!-- VOLUME I: PHILOSOPHY -->
+        <h2 class="section-header">📖 Volume I: Philosophical Foundations</h2>
+        <div class="topics-grid">
+
+            <!-- Topic 1 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 01</div>
+                <div class="topic-title">Language vs Algorithm</div>
+                <div class="topic-description">The Golden Law of performance. Why mathematics beats physics.</div>
+                <ul class="topic-points">
+                    <li>Constants (Language Speed) vs Growth (Algorithm Complexity)</li>
+                    <li>O(1) in Python beats O(n²) in C++ by millions of times</li>
+                    <li>Car & Road Analogy: Ferrari vs Toyota on different roads</li>
+                    <li>When does language actually become the bottleneck?</li>
+                </ul>
+                <a href="1.html" class="topic-link">📖 Read Topic 01 →</a>
+            </div>
+
+        </div>
+
+        <!-- VOLUME II: LARAVEL PERFORMANCE TUNING KIT -->
+        <h2 class="section-header">🛠️ Volume II: Laravel Performance Tuning Kit</h2>
+        <div class="topics-grid">
+
+            <!-- Topic 2 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 02</div>
+                <div class="topic-title">Route Caching</div>
+                <div class="topic-description">Eliminate route parsing overhead on every request.</div>
+                <ul class="topic-points">
+                    <li>Without cache: 200 routes = 30ms regex parsing per request</li>
+                    <li>With cache: routes precompiled as PHP array → 2ms</li>
+                    <li>Command: php artisan route:cache</li>
+                    <li>Part of php artisan optimize</li>
+                </ul>
+                <a href="2.html" class="topic-link">📖 Read Topic 02 →</a>
+            </div>
+
+            <!-- Topic 3 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 03</div>
+                <div class="topic-title">Config Caching (env trap)</div>
+                <div class="topic-description">The #1 production killer after config:cache.</div>
+                <ul class="topic-points">
+                    <li>Never use env() outside config/*.php files</li>
+                    <li>After config:cache, env() returns null</li>
+                    <li>Always use config() in your code</li>
+                    <li>Saves 15-40ms per request + eliminates I/O</li>
+                </ul>
+                <a href="3.html" class="topic-link">📖 Read Topic 03 →</a>
+            </div>
+
+            <!-- Topic 4 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 04</div>
+                <div class="topic-title">Eloquent N+1 Killer</div>
+                <div class="topic-description">The #1 performance disaster in Laravel.</div>
+                <ul class="topic-points">
+                    <li>101 queries when 2 would suffice</li>
+                    <li>Solution: with() for eager loading</li>
+                    <li>preventLazyLoading() catches N+1 in development</li>
+                    <li>Hidden N+1 in views (the real trap)</li>
+                </ul>
+                <a href="4.html" class="topic-link">📖 Read Topic 04 →</a>
+            </div>
+
+            <!-- Topic 5 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 05</div>
+                <div class="topic-title">Hydration Hell</div>
+                <div class="topic-description">Eloquent vs Query Builder memory comparison.</div>
+                <ul class="topic-points">
+                    <li>Eloquent: 500MB for 100k users</li>
+                    <li>Query Builder: 50MB for 100k users</li>
+                    <li>Read-only? Use DB::table() or raw PDO</li>
+                    <li>5-10x memory difference</li>
+                </ul>
+                <a href="5.html" class="topic-link">📖 Read Topic 05 →</a>
+            </div>
+
+            <!-- Topic 6 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 06</div>
+                <div class="topic-title">Queue Serialization Trap</div>
+                <div class="topic-description">Why sending full models to queues kills Redis memory.</div>
+                <ul class="topic-points">
+                    <li>Full model serialization: 5KB per job</li>
+                    <li>ID only: 8 bytes per job → 99.9% reduction</li>
+                    <li>Always dispatch $user->id, not $user</li>
+                    <li>Fetch fresh data inside the job</li>
+                </ul>
+                <a href="6.html" class="topic-link">📖 Read Topic 06 →</a>
+            </div>
+
+            <!-- Topic 7 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 07</div>
+                <div class="topic-title">Service Container & Reflection</div>
+                <div class="topic-description">Why auto-wiring is expensive and how to fix it.</div>
+                <ul class="topic-points">
+                    <li>Reflection = code reading code at runtime (10-100x slower)</li>
+                    <li>Singletons for stateless services</li>
+                    <li>Explicit binding to skip reflection</li>
+                    <li>Never call make() inside loops</li>
+                </ul>
+                <a href="7.html" class="topic-link">📖 Read Topic 07 →</a>
+            </div>
+
+            <!-- Topic 8 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 08</div>
+                <div class="topic-title">Middleware Selectivity</div>
+                <div class="topic-description">Every request runs 10 middleware classes. It shouldn't.</div>
+                <ul class="topic-points">
+                    <li>Health check doesn't need session, auth, or CSRF</li>
+                    <li>Create specialized groups: public, auth-api, web-session</li>
+                    <li>Order matters: put fast-failing middleware first</li>
+                    <li>Save 5-10ms per request</li>
+                </ul>
+                <a href="8.html" class="topic-link">📖 Read Topic 08 →</a>
+            </div>
+
+            <!-- Topic 9 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 09</div>
+                <div class="topic-title">Database Indexing & EXPLAIN</div>
+                <div class="topic-description">The #1 database performance killer.</div>
+                <ul class="topic-points">
+                    <li>Missing index = full table scan = 5 seconds for 1M rows</li>
+                    <li>With index = 0.001 seconds</li>
+                    <li>Run EXPLAIN before any query</li>
+                    <li>Composite index order matters (left-most prefix)</li>
+                </ul>
+                <a href="9.html" class="topic-link">📖 Read Topic 09 →</a>
+            </div>
+
+            <!-- Topic 10 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 10</div>
+                <div class="topic-title">Read/Write Splitting</div>
+                <div class="topic-description">Master for writes, replicas for reads.</div>
+                <ul class="topic-points">
+                    <li>90% of traffic is reads. Replicas handle them.</li>
+                    <li>Laravel config: no code changes needed</li>
+                    <li>Double your capacity overnight</li>
+                    <li>Beware of replication lag (eventual consistency)</li>
+                </ul>
+                <a href="10.html" class="topic-link">📖 Read Topic 10 →</a>
+            </div>
+
+            <!-- Topic 11 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 11</div>
+                <div class="topic-title">Database Partitioning</div>
+                <div class="topic-description">Vertical & Horizontal partitioning.</div>
+                <ul class="topic-points">
+                    <li>Vertical: split large columns (BLOB, TEXT) to separate tables</li>
+                    <li>Horizontal: split by date or user_id (sharding)</li>
+                    <li>MySQL native partitioning (by date, DROP PARTITION in seconds)</li>
+                    <li>Application-level sharding for multi-server scale</li>
+                </ul>
+                <a href="11.html" class="topic-link">📖 Read Topic 11 →</a>
+            </div>
+
+            <!-- Topic 12 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 12</div>
+                <div class="topic-title">Statelessness Doctrine</div>
+                <div class="topic-description">Your server must be killable at any moment.</div>
+                <ul class="topic-points">
+                    <li>Sessions → Redis (not files)</li>
+                    <li>Files → S3 (not local disk)</li>
+                    <li>Logs → CloudWatch / ELK</li>
+                    <li>Config → Environment Variables</li>
+                </ul>
+                <a href="12.html" class="topic-link">📖 Read Topic 12 →</a>
+            </div>
+
+            <!-- Topic 13 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 13</div>
+                <div class="topic-title">Event-Driven Architecture</div>
+                <div class="topic-description">Stop making users wait. Process in the background.</div>
+                <ul class="topic-points">
+                    <li>User waits: 500ms → 20ms (96% faster)</li>
+                    <li>Dispatch events, return 202 Accepted</li>
+                    <li>Queues + ShouldQueue for background processing</li>
+                    <li>Scale workers independently</li>
+                </ul>
+                <a href="13.html" class="topic-link">📖 Read Topic 13 →</a>
+            </div>
+
+            <!-- Topic 14 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 14</div>
+                <div class="topic-title">CDN & Edge Caching</div>
+                <div class="topic-description">Keep Laravel away from static files.</div>
+                <ul class="topic-points">
+                    <li>Nginx serves static files (1ms vs Laravel 50ms)</li>
+                    <li>CDN caches globally (Tokyo: 150ms → 5ms)</li>
+                    <li>Browser caching with Cache-Control headers</li>
+                    <li>Asset versioning for cache busting</li>
+                </ul>
+                <a href="14.html" class="topic-link">📖 Read Topic 14 →</a>
+            </div>
+
+            <!-- Topic 15 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 15</div>
+                <div class="topic-title">The 10 Disasters</div>
+                <div class="topic-description">The most common production failures.</div>
+                <ul class="topic-points">
+                    <li>DB::enableQueryLog() in production → OOM</li>
+                    <li>env() after config:cache → returns null</li>
+                    <li>User::all() for large datasets → memory explosion</li>
+                    <li>Full model in queue → payload bloat</li>
+                    <li>Forgotten optimize → 30ms waste per request</li>
+                    <li>Lazy loading N+1 in views</li>
+                    <li>Log::info() inside loops → I/O death</li>
+                    <li>File session driver → concurrency killer</li>
+                    <li>Missing indexes → full table scan</li>
+                    <li>pm.max_requests = 0 → memory leaks</li>
+                </ul>
+                <a href="15.html" class="topic-link">📖 Read Topic 15 →</a>
+            </div>
+
+            <!-- Topic 16 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 16</div>
+                <div class="topic-title">PHP-FPM Deep Dive</div>
+                <div class="topic-description">The real bottleneck nobody talks about.</div>
+                <ul class="topic-points">
+                    <li>pm.max_children calculation: (RAM - others) / 40MB</li>
+                    <li>pm.max_requests = 500 (prevents memory leaks)</li>
+                    <li>dynamic vs ondemand vs static</li>
+                    <li>request_terminate_timeout = 60s</li>
+                </ul>
+                <a href="16.html" class="topic-link">📖 Read Topic 16 →</a>
+            </div>
+
+            <!-- Topic 17 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 17</div>
+                <div class="topic-title">OpCache & PHP JIT</div>
+                <div class="topic-description">PHP's built-in performance superpowers.</div>
+                <ul class="topic-points">
+                    <li>OpCache: compile once, cache forever (3-5x faster)</li>
+                    <li>JIT: compile hot paths to machine code (PHP 8+)</li>
+                    <li>OpCache configuration for production</li>
+                    <li>JIT for CPU-intensive apps only</li>
+                </ul>
+                <a href="17.html" class="topic-link">📖 Read Topic 17 →</a>
+            </div>
+
+            <!-- Topic 18 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 18</div>
+                <div class="topic-title">Composer Autoloader</div>
+                <div class="topic-description">Stop PHP from searching for files.</div>
+                <ul class="topic-points">
+                    <li>--classmap-authoritative eliminates filesystem search</li>
+                    <li>APCu autoloader caching: classmap stays in memory</li>
+                    <li>Full production command: composer install --no-dev --optimize-autoloader --classmap-authoritative</li>
+                    <li>15-20ms → 2-4ms per request</li>
+                </ul>
+                <a href="18.html" class="topic-link">📖 Read Topic 18 →</a>
+            </div>
+
+            <!-- Topic 19 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 19</div>
+                <div class="topic-title">Database Proxy (ProxySQL)</div>
+                <div class="topic-description">Connection pooling for MySQL.</div>
+                <ul class="topic-points">
+                    <li>Eliminate TCP handshake per request (1.5ms → 0.1ms)</li>
+                    <li>Reuse connections across requests</li>
+                    <li>Query caching in ProxySQL</li>
+                    <li>Read/write splitting at proxy level</li>
+                </ul>
+                <a href="19.html" class="topic-link">📖 Read Topic 19 →</a>
+            </div>
+
+            <!-- Topic 20 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 20</div>
+                <div class="topic-title">APCu vs Redis</div>
+                <div class="topic-description">Local shared memory vs network-based cache.</div>
+                <ul class="topic-points">
+                    <li>APCu: 0.05µs, Redis: 10µs (200x faster)</li>
+                    <li>APCu for config, feature flags, local counters</li>
+                    <li>Redis for sessions, queues, shared cache</li>
+                    <li>Hybrid approach: APCu + Redis layered cache</li>
+                </ul>
+                <a href="20.html" class="topic-link">📖 Read Topic 20 →</a>
+            </div>
+
+            <!-- Topic 21 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 21</div>
+                <div class="topic-title">Laravel Octane</div>
+                <div class="topic-description">The nuclear option. Keep Laravel alive in memory.</div>
+                <ul class="topic-points">
+                    <li>Swoole vs RoadRunner</li>
+                    <li>Eliminate bootstrap overhead → 10x faster</li>
+                    <li>Memory leak danger in persistent processes</li>
+                    <li>Octane-safe code patterns</li>
+                </ul>
+                <a href="21.html" class="topic-link">📖 Read Topic 21 →</a>
+            </div>
+
+            <!-- Topic 22 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 22</div>
+                <div class="topic-title">SplFixedArray</div>
+                <div class="topic-description">PHP arrays are hash maps. SplFixedArray is a true C array.</div>
+                <ul class="topic-points">
+                    <li>PHP array: 500MB for 1M integers</li>
+                    <li>SplFixedArray: 100MB for 1M integers (80% less)</li>
+                    <li>Fixed size, integer keys only</li>
+                    <li>20-40% faster than normal arrays</li>
+                </ul>
+                <a href="22.html" class="topic-link">📖 Read Topic 22 →</a>
+            </div>
+
+            <!-- Topic 23 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 23</div>
+                <div class="topic-title">Lazy Resolution for Services</div>
+                <div class="topic-description">Don't pay for services you don't use.</div>
+                <ul class="topic-points">
+                    <li>Eager: all services instantiated on every request</li>
+                    <li>Lazy: instantiate only when used</li>
+                    <li>Bind with class name strings for lazy resolution</li>
+                    <li>70-80% reduction in service overhead</li>
+                </ul>
+                <a href="23.html" class="topic-link">📖 Read Topic 23 →</a>
+            </div>
+
+            <!-- Topic 24 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 24</div>
+                <div class="topic-title">Observers & withoutEvents</div>
+                <div class="topic-description">The silent performance killers.</div>
+                <ul class="topic-points">
+                    <li>Without events: bulk update = 5ms</li>
+                    <li>With observers: bulk update = 5,000ms (1000x slower)</li>
+                    <li>Use withoutEvents() for bulk operations</li>
+                    <li>Move observer logic to queued jobs</li>
+                </ul>
+                <a href="24.html" class="topic-link">📖 Read Topic 24 →</a>
+            </div>
+
+            <!-- Topic 25 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 25</div>
+                <div class="topic-title">Logging I/O Trap</div>
+                <div class="topic-description">Every Log::info() opens a file.</div>
+                <ul class="topic-points">
+                    <li>10,000 logs = 10,000 I/O operations (1-2 seconds)</li>
+                    <li>Batch logs in arrays: 2 I/O operations (0.002 seconds)</li>
+                    <li>Set LOG_LEVEL=error in production</li>
+                    <li>Use Redis logging for high volume</li>
+                </ul>
+                <a href="25.html" class="topic-link">📖 Read Topic 25 →</a>
+            </div>
+
+            <!-- Topic 26 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 26</div>
+                <div class="topic-title">Blade View Cache</div>
+                <div class="topic-description">Every Blade template is compiled to PHP.</div>
+                <ul class="topic-points">
+                    <li>Without cache: 5-20ms per view per request</li>
+                    <li>With view:cache: 1-2ms per view</li>
+                    <li>Command: php artisan view:cache</li>
+                    <li>Part of php artisan optimize</li>
+                </ul>
+                <a href="26.html" class="topic-link">📖 Read Topic 26 →</a>
+            </div>
+
+        </div>
+
+        <!-- VOLUME IV: DISTRIBUTED SYSTEMS -->
+        <h2 class="section-header">🌐 Volume IV: Distributed Systems</h2>
+        <div class="topics-grid">
+
+            <!-- Topic 27 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 27</div>
+                <div class="topic-title">CAP Theorem</div>
+                <div class="topic-description">Consistency vs Availability vs Partition Tolerance.</div>
+                <ul class="topic-points">
+                    <li>You can only have two of three</li>
+                    <li>CP (banking): consistency over availability</li>
+                    <li>AP (social media): availability over consistency</li>
+                    <li>CA is impossible in distributed systems</li>
+                </ul>
+                <a href="27.html" class="topic-link">📖 Read Topic 27 →</a>
+            </div>
+
+            <!-- Topic 28 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 28</div>
+                <div class="topic-title">Distributed Locking</div>
+                <div class="topic-description">Cache::lock is not enough for multi-server environments.</div>
+                <ul class="topic-points">
+                    <li>Redlock: 5 Redis instances for safety</li>
+                    <li>ZooKeeper: strong consistency, fencing tokens</li>
+                    <li>etcd: modern alternative (Kubernetes)</li>
+                    <li>MySQL GET_LOCK: simple but slow</li>
+                </ul>
+                <a href="28.html" class="topic-link">📖 Read Topic 28 →</a>
+            </div>
+
+            <!-- Topic 29 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 29</div>
+                <div class="topic-title">Observability</div>
+                <div class="topic-description">Logging, Metrics, Tracing — the three pillars.</div>
+                <ul class="topic-points">
+                    <li>Logs: what happened (ELK, Loki)</li>
+                    <li>Metrics: how often (Prometheus, Datadog)</li>
+                    <li>Tracing: where time went (Jaeger, Tempo)</li>
+                    <li>Correlation IDs connect everything</li>
+                </ul>
+                <a href="29.html" class="topic-link">📖 Read Topic 29 →</a>
+            </div>
+
+            <!-- Topic 30 -->
+            <div class="topic-card">
+                <div class="topic-number">Topic 30</div>
+                <div class="topic-title">Zero-Trust Architecture</div>
+                <div class="topic-description">Trust nothing. Verify everything.</div>
+                <ul class="topic-points">
+                    <li>Death of the perimeter (no inside/outside)</li>
+                    <li>Authenticate every request, every service</li>
+                    <li>Least privilege, JIT access, micro-segmentation</li>
+                    <li>Assume breach, monitor continuously</li>
+                </ul>
+                <a href="30.html" class="topic-link">📖 Read Topic 30 →</a>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>⚡ The Performance Bible — Complete Edition</p>
+            <p>Authored by <strong>EzEldeen A. Y. Mushtaha</strong> • 30 Topics | 200+ Code Examples | Production-Ready Patterns</p>
+            <p style="margin-top: 0.5rem;">"The language is just a tool. You don't blame the hammer if you can't build a skyscraper alone."</p>
+            <p style="margin-top: 1rem; font-size: 0.7rem;">📄 Licensed under MIT • Free to share, modify, and use in production</p>
+        </div>
+
+    </div>
+</body>
+</html>

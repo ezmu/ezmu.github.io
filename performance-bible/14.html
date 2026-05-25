@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 14: CDN & Edge Caching</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box {
+            background: #2a0a0a;
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            border: 1px solid #7f1d1d;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .comparison-block {
+            margin: 1.5rem 0;
+        }
+
+        .comparison-bad, .comparison-good {
+            background: #111827;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #1f2937;
+        }
+
+        .comparison-bad {
+            border-left: 5px solid #ef4444;
+        }
+
+        .comparison-good {
+            border-left: 5px solid #10b981;
+        }
+
+        .comparison-bad h4, .comparison-good h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume III: Advanced Architecture</div>
+        <h1>🌍 Topic 14: CDN & Edge Caching</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">Keep Laravel away from static files. Serve from the edge.</p>
+
+        <div class="golden-quote">
+            "Your CSS, JS, and images don't need Laravel.<br>
+            They don't need PHP. They don't need sessions or middleware.<br>
+            But every time you serve them through Laravel, you waste CPU, memory, and bandwidth.<br>
+            Move them to a CDN. Serve them from the edge. Your application server will thank you."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE STATIC ASSET SIN</span>
+            <p style="margin-top: 0.75rem;">Many Laravel apps serve CSS, JS, and images through Laravel itself (even if they're in <code>public/</code>, Laravel still boots on every request). A single page load might request 50 static assets. <strong>That's 50 unnecessary Laravel bootstraps per page view.</strong> With 10,000 visitors, that's 500,000 wasted Laravel requests daily.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 2: THE PROBLEM -->
+    <section class="section">
+        <h2>🔴 The Problem: Laravel Serving Static Files</h2>
+
+        <div class="ascii-art">
+STATIC FILES SERVED BY LARAVEL (BAD)
+═══════════════════════════════════════════════════════════════════
+
+  User's Browser
+       │
+       │ 1. HTML Page (Laravel)
+       ▼
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Browser parses HTML, finds:                                    │
+  │  &lt;link href="/css/app.css"&gt;                                    │
+  │  &lt;script src="/js/app.js"&gt;                                     │
+  │  &lt;img src="/images/logo.png"&gt;                                  │
+  └─────────────────────────────────────────────────────────────────┘
+       │
+       │ 2. Request for /css/app.css
+       ▼
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                    LARAVEL APPLICATION                         │
+  │                                                                 │
+  │  • Boot Laravel (load config, routes, providers)               │
+  │  • Run middleware (session, csrf, auth)                        │
+  │  • Route the request (find matching route)                     │
+  │  • Serve file from public/css/app.css                          │
+  │                                                                 │
+  │  COST: 20-50ms PER static file!                                │
+  └─────────────────────────────────────────────────────────────────┘
+
+RESULTS:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  • Each image/CSS/JS triggers full Laravel bootstrapping       │
+  │  • 50 assets = 50 Laravel boots = 1-2 seconds of overhead      │
+  │  • Wasted PHP-FPM processes (can't handle real requests)       │
+  │  • User perceives slow page loads                               │
+  └─────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE STATIC SINS (What NOT to do)</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Serving CSS/JS through Laravel</strong> — Even if in <code>public/</code>, Laravel still boots</li>
+                <li><strong>User-uploaded images served through Laravel</strong> — Use S3 + CloudFront instead</li>
+                <li><strong>No Cache-Control headers</strong> — Browsers re-download assets every time</li>
+                <li><strong>No CDN for global users</strong> — Users in Australia wait for US server</li>
+                <li><strong>No asset versioning</strong> — Cache invalidation nightmare</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 3: THE SOLUTION -->
+    <section class="section">
+        <h2>✅ The Solution: Nginx + CDN + Edge Caching</h2>
+
+        <div class="ascii-art">
+STATIC FILES SERVED BY NGINX + CDN (GOOD)
+═══════════════════════════════════════════════════════════════════
+
+                       CDN Edge Locations
+  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+  │  US East    │  │  EU West    │  │  Asia       │  │  Australia  │
+  │  (Virginia) │  │  (Ireland)  │  │  (Tokyo)    │  │  (Sydney)   │
+  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+         │                │                │                │
+         └────────────────┼────────────────┼────────────────┘
+                          │                │
+                          ▼                ▼
+                  ┌─────────────────────────────────┐
+                  │         ORIGIN SERVER           │
+                  │         (Nginx + Laravel)       │
+                  │                                 │
+                  │  Nginx handles static files:    │
+                  │  location ~* \.(css|js|png) {   │
+                  │      expires 1y;                │
+                  │      add_header Cache-Control;  │
+                  │  }                              │
+                  │                                 │
+                  │  Laravel handles dynamic:       │
+                  │  location / {                   │
+                  │      try_files $uri /index.php; │
+                  │  }                              │
+                  └─────────────────────────────────┘
+
+BENEFITS:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  • Nginx serves static files in 1ms (Laravel takes 50ms)       │
+  │  • CDN caches assets globally (50ms → 5ms latency)             │
+  │  • Browser caches assets for 1 year (0 requests to your server)│
+  │  • Laravel never sees static asset requests                    │
+  │  • PHP-FPM freed for dynamic requests                          │
+  └─────────────────────────────────────────────────────────────────┘
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE GOLDEN RULE OF STATIC ASSETS</span>
+            <p style="margin-top: 0.75rem;"><strong>Your application server should NEVER serve static files. Nginx serves them locally. CDN serves them globally. Browser caches them permanently.</strong></p>
+        </div>
+    </section>
+
+    <!-- SECTION 4: NGINX CONFIGURATION -->
+    <section class="section">
+        <h2>⚙️ Nginx Configuration (First Line of Defense)</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">NGINX STATIC FILE RULES</span>
+            <pre><code># /etc/nginx/sites-available/example.com
+
+server {
+    listen 80;
+    server_name example.com;
+    root /var/www/example.com/public;
+    index index.php;
+
+    # Static files - served directly by Nginx (no Laravel)
+    location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+        log_not_found off;
+        try_files $uri =404;
+    }
+
+    # HTML files (rare) - also serve directly
+    location ~* \.html$ {
+        expires 1h;
+        add_header Cache-Control "public";
+    }
+
+    # Dynamic requests - send to Laravel
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # PHP processing
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}</code></pre>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">WHAT CHANGES</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Before:</strong> Request → Nginx → Laravel → Serve file (50ms)</li>
+                <li><strong>After:</strong> Request → Nginx → Serve file directly (1ms)</li>
+                <li><strong>50x faster</strong> for static assets</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 5: CDN INTEGRATION -->
+    <section class="section">
+        <h2>🚀 CDN Integration: Global Edge Caching</h2>
+
+        <div class="comparison-block">
+            <div class="comparison-bad">
+                <h4>👎 WITHOUT CDN</h4>
+                <div class="ascii-art">
+  User in Tokyo → Request → US Server (150ms latency)
+  User in London → Request → US Server (80ms latency)
+  User in Sydney → Request → US Server (200ms latency)
+
+  Every request travels across the ocean.
+                </div>
+            </div>
+            <div class="comparison-good">
+                <h4>👍 WITH CDN (CloudFront / CloudFlare)</h4>
+                <div class="ascii-art">
+  User in Tokyo → Request → Tokyo Edge (5ms) → Cache hit!
+  User in London → Request → London Edge (5ms) → Cache hit!
+  User in Sydney → Request → Sydney Edge (5ms) → Cache hit!
+
+  Assets are cached at 200+ edge locations worldwide.
+                </div>
+            </div>
+        </div>
+
+        <h3>Step-by-Step CDN Setup (CloudFlare - Free)</h3>
+        <pre><code># 1. Change your DNS to CloudFlare
+# 2. Enable "Proxy" (orange cloud) for your domain
+# 3. Configure caching rules:
+
+# CloudFlare Page Rules:
+# URL: example.com/css/*
+# Cache Level: Cache Everything
+# Edge Cache TTL: 1 month
+
+# URL: example.com/js/*
+# Cache Level: Cache Everything
+# Edge Cache TTL: 1 month
+
+# URL: example.com/images/*
+# Cache Level: Cache Everything
+# Edge Cache TTL: 1 year
+
+# 4. Configure Laravel to use CDN for assets
+// config/app.php
+'asset_url' => env('ASSET_URL', 'https://cdn.example.com'),
+
+// .env
+ASSET_URL=https://cdn.example.com
+
+// In Blade (automatically prefixes CDN)
+&lt;link href="{{ asset('css/app.css') }}"&gt;
+// Becomes: https://cdn.example.com/css/app.css</code></pre>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">AWS CloudFront (with S3)</span>
+            <pre><code># For user-uploaded images (S3 + CloudFront)
+# .env
+AWS_ACCESS_KEY_ID=xxx
+AWS_SECRET_ACCESS_KEY=xxx
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=myapp-uploads
+CLOUDFRONT_URL=https://d123.cloudfront.net
+
+# config/filesystems.php
+'disks' => [
+    's3' => [
+        'driver' => 's3',
+        'key' => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION'),
+        'bucket' => env('AWS_BUCKET'),
+        'url' => env('CLOUDFRONT_URL'),
+    ],
+],</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 6: ASSET VERSIONING -->
+    <section class="section">
+        <h2>🔖 Laravel Asset Versioning (Cache Busting)</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE CACHE INVALIDATION PROBLEM</span>
+            <p>You set <code>expires 1y</code> — great! But now when you update app.css, users still see the old version for up to 1 year.</p>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">SOLUTION: Versioned Assets (Laravel Mix / Vite)</span>
+            <pre><code># webpack.mix.js (Laravel Mix)
+mix.js('resources/js/app.js', 'public/js')
+   .sass('resources/sass/app.scss', 'public/css')
+   .version();
+
+// Result:
+// public/css/app.css?id=8a4b9c2d
+// public/js/app.js?id=3e5f7a1b
+
+// In Blade:
+&lt;link href="{{ mix('css/app.css') }}"&gt;
+// Outputs: &lt;link href="/css/app.css?id=8a4b9c2d"&gt;
+
+// With CDN:
+&lt;link href="{{ asset(mix('css/app.css')) }}"&gt;
+// Outputs: https://cdn.example.com/css/app.css?id=8a4b9c2d</code></pre>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">VITE (Laravel 9+)</span>
+            <pre><code># vite.config.js
+export default defineConfig({
+    plugins: [laravel({
+        input: ['resources/css/app.css', 'resources/js/app.js'],
+        refresh: true,
+    })],
+});
+
+// Vite automatically adds version hashes
+
+// In Blade:
+@vite(['resources/css/app.css', 'resources/js/app.js'])
+// Outputs with version hashes automatically</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 7: BROWSER CACHING STRATEGY -->
+    <section class="section">
+        <h2>📦 Browser Caching Strategy (Cache-Control Headers)</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Asset Type</th>
+                        <th>Cache-Control</th>
+                        <th>Expires</th>
+                        <th>Why</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CSS, JS (versioned)</td>
+                        <td class="highlight"><code>public, immutable</code></td>
+                        <td class="highlight">1 year</td>
+                        <td>Content never changes (new version = new filename)</td>
+                    </tr>
+                    <tr>
+                        <td>Images, logos, icons</td>
+                        <td class="highlight"><code>public</code></td>
+                        <td class="highlight">1 year</td>
+                        <td>Changes rarely</td>
+                    </tr>
+                    <tr>
+                        <td>User-uploaded images</td>
+                        <td class="highlight"><code>public</code></td>
+                        <td class="highlight">1 month</td>
+                        <td>Can change if user updates profile</td>
+                    </tr>
+                    <tr>
+                        <td>HTML pages (dynamic)</td>
+                        <td class="highlight-red"><code>no-cache</code></td>
+                        <td class="highlight-red">0</td>
+                        <td>Always need fresh content</td>
+                    </tr>
+                    <tr>
+                        <td>API responses</td>
+                        <td class="highlight-red"><code>no-cache</code></td>
+                        <td class="highlight-red">0</td>
+                        <td>Must be fresh</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <pre><code># Complete Nginx cache configuration
+location ~* \.(css|js)$ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+    access_log off;
+}
+
+location ~* \.(jpg|jpeg|png|gif|ico|svg|webp)$ {
+    expires 1y;
+    add_header Cache-Control "public";
+    access_log off;
+}
+
+location ~* \.(woff|woff2|ttf|eot)$ {
+    expires 1y;
+    add_header Cache-Control "public";
+    access_log off;
+}
+
+location / {
+    # Dynamic content - no cache
+    add_header Cache-Control "no-cache, private";
+    try_files $uri $uri/ /index.php?$query_string;
+}</code></pre>
+    </section>
+
+    <!-- SECTION 8: PERFORMANCE GAINS -->
+    <section class="section">
+        <h2>📊 Performance Gains: CDN + Edge Caching</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>Without CDN</th>
+                        <th>With CDN (CloudFlare/CloudFront)</th>
+                        <th>Improvement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>User in Tokyo loading CSS</td>
+                        <td class="highlight-red">150ms (round-trip to US)</td>
+                        <td class="highlight">5ms (Tokyo edge)</td>
+                        <td class="highlight">30x faster</td>
+                    </tr>
+                    <tr>
+                        <td>User in London loading JS</td>
+                        <td class="highlight-red">80ms (to US)</td>
+                        <td class="highlight">5ms (London edge)</td>
+                        <td class="highlight">16x faster</td>
+                    </tr>
+                    <tr>
+                        <td>User in Sydney loading image</td>
+                        <td class="highlight-red">200ms (to US)</td>
+                        <td class="highlight">5ms (Sydney edge)</td>
+                        <td class="highlight">40x faster</td>
+                    </tr>
+                    <tr>
+                        <td>Laravel CPU usage for static assets</td>
+                        <td class="highlight-red">50ms per asset (50 assets = 2.5s CPU)</td>
+                        <td class="highlight">0ms (Nginx/CDN)</td>
+                        <td class="highlight">100% reduction</td>
+                    </tr>
+                    <tr>
+                        <td>Bandwidth cost (100GB/month)</td>
+                        <td class="highlight-red">$9 (AWS data transfer)</td>
+                        <td class="highlight">$0 (CloudFlare free tier)</td>
+                        <td class="highlight">Free (or cheaper)</td>
+                    </tr>
+                    <tr style="background: #0a2a1a;">
+                        <td><strong>Overall Page Load Time</strong></td>
+                        <td class="highlight-red"><strong>2.5 seconds</strong></td>
+                        <td class="highlight"><strong>0.5 seconds</strong></td>
+                        <td class="highlight"><strong>80% faster</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">THE BOTTOM LINE</span>
+            <p>CDN + Nginx static serving + browser caching can reduce page load time by <strong>70-90%</strong> and reduce server load by <strong>50-80%</strong>. It's the highest ROI performance optimization you can make.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 9: SUMMARY -->
+    <section class="section">
+        <h2>📝 Topic 14 Summary: CDN & Edge Caching</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Layer</th>
+                        <th>Responsibility</th>
+                        <th>Cache Duration</th>
+                        <th>Latency</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Browser Cache</td>
+                        <td class="highlight">User's device</td>
+                        <td class="highlight">1 year (versioned assets)</td>
+                        <td class="highlight">0ms (local)</td>
+                    </tr>
+                    <tr>
+                        <td>CDN Edge</td>
+                        <td class="highlight">200+ global locations</td>
+                        <td class="highlight">1 month - 1 year</td>
+                        <td class="highlight">1-10ms</td>
+                    </tr>
+                    <tr>
+                        <td>Nginx (Origin)</td>
+                        <td class="highlight">Application server</td>
+                        <td class="highlight">Static files only</td>
+                        <td class="highlight">1ms</td>
+                    </tr>
+                    <tr>
+                        <td>Laravel</td>
+                        <td class="highlight-red">NEVER for static assets</td>
+                        <td class="highlight-red">Dynamic content only</td>
+                        <td class="highlight-red">50-200ms</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Nginx serves static files. CDN caches them globally. Browser caches them locally. Laravel NEVER sees static assets. Your response time drops from 500ms to 50ms. Your server handles 10x more traffic.</strong><br><br>
+            CDN and edge caching are not optional for production applications. They are table stakes.
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 15: The 10 Disasters (Complete List)</strong> — The most common production failures. DB::enableQueryLog() in production. env() after config:cache. File sessions. Missing indexes. Full model serialization. And how to prevent each one.</p>
+        </div>
+    </section>
+
+</body>
+</html>

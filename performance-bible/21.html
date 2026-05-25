@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 21: Laravel Octane</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            width: 100%;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box {
+            background: #2a0a0a;
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            border: 1px solid #7f1d1d;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            background: #111827;
+        }
+
+        table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: #111827;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-card {
+            background: #111827;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            border: 1px solid #1f2937;
+        }
+
+        .comparison-card.bad {
+            border-top: 4px solid #ef4444;
+        }
+
+        .comparison-card.good {
+            border-top: 4px solid #10b981;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume II: Laravel Performance Tuning Kit</div>
+        <h1>🚀 Topic 21: Laravel Octane</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">The nuclear option. Keep Laravel alive in memory.</p>
+
+        <div class="golden-quote">
+            "Laravel was designed to die after every request.<br>
+            Bootstrap. Execute. Die. Bootstrap again. Execute again. Die again.<br>
+            Octane keeps Laravel ALIVE in memory.<br>
+            Bootstrap once. Handle thousands of requests.<br>
+            The result? 10-100x faster response times."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE NUCLEAR OPTION</span>
+            <p style="margin-top: 0.75rem;">Octane is not for everyone. It eliminates 90% of Laravel's bootstrapping overhead, but introduces new challenges: memory leaks become permanent, global state becomes dangerous, and you can no longer rely on "fresh" application state per request. <strong>Only use Octane if you understand these trade-offs.</strong></p>
+        </div>
+    </section>
+
+    <!-- SECTION 2: THE PROBLEM (BOOTSTRAPPING EVERY REQUEST) -->
+    <section class="section">
+        <h2>🔴 The Problem: Laravel Dies After Every Request</h2>
+
+        <div class="ascii-art">
+TRADITIONAL PHP-FPM ARCHITECTURE
+═══════════════════════════════════════════════════════════════════
+
+  Request 1:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Boot Laravel (30ms) → Execute Code (10ms) → Die (0ms)        │
+  │  └─────────────────────────────────────────────────────────────────┘
+
+  Request 2:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Boot Laravel (30ms) → Execute Code (10ms) → Die (0ms)        │
+  └─────────────────────────────────────────────────────────────────┘
+
+  Request 3:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Boot Laravel (30ms) → Execute Code (10ms) → Die (0ms)        │
+  └─────────────────────────────────────────────────────────────────┘
+
+  Time breakdown:
+  • Bootstrapping: 75% of request time
+  • Actual work: 25% of request time
+  • Huge waste of CPU!
+
+OCTANE (SWOOLE / ROADRUNNER) ARCHITECTURE
+═══════════════════════════════════════════════════════════════════
+
+  Application Start:
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Boot Laravel ONCE (30ms) → Application stays ALIVE           │
+  └─────────────────────────────────────────────────────────────────┘
+
+  Request 1: Execute Code (10ms) → Response
+  Request 2: Execute Code (10ms) → Response
+  Request 3: Execute Code (10ms) → Response
+
+  Time breakdown:
+  • Bootstrapping: 0% of request time (done once)
+  • Actual work: 100% of request time
+  • 75% reduction in response time!
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">THE BOTTOM LINE</span>
+            <p><strong>Octane makes Laravel 5-10x faster for most operations</strong> by eliminating the bootstrap overhead. A 50ms Laravel request becomes 5-10ms. A 200ms request becomes 20-30ms.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 3: SWOOLE vs ROADRUNNER -->
+    <section class="section">
+        <h2>🔧 Swoole vs RoadRunner (Octane Servers)</h2>
+
+        <div class="comparison-grid">
+            <div class="comparison-card">
+                <h4>🟢 Swoole</h4>
+                <ul style="margin: 0.5rem 0 0 1.5rem;">
+                    <li>PHP extension (C-level)</li>
+                    <li>Extremely fast</li>
+                    <li>Built-in HTTP/2 support</li>
+                    <li>WebSocket support</li>
+                    <li>More features (coroutines, task workers)</li>
+                    <li>Requires installing Swoole extension</li>
+                    <li><strong>Best for: Maximum performance</strong></li>
+                </ul>
+            </div>
+            <div class="comparison-card">
+                <h4>🔵 RoadRunner</h4>
+                <ul style="margin: 0.5rem 0 0 1.5rem;">
+                    <li>Go binary (no extension needed)</li>
+                    <li>Very fast (slightly slower than Swoole)</li>
+                    <li>Easy to install (single binary)</li>
+                    <li>Works with any PHP version</li>
+                    <li>More stable for some workloads</li>
+                    <li>Better for shared hosting</li>
+                    <li><strong>Best for: Ease of setup</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">INSTALLATION</span>
+            <pre><code># Install Laravel Octane
+composer require laravel/octane
+
+# Install Swoole (recommended for performance)
+composer require swoole/php-ext
+sudo pecl install swoole
+
+# OR install RoadRunner (easier)
+php artisan octane:install --server=roadrunner
+
+# Start Octane
+php artisan octane:start --server=swoole --port=8000
+
+# Run with multiple workers
+php artisan octane:start --server=swoole --workers=4 --task-workers=2</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 4: BEFORE vs AFTER - THE NUMBERS -->
+    <section class="section">
+        <h2>📊 Performance Comparison: PHP-FPM vs Octane</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operation</th>
+                        <th>PHP-FPM</th>
+                        <th>Octane (Swoole)</th>
+                        <th>Improvement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Simple Hello World</th>
+                        <td class="highlight-red">15-25ms</th>
+                        <td class="highlight">1-2ms</th>
+                        <td class="highlight">10-15x faster</th>
+                    </tr>
+                    <tr>
+                        <td>Eloquent SELECT (100 rows)</th>
+                        <td class="highlight-red">30-50ms</th>
+                        <td class="highlight">5-10ms</th>
+                        <td class="highlight">4-6x faster</th>
+                    </tr>
+                    <tr>
+                        <td>Complex page with views</th>
+                        <td class="highlight-red">80-150ms</th>
+                        <td class="highlight">15-30ms</th>
+                        <td class="highlight">4-5x faster</th>
+                    </tr>
+                    <tr>
+                        <td>API endpoint (JSON)</th>
+                        <td class="highlight-red">20-40ms</th>
+                        <td class="highlight">3-8ms</th>
+                        <td class="highlight">4-6x faster</th>
+                    </tr>
+                    <tr>
+                        <td>Requests per second (RPS)</th>
+                        <td class="highlight-red">50-200 RPS</th>
+                        <td class="highlight">500-2000 RPS</th>
+                        <td class="highlight">5-10x more capacity</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">REAL-WORLD EXAMPLE</span>
+            <p>A typical Laravel e-commerce site:</p>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>PHP-FPM:</strong> 200ms response time, 100 RPS peak</li>
+                <li><strong>Octane:</strong> 30ms response time, 800 RPS peak</li>
+                <li><strong>Same server, same code, 4-8x more traffic capacity</strong></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 5: THE MEMORY LEAK DANGER -->
+    <section class="section">
+        <h2>💧 The Memory Leak Danger (Why Octane is Dangerous)</h2>
+
+        <div class="ascii-art">
+MEMORY LEAK IN PHP-FPM vs OCTANE
+═══════════════════════════════════════════════════════════════════
+
+  PHP-FPM (with pm.max_requests=500):
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Request 1-500: Memory grows slowly (leak)                     │
+  │  Request 501: Process dies, memory freed, new process starts  │
+  │  Result: Leaks are contained, server stays healthy            │
+  └─────────────────────────────────────────────────────────────────┘
+
+  Octane (persistent process):
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  Request 1: Memory = 50MB                                      │
+  │  Request 1000: Memory = 80MB (30MB leak)                       │
+  │  Request 10,000: Memory = 350MB (300MB leak)                   │
+  │  Request 100,000: Memory = 3GB (server crashes)               │
+  │  Result: Leaks accumulate FOREVER until server dies           │
+  └─────────────────────────────────────────────────────────────────┘
+
+WHAT CAUSES MEMORY LEAKS IN OCTANE?
+═══════════════════════════════════════════════════════════════════
+
+  • Singletons that accumulate data (e.g., array push on each request)
+  • Static properties that never get cleared
+  • Global variables that persist across requests
+  • Database connection pools that grow unbounded
+  • Caches that never expire
+  • Event listeners that register new listeners each request
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ CRITICAL WARNING</span>
+            <p style="margin-top: 0.75rem;"><strong>Code that works perfectly in PHP-FPM can leak memory catastrophically in Octane.</strong> Test your application thoroughly with Octane before deploying to production. Monitor memory usage closely.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 6: OCTANE-SAFE CODE PATTERNS -->
+    <section class="section">
+        <h2>✅ Octane-Safe Code Patterns</h2>
+
+        <div class="comparison-grid">
+            <div class="comparison-card bad">
+                <h4>👎 DANGEROUS (Memory Leak)</h4>
+                <pre><code>// Static property accumulates data
+class UserService
+{
+    private static array $processed = [];
+    
+    public function process(User $user)
+    {
+        self::$processed[] = $user->id;  // GROWS FOREVER
+    }
+}
+
+// Singleton accumulating data
+$this->app->singleton(Analytics::class, function () {
+    return new Analytics();  // Events accumulate!
+});
+
+// Global variables
+$GLOBALS['counter'] = ($GLOBALS['counter'] ?? 0) + 1;</code></pre>
+            </div>
+            <div class="comparison-card good">
+                <h4>👍 SAFE (No Leak)</h4>
+                <pre><code>// Use request-scoped data
+class UserService
+{
+    public function process(User $user)
+    {
+        $processed = [];  // Fresh per request
+        $processed[] = $user->id;
+    }
+}
+
+// Use cache with TTL (not memory accumulation)
+Cache::remember('counter', 60, function () {
+    return Counter::increment();
+});
+
+// Avoid globals entirely</code></pre>
+            </div>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">OCTANE BEST PRACTICES</span>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Avoid static properties</strong> that grow over time</li>
+                <li><strong>Avoid global variables</strong> — use request context instead</li>
+                <li><strong>Use Cache with TTL</strong> instead of in-memory arrays</li>
+                <li><strong>Reset singletons</strong> manually if they accumulate state</li>
+                <li><strong>Use Octane's request lifecycle events</strong> to clean up</li>
+                <li><strong>Monitor memory</strong> with `octane:status` command</li>
+                <li><strong>Restart Octane periodically</strong> (e.g., daily) to clear leaks</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 7: OCTANE CONFIGURATION -->
+    <section class="section">
+        <h2>⚙️ Octane Configuration</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">config/octane.php</span>
+            <pre><code>return [
+    // Server type (swoole or roadrunner)
+    'server' => env('OCTANE_SERVER', 'swoole'),
+    
+    // Number of workers (CPU cores * 1-2)
+    'workers' => env('OCTANE_WORKERS', 4),
+    
+    // Number of task workers (for async tasks)
+    'task_workers' => env('OCTANE_TASK_WORKERS', 2),
+    
+    // Max request size (bytes)
+    'max_request_size' => env('OCTANE_MAX_REQUEST_SIZE', 10 * 1024 * 1024),
+    
+    // Listen on all interfaces
+    'host' => env('OCTANE_HOST', '0.0.0.0'),
+    
+    // Port (use 80 with reverse proxy)
+    'port' => env('OCTANE_PORT', 8000),
+    
+    // Reload workers after N requests (like pm.max_requests)
+    'max_requests' => env('OCTANE_MAX_REQUESTS', 1000),
+    
+    // Watch for file changes (disable in production)
+    'watch' => env('OCTANE_WATCH', false),
+    
+    // Swoole specific
+    'swoole' => [
+        'options' => [
+            'enable_coroutine' => false,  // Disable for Laravel
+            'open_http2_protocol' => true,
+            'http_compression' => true,
+        ],
+    ],
+    
+    // RoadRunner specific
+    'roadrunner' => [
+        'options' => [
+            'http' => [
+                'middleware' => ['static', 'gzip'],
+            ],
+        ],
+    ],
+];</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 8: OCTANE PRODUCTION DEPLOYMENT -->
+    <section class="section">
+        <h2>🛠️ Production Deployment with Octane</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">SUPERVISOR CONFIGURATION</span>
+            <pre><code># /etc/supervisor/conf.d/octane.conf
+
+[program:octane]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/artisan octane:start --server=swoole --workers=4 --task-workers=2 --max-requests=1000
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=forge
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/storage/logs/octane.log
+stopwaitsecs=3600
+
+[program:octane-watcher]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/artisan octane:reload
+autostart=true
+autorestart=true
+user=forge
+numprocs=1</code></pre>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">NGINX CONFIGURATION (PROXY TO OCTANE)</span>
+            <pre><code># /etc/nginx/sites-available/example.com
+
+server {
+    listen 80;
+    server_name example.com;
+    
+    # Proxy all requests to Octane
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+    }
+    
+    # Static files still served by Nginx
+    location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2)$ {
+        root /var/www/example.com/public;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 9: MONITORING OCTANE -->
+    <section class="section">
+        <h2>📊 Monitoring Octane</h2>
+
+        <pre><code># Check Octane status
+php artisan octane:status
+
+# Output example:
+# ┌─────────────────────────────────────────┐
+# │ Port: 8000                              │
+# │ Server: Swoole                          │
+# │ Workers: 4                              │
+# │ Task Workers: 2                         │
+# │ State: Running                          │
+# │ Requests: 125,342                       │
+# └─────────────────────────────────────────┘
+
+# Memory usage per worker
+php artisan octane:status --verbose
+
+# Reload workers (without downtime)
+php artisan octane:reload
+
+# Stop Octane
+php artisan octane:stop
+
+# Start Octane with custom memory limit
+php artisan octane:start --memory-limit=512M</code></pre>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">CRITICAL MONITORING</span>
+            <p>Monitor these metrics in production:</p>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>Worker memory usage</strong> — Should be stable, not growing</li>
+                <li><strong>Request count</strong> — Track per worker to identify leaks</li>
+                <li><strong>Restart frequency</strong> — Schedule daily restarts if memory grows</li>
+                <li><strong>Response times</strong> — Should be consistent, not degrading</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 10: SUMMARY -->
+    <section class="section">
+        <h2>📝 Topic 21 Summary: Laravel Octane</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aspect</th>
+                        <th>PHP-FPM</th>
+                        <th>Octane (Swoole/RoadRunner)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Bootstrap per request</th>
+                        <td class="highlight-red">Yes (30-50ms)</th>
+                        <td class="highlight">No (once)</th>
+                    </tr>
+                    <tr>
+                        <td>Response time (typical)</th>
+                        <td class="highlight-red">50-200ms</th>
+                        <td class="highlight">5-30ms</th>
+                    </tr>
+                    <tr>
+                        <td>Requests per second</th>
+                        <td class="highlight-red">50-200</th>
+                        <td class="highlight">500-2000</th>
+                    </tr>
+                    <tr>
+                        <td>Memory leak risk</th>
+                        <td class="highlight">Low (processes restart)</th>
+                        <td class="highlight-red">High (persistent)</th>
+                    </tr>
+                    <tr>
+                        <td>Setup complexity</th>
+                        <td class="highlight">Low (standard)</th>
+                        <td class="highlight-red">Medium</th>
+                    </tr>
+                    <tr>
+                        <td>Code compatibility</th>
+                        <td class="highlight">100%</th>
+                        <td class="highlight-red">95% (some patterns unsafe)</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Use Octane when you need maximum performance and can accept the complexity. Test thoroughly for memory leaks. Monitor memory usage in production. Set --max-requests to restart workers periodically. When it works, Octane is magic. When it fails, it fails hard.</strong>
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 22: SplFixedArray</strong> — The PHP array lie. Why normal arrays are actually hash maps. How SplFixedArray can save 70-80% memory for known-size arrays.</p>
+        </div>
+    </section>
+
+</body>
+</html>

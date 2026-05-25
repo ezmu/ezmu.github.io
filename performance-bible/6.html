@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Performance Bible | Topic 6: Queue Serialization Trap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 6rem;
+            border-bottom: 1px solid #1f2937;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section:nth-child(odd) {
+            background: #0a0e1a;
+        }
+        .section:nth-child(even) {
+            background: #0f1119;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .topic-badge {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem 0;
+            color: #f1f5f9;
+            border-left: 5px solid #3b82f6;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem 0;
+            color: #94a3b8;
+        }
+
+        .golden-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #fbbf24;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #1e293b;
+            border-radius: 1rem;
+            border-right: 4px solid #fbbf24;
+        }
+
+        .problem-box {
+            background: #2a0a0a;
+            border-left: 5px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .fix-box {
+            background: #0a2a1a;
+            border-left: 5px solid #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .impact-box {
+            background: #1a1a2a;
+            border-left: 5px solid #8b5cf6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-box {
+            background: #2a1a0a;
+            border-left: 5px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .danger-box {
+            background: #2a0a0a;
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            border: 1px solid #7f1d1d;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            border: 1px solid #21262d;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: #111827;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .highlight {
+            background: #1e3a3a;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .highlight-red {
+            background: #3a1a1a;
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .ascii-art {
+            background: #0d1117;
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            white-space: pre;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            line-height: 1.4;
+            color: #8b949e;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-card {
+            background: #111827;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            border: 1px solid #1f2937;
+        }
+
+        .comparison-card.bad {
+            border-top: 4px solid #ef4444;
+        }
+
+        .comparison-card.good {
+            border-top: 4px solid #10b981;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .badge-red { background: #ef4444; color: white; }
+        .badge-green { background: #10b981; color: white; }
+        .badge-purple { background: #8b5cf6; color: white; }
+        .badge-orange { background: #f59e0b; color: white; }
+        .badge-blue { background: #3b82f6; color: white; }
+
+        .payload-size {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .golden-quote { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: INTRODUCTION                      -->
+    <!-- ============================================ -->
+    <section class="section">
+        <div class="topic-badge">📁 Volume II: Laravel Performance Tuning Kit</div>
+        <h1>📦 Topic 6: Queue Serialization Trap</h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin: 1rem 0 2rem 0;">Why sending full models to queues kills your Redis memory.</p>
+
+        <div class="golden-quote">
+            "You dispatch a job with $user.<br>
+            Laravel serializes the ENTIRE model — all columns, all relations, all hidden attributes.<br>
+            Your 2KB payload becomes 2MB. Your Redis fills up. Your queue stops.<br>
+            And you have no idea why."
+        </div>
+
+        <div class="danger-box">
+            <span class="badge badge-red">⚠️ THE SILENT KILLER</span>
+            <p style="margin-top: 0.75rem;"><strong>This is one of the most common production failures in Laravel.</strong> Developers dispatch jobs with full models, everything works in development (small data), then in production with 100,000 jobs, Redis memory explodes, workers hang, and the entire queue system collapses.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: THE PROBLEM (WHAT GETS SERIALIZED) -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🔴 The Problem: Full Model Serialization</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">WHAT LARAVEL SERIALIZES</span>
+            <p style="margin-top: 0.75rem;">When you dispatch a job with a Model:</p>
+            <pre><code>ProcessUserJob::dispatch($user);</code></pre>
+            <p>Laravel serializes:</p>
+            <ul style="margin: 0.5rem 0 0 2rem;">
+                <li><strong>All database columns</strong> (id, name, email, password, remember_token, created_at, updated_at, etc.)</li>
+                <li><strong>All hidden attributes</strong> (even if hidden from JSON)</li>
+                <li><strong>All loaded relationships</strong> (if you did $user->load('posts'), all posts are serialized too!)</li>
+                <li><strong>Model metadata</strong> (table name, connection name, key name, etc.)</li>
+                <li><strong>Original values array</strong> (for dirty checking)</li>
+                <li><strong>Model class name</strong> (for hydration when job runs)</li>
+            </ul>
+        </div>
+
+        <h3>What does a serialized User model look like?</h3>
+        <div class="ascii-art">
+            │
+            │  SERIALIZED USER MODEL (simplified representation)
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  O:15:"App\Models\User":20:{
+            │    s:3:"id";i:12345;
+            │    s:8:"name";s:10:"John Doe";
+            │    s:5:"email";s:19:"john@example.com";
+            │    s:8:"password";s:60:"$2y$10$...hashedpassword...";
+            │    s:13:"remember_token";s:100:"...token...";
+            │    s:10:"created_at";s:19:"2024-01-01 12:00:00";
+            │    s:11:"updated_at";s:19:"2024-01-01 12:00:00";
+            │    s:14:"email_verified_at";s:19:"2024-01-01 12:00:00";
+            │    s:15:"profile_photo";s:50:"photos/avatar_12345.jpg";
+            │    s:12:"two_factor_secret";s:32:"...secret...";
+            │    s:21:"two_factor_recovery_codes";s:200:"[...codes...]";
+            │    s:9:"last_login";s:19:"2024-01-01 12:00:00";
+            │    s:13:"ip_address";s:15:"192.168.1.100";
+            │    s:12:"user_agent";s:120:"Mozilla/5.0...";
+            │    s:5:"roles";a:3:{...};  // Relationship!
+            │    s:7:"permissions";a:15:{...};  // Another relationship!
+            │    ... more metadata ...
+            │  }
+            │
+            │  TYPICAL SIZE: 2-10 KB per user (with no relations)
+            │  WITH RELATIONS: 50-500 KB per user
+            │
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">THE REAL KILLER: RELATIONSHIPS</span>
+            <p>If your model has loaded relationships (e.g., <code>$user->load('posts', 'comments')</code>), Laravel serializes <strong>every related model recursively</strong>. One user with 100 posts and 500 comments = <strong>megabytes of serialized data</strong> per job.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: THE NUMBERS (PAYLOAD SIZE)       -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📊 Payload Size Comparison</h2>
+
+        <div class="comparison-grid">
+            <div class="comparison-card bad">
+                <h4>👎 SENDING FULL MODEL</h4>
+                <pre><code>ProcessUserJob::dispatch($user);</code></pre>
+                <table style="margin: 0.5rem 0;">
+                    <tr><th>Scenario</th><th>Payload Size</th></tr>
+                    <tr><td>User only (no relations)</td><td class="highlight-red">2-10 KB</td></tr>
+                    <tr><td>User + posts (100 posts)</td><td class="highlight-red">50-100 KB</td></tr>
+                    <tr><td>User + posts + comments (500 comments)</td><td class="highlight-red">500 KB - 2 MB</td></tr>
+                </table>
+            </div>
+            <div class="comparison-card good">
+                <h4>👍 SENDING ID ONLY</h4>
+                <pre><code>ProcessUserJob::dispatch($user->id);</code></pre>
+                <table style="margin: 0.5rem 0;">
+                    <tr><th>Scenario</th><th>Payload Size</th></tr>
+                    <tr><td>Any user</td><td class="highlight">4-8 bytes (integer)</td></tr>
+                    <tr><td>User + any relations</td><td class="highlight">4-8 bytes</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <h3>Impact on Redis Memory (100,000 jobs in queue):</h3>
+        <table>
+            <thead>
+                <tr><th>Approach</th><th>Payload per Job</th><th>Total for 100k Jobs</th><th>Redis Memory</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Full User Model (no relations)</td>
+                    <td class="highlight-red">5 KB</td>
+                    <td class="highlight-red">500 MB</td>
+                    <td class="highlight-red">⚠️ Near limit</td>
+                </tr>
+                <tr>
+                    <td>Full User + Posts + Comments</td>
+                    <td class="highlight-red">500 KB</td>
+                    <td class="highlight-red">50 GB</td>
+                    <td class="highlight-red">💀 CRASH</td>
+                </tr>
+                <tr style="background: #0a2a1a;">
+                    <td><strong>ID Only</strong></td>
+                    <td class="highlight">8 bytes</td>
+                    <td class="highlight">0.8 MB</td>
+                    <td class="highlight">✅ Fine (0.1% of memory)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="impact-box">
+            <span class="badge badge-purple">THE BOTTOM LINE</span>
+            <p><strong>Sending ID only is 99.99% smaller than sending full models with relations.</strong> In production, this difference is the line between a working queue and a crashed server.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: THE FIX (ID ONLY PATTERN)        -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>✅ The Fix: The ID-Only Pattern</h2>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE GOLDEN RULE OF QUEUES</span>
+            <p style="margin-top: 0.75rem;"><strong>Never dispatch a model. Always dispatch the ID.</strong></p>
+        </div>
+
+        <div class="comparison-grid">
+            <div class="comparison-card bad">
+                <h4>👎 BAD (Dispatch Full Model)</h4>
+                <pre><code>// Controller
+$user = User::find(123);
+ProcessUserJob::dispatch($user);  // ❌ Serializes everything
+
+// Job
+class ProcessUserJob implements ShouldQueue
+{
+    public function __construct(
+        public User $user  // ❌ Receives full model
+    ) {}
+    
+    public function handle()
+    {
+        // Use $this->user directly
+        $this->user->update(['processed' => true]);
+    }
+}</code></pre>
+            </div>
+            <div class="comparison-card good">
+                <h4>👍 GOOD (Dispatch ID Only)</h4>
+                <pre><code>// Controller
+$user = User::find(123);
+ProcessUserJob::dispatch($user->id);  // ✅ Serializes integer
+
+// Job
+class ProcessUserJob implements ShouldQueue
+{
+    public function __construct(
+        public int $userId  // ✅ Receives integer
+    ) {}
+    
+    public function handle()
+    {
+        // Fetch fresh model inside job
+        $user = User::find($this->userId);
+        $user->update(['processed' => true]);
+    }
+}</code></pre>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <span class="badge badge-orange">BUT WHAT ABOUT STALE DATA?</span>
+            <p><strong>Common objection:</strong> "What if the user changes between dispatch and job execution?"</p>
+            <p><strong>Answer:</strong> That's exactly what you want! The job should use the <strong>current state</strong> of the user, not the state from when the job was dispatched. Fetching fresh inside <code>handle()</code> ensures you have the latest data.</p>
+            <p><strong>If you NEED the state at dispatch time</strong>, explicitly serialize only the fields you need:</p>
+            <pre><code>ProcessUserJob::dispatch($user->only(['id', 'name', 'email']));</code></pre>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: THE ASCII VISUALIZATION           -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🎨 What Happens in Redis (Visualized)</h2>
+
+        <div class="ascii-art">
+            │
+            │  WITH FULL MODEL SERIALIZATION
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    Job 1:  [████████████████████████████████████████████] 5 KB
+            │    Job 2:  [████████████████████████████████████████████] 5 KB
+            │    Job 3:  [████████████████████████████████████████████] 5 KB
+            │    ... (100,000 jobs) ...
+            │    Job N:  [████████████████████████████████████████████] 5 KB
+            │
+            │    ┌─────────────────────────────────────────────────────────────────┐
+            │    │  TOTAL: 500 MB in Redis                                        │
+            │    │  ┌─────────────────────────────────────────────────────────┐   │
+            │    │  │ ██████████████████████████████████████████████████████ │   │
+            │    │  │ ██████████████████████████████████████████████████████ │   │
+            │    │  │ ████████████████████████████████████░░░░░░░░░░░░░░░░░░ │   │
+            │    │  └─────────────────────────────────────────────────────────┘   │
+            │    │  Redis near memory limit. New jobs rejected. Queue stops.      │
+            │    └─────────────────────────────────────────────────────────────────┘
+            │
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │  WITH ID-ONLY SERIALIZATION
+            │  ═══════════════════════════════════════════════════════════════════
+            │
+            │    Job 1:  [·] 8 bytes
+            │    Job 2:  [·] 8 bytes
+            │    Job 3:  [·] 8 bytes
+            │    ... (100,000 jobs) ...
+            │    Job N:  [·] 8 bytes
+            │
+            │    ┌─────────────────────────────────────────────────────────────────┐
+            │    │  TOTAL: 0.8 MB in Redis                                        │
+            │    │  ┌─────────────────────────────────────────────────────────┐   │
+            │    │  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │   │
+            │    │  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │   │
+            │    │  │ ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │   │
+            │    │  └─────────────────────────────────────────────────────────┘   │
+            │    │  Redis memory comfortable. Queue runs smoothly.                │
+            │    └─────────────────────────────────────────────────────────────────┘
+            │
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: THE RELATIONS TRAP                -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🕸️ The Relations Trap (Deep Serialization)</h2>
+
+        <div class="problem-box">
+            <span class="badge badge-red">THE WORST CASE</span>
+            <p style="margin-top: 0.75rem;">This innocent-looking code will kill your queue:</p>
+            <pre><code>// Controller
+$user = User::with(['posts.comments', 'profile', 'settings'])->find(123);
+SendNewsletterJob::dispatch($user);  // 💀 Serializes EVERYTHING
+
+// Job
+class SendNewsletterJob implements ShouldQueue
+{
+    public function __construct(public User $user) {}
+    
+    public function handle()
+    {
+        foreach ($this->user->posts as $post) {
+            foreach ($post->comments as $comment) {
+                // Process comment
+            }
+        }
+    }
+}</code></pre>
+            <p style="margin-top: 0.75rem;">This will serialize the user, all their posts, all comments on those posts, their profile, and their settings. <strong>One user could be 10MB+ of serialized data.</strong> 10,000 such jobs = 100GB of Redis memory = guaranteed crash.</p>
+        </div>
+
+        <div class="fix-box">
+            <span class="badge badge-green">THE FIX FOR RELATIONS</span>
+            <pre><code>// Controller
+$userId = 123;
+SendNewsletterJob::dispatch($userId);  // ✅ Only the ID
+
+// Job
+class SendNewsletterJob implements ShouldQueue
+{
+    public function __construct(public int $userId) {}
+    
+    public function handle()
+    {
+        // Fetch WITH relations INSIDE the job
+        $user = User::with(['posts.comments', 'profile', 'settings'])
+            ->find($this->userId);
+        
+        // Now process
+        foreach ($user->posts as $post) {
+            foreach ($post->comments as $comment) {
+                // Process comment
+            }
+        }
+    }
+}</code></pre>
+            <p style="margin-top: 0.75rem;">Now the job fetches fresh data when it runs. No massive serialization in Redis.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: QUEUE CONNECTION MATTERS         -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>⚡ Queue Connection Matters</h2>
+
+        <h3>Payload size limits by driver:</h3>
+        <table>
+            <thead>
+                <tr><th>Driver</th><th>Default Max Payload</th><th>Risk with Full Models</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>sync</code> (testing)</td>
+                    <td>No limit (in-process)</td>
+                    <td>Low risk (no serialization)</td>
+                </tr>
+                <tr>
+                    <td><code>database</code> (<code>jobs</code> table)</td>
+                    <td class="highlight-red">~65KB (TEXT column)</td>
+                    <td class="highlight-red">⚠️ HIGH RISK — models with relations exceed 65KB</td>
+                </tr>
+                <tr>
+                    <td><code>redis</code></td>
+                    <td class="highlight">~512MB (configurable)</td>
+                    <td class="highlight">Memory, not size limit</td>
+                </tr>
+                <tr>
+                    <td><code>sqs</code> (AWS)</td>
+                    <td class="highlight-red">256KB</td>
+                    <td class="highlight-red">⚠️ HIGH RISK — exceeds limit, jobs fail silently</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="danger-box">
+            <span class="badge badge-red">SQS USERS: PAY ATTENTION</span>
+            <p>AWS SQS has a <strong>256KB hard limit</strong> per message. A User model with 50 posts and 200 comments can easily exceed this. The job will fail with no clear error message. Always use ID-only with SQS.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 8: WHEN YOU ACTUALLY NEED FULL MODEL -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>🤔 When Do You Actually Need Full Model Serialization?</h2>
+
+        <div class="comparison-grid">
+            <div class="comparison-card">
+                <h4>✅ ACCEPTABLE CASES</h4>
+                <ul style="margin: 0.5rem 0 0 1.5rem;">
+                    <li><strong>The model is very small</strong> (only 2-3 attributes)</li>
+                    <li><strong>You're 100% sure</strong> the model will never have relations</li>
+                    <li><strong>You need a snapshot</strong> of the data as it was at dispatch time</li>
+                    <li><strong>Low-volume queues</strong> (&lt; 100 jobs/day)</li>
+                </ul>
+            </div>
+            <div class="comparison-card">
+                <h4>❌ ALWAYS USE ID WHEN</h4>
+                <ul style="margin: 0.5rem 0 0 1.5rem;">
+                    <li>The model has <strong>any relations</strong> (posts, comments, etc.)</li>
+                    <li><strong>High-volume queues</strong> (thousands+ jobs)</li>
+                    <li>Using <strong>database queue driver</strong></li>
+                    <li>Using <strong>SQS queue driver</strong></li>
+                    <li><strong>Production environment</strong> (just to be safe)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="golden-quote" style="font-size: 1rem;">
+            🔴 THE SAFETY RULE:<br>
+            <strong>When in doubt, dispatch the ID.</strong> One extra database query in the job is infinitely cheaper than a crashed queue system.
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 9: SUMMARY                          -->
+    <!-- ============================================ -->
+    <section class="section">
+        <h2>📝 Topic 6 Summary: Queue Serialization Trap</h2>
+
+        <table>
+            <thead>
+                <tr><th>Approach</th><th>Payload Size (100k jobs)</th><th>Redis Memory</th><th>Safety</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Full User Model (no relations)</td>
+                    <td class="highlight-red">500 MB</td>
+                    <td class="highlight-red">High</td>
+                    <td class="highlight-red">⚠️ Risk</td>
+                </tr>
+                <tr>
+                    <td>Full User + Relations</td>
+                    <td class="highlight-red">50+ GB</td>
+                    <td class="highlight-red">💀 CRASH</td>
+                    <td class="highlight-red">💀 Never do this</td>
+                </tr>
+                <tr style="background: #0a2a1a;">
+                    <td><strong>ID Only</strong></td>
+                    <td class="highlight">0.8 MB</td>
+                    <td class="highlight">Minimal</td>
+                    <td class="highlight">✅ Always safe</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="golden-quote" style="font-size: 1.1rem; margin-top: 2rem;">
+            📌 THE RULE: <strong>Never dispatch a model. Always dispatch the ID. Fetch fresh inside the job.</strong><br><br>
+            This one pattern saves more production incidents than almost any other. Your queue will be faster, use less memory, and never hit payload limits.
+        </div>
+
+        <div class="warning-box" style="margin-top: 1.5rem;">
+            <span class="badge badge-orange">NEXT TOPIC PREVIEW</span>
+            <p><strong>Topic 7: Service Container & Reflection Cost</strong> — Why auto-wiring is expensive. The difference between singletons and transient services. How explicit binding saves CPU.</p>
+        </div>
+    </section>
+
+</body>
+</html>
