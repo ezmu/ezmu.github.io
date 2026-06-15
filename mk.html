@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MidKnight - Complete Tutorial & Documentation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .header h1 { font-size: 3em; margin-bottom: 10px; }
+        .header h1 span { color: #e94560; }
+        .container {
+            max-width: 1400px;
+            margin: -30px auto 0;
+            padding: 0 20px 40px;
+        }
+        .toc {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .toc h2 { color: #1a1a2e; margin-bottom: 20px; }
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .toc a {
+            display: block;
+            background: #f0f0f0;
+            padding: 12px;
+            text-decoration: none;
+            color: #1a1a2e;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .toc a:hover { background: #e94560; color: white; transform: translateX(5px); }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            color: #1a1a2e;
+            border-left: 4px solid #e94560;
+            padding-left: 15px;
+            margin-bottom: 25px;
+        }
+        .card h3 {
+            color: #e94560;
+            margin: 25px 0 15px;
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+        }
+        .code-block pre { margin: 0; }
+        .note {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th { background: #1a1a2e; color: white; }
+        tr:hover { background: #f5f5f5; }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 15px 40px; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>⚡ MidKnight <span>v2.0.0</span></h1>
+    <p>Complete Configuration & Caching Tutorial</p>
+</div>
+
+<div class="container">
+    <!-- Table of Contents -->
+    <div class="toc">
+        <h2>📚 Table of Contents</h2>
+        <div class="toc-grid">
+            <a href="#config">1. Configuration File</a>
+            <a href="#rules">2. Cache Rules</a>
+            <a href="#storage">3. Storage Types</a>
+            <a href="#license">4. License Setup</a>
+            <a href="#api">5. Admin API</a>
+            <a href="#search">6. Searchable Cache</a>
+            <a href="#examples">7. Examples</a>
+            <a href="#troubleshoot">8. Troubleshooting</a>
+        </div>
+    </div>
+
+    <!-- 1. Configuration File -->
+    <div id="config" class="card">
+        <h2>⚙️ Complete Configuration File</h2>
+        <p>Here's the <strong>full configuration file</strong> with ALL available options:</p>
+        
+        <div class="code-block">
+            <pre># ============================================
+# MIDKNIGHT CACHE PROXY CONFIGURATION
+# ============================================
+
+# ---------- NETWORK SETTINGS ----------
+port = 8080                          # HTTP proxy port
+backend = 127.0.0.1:3000             # Upstream backend server
+
+# ---------- CACHE SETTINGS ----------
+shm_size_mb = 512                    # Shared memory size (RAM cache)
+max_entries = 10000                  # Maximum cache entries
+cache_mode = config                  # all | config | auto
+eviction_policy = LRU                # LRU | LFU | FIFO
+
+# ---------- LICENSE ----------
+license = MIDK-1234-5678-9012-3456   # Your license key (MIDK-XXXX-XXXX-XXXX-XXXX)
+
+# ---------- DISK CACHE ----------
+disk_cache_dir = /tmp/ezmu_cache     # Disk cache directory
+disk_cache_size_mb = 10240           # Max disk cache size (10GB)
+
+# ---------- ADMIN SETTINGS ----------
+admin_allowed_ips = 127.0.0.1,192.168.1.0/24   # Allowed admin IPs
+admin_secret = mysecretkey                     # Admin authentication
+
+# ---------- PERFORMANCE ----------
+max_threads = 0                      # 0 = auto (based on CPU cores)
+enable_stats = 1                     # Enable statistics collection
+enable_logging = 1                   # Enable request logging
+
+# ---------- CACHE RULES ----------
+# Format: cache_rule = pattern ttl storage
+# ttl in seconds, storage: shm or disk
+
+# Static assets - Long TTL, Disk storage
+cache_rule = *.jpg 86400 disk
+cache_rule = *.jpeg 86400 disk
+cache_rule = *.png 86400 disk
+cache_rule = *.gif 86400 disk
+cache_rule = *.svg 86400 disk
+cache_rule = *.webp 86400 disk
+cache_rule = *.mp4 604800 disk
+cache_rule = *.webm 604800 disk
+cache_rule = *.pdf 604800 disk
+
+# Code files - Long TTL, SHM storage (faster)
+cache_rule = *.css 604800 shm
+cache_rule = *.js 604800 shm
+cache_rule = *.mjs 604800 shm
+
+# Fonts - Very long TTL
+cache_rule = *.woff 2592000 shm
+cache_rule = *.woff2 2592000 shm
+cache_rule = *.ttf 2592000 shm
+
+# API endpoints - Short TTL
+cache_rule = /api/* 3600 shm
+cache_rule = /v1/* 7200 shm
+cache_rule = /graphql 300 shm
+
+# Search endpoints - SHM with short TTL
+cache_rule = /search/* 600 shm
+cache_rule = /products/* 1800 shm
+
+# Admin section - NO CACHE
+cache_rule = /admin/* 0 shm
+cache_rule = /login 0 shm
+cache_rule = /logout 0 shm
+
+# User-specific - NO CACHE
+cache_rule = /user/* 0 shm
+cache_rule = /cart/* 0 shm
+cache_rule = /checkout/* 0 shm
+
+# HTML pages - Medium TTL
+cache_rule = *.html 3600 disk
+cache_rule = *.htm 3600 disk
+
+# XML/RSS feeds
+cache_rule = *.xml 1800 shm
+cache_rule = *.rss 1800 shm
+
+# Everything else - Default rule
+cache_rule = * 1800 shm</pre>
+        </div>
+
+        <div class="note">
+            <strong>💡 Note:</strong> Rules are evaluated in order. First matching rule applies!
+        </div>
+    </div>
+
+    <!-- 2. Cache Rules Explained -->
+    <div id="rules" class="card">
+        <h2>🎯 Cache Rules Explained</h2>
+        
+        <h3>Rule Syntax</h3>
+        <div class="code-block">
+            <pre>cache_rule = &lt;pattern&gt; &lt;ttl&gt; &lt;storage&gt;</pre>
+        </div>
+
+        <h3>Pattern Matching</h3>
+        <table>
+            <thead><tr><th>Pattern</th><th>Matches</th><th>Example</th></tr></thead>
+            <tbody>
+                <tr><td>*.ext</td><td>All files with extension</td><td>*.jpg</td></tr>
+                <tr><td>/path/*</td><td>All paths under directory</td><td>/api/*</td></tr>
+                <tr><td>exact/path</td><td>Exact path match</td><td>/index.html</td></tr>
+                <tr><td>*</td><td>Everything (default)</td><td>*</td></tr>
+            </tbody>
+        </table>
+
+        <h3>TTL Values (Time To Live)</h3>
+        <table>
+            <thead><tr><th>Duration</th><th>Seconds</th><th>Use Case</th></tr></thead>
+            <tbody>
+                <tr><td>0</td><td>No cache</td><td>Dynamic/private content</td></tr>
+                <tr><td>5 minutes</td><td>300</td><td>Real-time data</td></tr>
+                <tr><td>1 hour</td><td>3600</td><td>API responses</td></tr>
+                <tr><td>1 day</td><td>86400</td><td>Images, static content</td></tr>
+                <tr><td>1 week</td><td>604800</td><td>CSS, JS libraries</td></tr>
+                <tr><td>1 month</td><td>2592000</td><td>Fonts, rarely changed assets</td></tr>
+                <tr><td>1 year</td><td>31536000</td><td>Permanent assets</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 3. Storage Types -->
+    <div id="storage" class="card">
+        <h2>💾 Storage Types Comparison</h2>
+        
+        <table>
+            <thead><tr><th>Feature</th><th>SHM (Shared Memory)</th><th>DISK</th></tr></thead>
+            <tbody>
+                <tr><td>Speed</td><td>⚡ Nanoseconds (RAM)</td><td>🐢 Milliseconds (Disk I/O)</td></tr>
+                <tr><td>Capacity</td><td>Limited (set by shm_size_mb)</td><td>Large (disk_cache_size_mb)</td></tr>
+                <tr><td>Persistence</td><td>Lost on restart</td><td>Persistent across restarts</td></tr>
+                <tr><td>Best for</td><td>Small files, APIs, JSON</td><td>Images, videos, large files</td></tr>
+                <tr><td>Cost</td><td>Uses RAM</td><td>Uses disk space</td></tr>
+            </tbody>
+        </table>
+
+        <div class="warning">
+            <strong>⚠️ Important:</strong> SHM cache is faster but limited. Use DISK for large files!
+        </div>
+    </div>
+
+    <!-- 4. License Setup -->
+    <div id="license" class="card">
+        <h2>🔑 License Setup</h2>
+        
+        <h3>License Key Format</h3>
+        <div class="code-block">
+            <pre>MIDK-XXXX-XXXX-XXXX-XXXX
+(Where X is hexadecimal: 0-9, A-F)</pre>
+        </div>
+
+        <h3>Ways to Set License</h3>
+        <div class="code-block">
+            <pre># Method 1: In config file
+license = MIDK-1234-5678-9012-3456
+
+# Method 2: Environment variable
+export MIDKNIGHT_LICENSE="MIDK-1234-5678-9012-3456"
+
+# Method 3: System file
+echo "MIDK-1234-5678-9012-3456" | sudo tee /etc/midknight/license
+
+# Method 4: Command line (if implemented)
+./midknight --license "MIDK-1234-5678-9012-3456"</pre>
+        </div>
+
+        <h3>License Status Commands</h3>
+        <div class="code-block">
+            <pre># Check license via admin API
+curl http://localhost:8082/__ezmu_admin__/license
+
+# Response:
+# {
+#   "status": "LICENSED",
+#   "message": "Valid for 1 year",
+#   "days_left": 358,
+#   "expires": "2026-01-15 12:00:00",
+#   "valid": true
+# }</pre>
+        </div>
+    </div>
+
+    <!-- 5. Admin API -->
+    <div id="api" class="card">
+        <h2>🔌 Complete Admin API Reference</h2>
+        
+        <h3>Endpoints</h3>
+        <table>
+            <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>GET</td><td>/__ezmu_admin__/stats</td><td>Cache statistics</td></tr>
+                <tr><td>GET</td><td>/__ezmu_admin__/license</td><td>License information</td></tr>
+                <tr><td>DELETE</td><td>/__ezmu_admin__/cache/all</td><td>Clear all cache</td></tr>
+                <tr><td>DELETE</td><td>/__ezmu_admin__/cache?key=KEY</td><td>Delete specific entry</td></tr>
+                <tr><td>POST</td><td>/__ezmu_admin__/reload</td><td>Reload configuration</td></tr>
+                <tr><td>POST</td><td>/__ezmu_admin__/cache/json</td><td>Push JSON to searchable cache</td></tr>
+                <tr><td>GET</td><td>/__ezmu_admin__/search/stats</td><td>Search cache stats</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Examples</h3>
+        <div class="code-block">
+            <pre># Get statistics
+curl http://localhost:8082/__ezmu_admin__/stats
+
+# Clear specific cache
+curl -X DELETE "http://localhost:8082/__ezmu_admin__/cache?key=/api/users"
+
+# Reload config after editing midknight.conf
+curl -X POST http://localhost:8082/__ezmu_admin__/reload
+
+# Push data to searchable cache
+curl -X POST http://localhost:8082/__ezmu_admin__/cache/json \
+  -H "Content-Type: application/json" \
+  -d '{
+    "key": "/api/products",
+    "data": "[{\"id\":1,\"name\":\"Laptop\",\"price\":999}]",
+    "searchable_fields": "name,category",
+    "sortable_fields": "price"
+  }'</pre>
+        </div>
+    </div>
+
+    <!-- 6. Searchable Cache -->
+    <div id="search" class="card">
+        <h2>🔍 Searchable Cache Feature</h2>
+        
+        <h3>What is Searchable Cache?</h3>
+        <p>MidKnight can index JSON data and provide full-text search directly from cache!</p>
+
+        <h3>Storing Searchable Data</h3>
+        <div class="code-block">
+            <pre># Via Admin API
+curl -X POST http://localhost:8082/__ezmu_admin__/cache/json \
+  -H "Content-Type: application/json" \
+  -d '{
+    "key": "/api/products",
+    "data": "[
+      {\"id\":1,\"name\":\"Gaming Laptop\",\"category\":\"electronics\",\"price\":1299},
+      {\"id\":2,\"name\":\"Office Laptop\",\"category\":\"electronics\",\"price\":799},
+      {\"id\":3,\"name\":\"Wireless Mouse\",\"category\":\"accessories\",\"price\":45}
+    ]",
+    "searchable_fields": "name,category",
+    "sortable_fields": "price,name"
+  }'</pre>
+        </div>
+
+        <h3>Search Queries</h3>
+        <div class="code-block">
+            <pre># Full-text search
+curl "http://localhost:8080/api/products?q=laptop"
+
+# Field search
+curl "http://localhost:8080/api/products?category=electronics"
+
+# Filter by price range
+curl "http://localhost:8080/api/products?price__gt=500&price__lt=1000"
+
+# Sort results
+curl "http://localhost:8080/api/products?sort=price&order=desc"
+
+# Pagination
+curl "http://localhost:8080/api/products?page=2&per_page=20"
+
+# Combine everything
+curl "http://localhost:8080/api/products?category=electronics&sort=price&order=asc&page=1&per_page=10"</pre>
+        </div>
+
+        <h3>Search Operators</h3>
+        <table>
+            <thead><tr><th>Operator</th><th>Description</th><th>Example</th></tr></thead>
+            <tbody>
+                <tr><td>field=value</td><td>Exact match</td><td>category=electronics</td></tr>
+                <tr><td>field__contains</td><td>Partial match</td><td>name__contains=lap</td></tr>
+                <tr><td>field__gt</td><td>Greater than</td><td>price__gt=500</td></tr>
+                <tr><td>field__lt</td><td>Less than</td><td>price__lt=1000</td></tr>
+                <tr><td>q</td><td>Full-text search</td><td>q=gaming</td></tr>
+                <tr><td>sort</td><td>Sort field</td><td>sort=price</td></tr>
+                <tr><td>order</td><td>asc or desc</td><td>order=desc</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 7. Complete Examples -->
+    <div id="examples" class="card">
+        <h2>📋 Complete Configuration Examples</h2>
+
+        <h3>Example 1: WordPress/Static Site Accelerator</h3>
+        <div class="code-block">
+            <pre>port = 8080
+backend = wordpress.local:80
+shm_size_mb = 2048
+cache_mode = config
+
+# Cache static assets aggressively
+cache_rule = *.css 604800 shm
+cache_rule = *.js 604800 shm
+cache_rule = *.jpg 86400 disk
+cache_rule = *.png 86400 disk
+cache_rule = *.svg 86400 disk
+cache_rule = *.woff2 2592000 shm
+
+# WordPress specific
+cache_rule = /wp-content/* 86400 disk
+cache_rule = /wp-includes/* 86400 disk
+cache_rule = /wp-admin/* 0 shm
+
+disk_cache_dir = /var/cache/midknight/wordpress</pre>
+        </div>
+
+        <h3>Example 2: API Gateway with Search</h3>
+        <div class="code-block">
+            <pre>port = 8080
+backend = api.backend.com:3000
+shm_size_mb = 1024
+cache_mode = config
+
+# API endpoints with different TTLs
+cache_rule = /api/products 3600 shm
+cache_rule = /api/users/* 0 shm
+cache_rule = /api/search/* 600 shm
+cache_rule = /api/static/* 86400 shm
+
+# Searchable fields for JSON responses
+# Backend should return headers:
+# X-Searchable-Fields: name,email,status
+# X-Sortable-Fields: created_at,id</pre>
+        </div>
+
+        <h3>Example 3: CDN for Media Files</h3>
+        <div class="code-block">
+            <pre>port = 80
+backend = origin.storage.com:80
+shm_size_mb = 512
+cache_mode = config
+
+# Images - long TTL, disk storage
+cache_rule = *.jpg 2592000 disk
+cache_rule = *.png 2592000 disk
+cache_rule = *.webp 2592000 disk
+
+# Videos - very long TTL
+cache_rule = *.mp4 7776000 disk
+cache_rule = *.webm 7776000 disk
+
+# Thumbnails - medium TTL
+cache_rule = /thumb/* 86400 disk
+
+disk_cache_dir = /data/midknight/cdn
+disk_cache_size_mb = 102400  # 100GB cache</pre>
+        </div>
+    </div>
+
+    <!-- 8. Troubleshooting -->
+    <div id="troubleshoot" class="card">
+        <h2>🔧 Troubleshooting Guide</h2>
+
+        <h3>Common Issues and Solutions</h3>
+
+        <div class="warning">
+            <strong>Issue 1:</strong> "Failed to initialize shared memory"
+            <div class="code-block">
+                <pre># Solution: Increase system shared memory limits
+sudo sysctl -w kernel.shmmax=1073741824
+sudo sysctl -w kernel.shmall=2097152
+
+# Make permanent
+echo "kernel.shmmax=1073741824" | sudo tee -a /etc/sysctl.conf
+echo "kernel.shmall=2097152" | sudo tee -a /etc/sysctl.conf</pre>
+            </div>
+        </div>
+
+        <div class="warning">
+            <strong>Issue 2:</strong> Cache not working
+            <div class="code-block">
+                <pre># Check:
+# 1. Is method GET?
+# 2. Does path match any rule?
+# 3. Is TTL > 0?
+# 4. Is cache_mode correct?
+
+# Debug: Check if rule matches
+curl -I http://localhost:8080/your/path</pre>
+            </div>
+        </div>
+
+        <div class="warning">
+            <strong>Issue 3:</strong> High memory usage
+            <div class="code-block">
+                <pre># Solution: Reduce SHM size or max_entries
+shm_size_mb = 256
+max_entries = 5000
+
+# Or monitor and clear cache
+curl -X DELETE http://localhost:8082/__ezmu_admin__/cache/all</pre>
+            </div>
+        </div>
+
+        <div class="warning">
+            <strong>Issue 4:</strong> License expired
+            <div class="code-block">
+                <pre># Purchase new license or renew
+Contact: 3z.eldeen@gmail.com
+
+# Check current status
+curl http://localhost:8082/__ezmu_admin__/license</pre>
+            </div>
+        </div>
+
+        <h3>Performance Monitoring</h3>
+        <div class="code-block">
+            <pre># Monitor hit rate
+watch -n 5 'curl -s http://localhost:8082/__ezmu_admin__/stats | jq .hit_rate'
+
+# Monitor SHM usage
+ipcs -m
+
+# Monitor disk cache
+du -sh /tmp/ezmu_cache
+
+# Real-time logs
+tail -f /var/log/midknight.log</pre>
+        </div>
+    </div>
+
+    <!-- Running the Server -->
+    <div class="card">
+        <h2>🚀 Running the Server</h2>
+        
+        <h3>Basic Commands</h3>
+        <div class="code-block">
+            <pre># Start with config
+./midknight --config midknight.conf
+
+# Start in background
+./midknight --config midknight.conf > midknight.log 2>&1 &
+
+# Start with command line overrides
+./midknight --port 9090 --backend localhost:3000 --shm-size 1024
+
+# Stop
+pkill midknight
+
+# Check if running
+ps aux | grep midknight
+netstat -tlnp | grep midknight</pre>
+        </div>
+
+        <h3>Systemd Service (Production)</h3>
+        <div class="code-block">
+            <pre># /etc/systemd/system/midknight.service
+[Unit]
+Description=MidKnight Cache Proxy
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+ExecStart=/usr/local/bin/midknight --config /etc/midknight/midknight.conf
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+# Enable and start
+sudo systemctl daemon-reload
+sudo systemctl enable midknight
+sudo systemctl start midknight
+sudo systemctl status midknight</pre>
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="card">
+        <h2>📧 Contact & Support</h2>
+        <div class="note">
+            <strong>📧 Email:</strong> 3z.eldeen@gmail.com<br>
+            <strong>🔑 License Purchases:</strong> Same email<br>
+            <strong>🐛 Bug Reports:</strong> Include version and config<br>
+            <strong>💡 Feature Requests:</strong> Always welcome!
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>© 2024-2026 <strong>Ezmu Team</strong>. All rights reserved.</p>
+    <p>MidKnight - High-Performance HTTP Reverse Proxy Cache</p>
+</div>
+
+</body>
+</html>
