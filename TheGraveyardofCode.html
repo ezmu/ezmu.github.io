@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Graveyard of Code — A Manifesto</title>
+    <style>
+        /* ── Reset & Base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d1117;
+            color: #f0f6fc;
+            font-family: 'Courier New', monospace;
+            line-height: 1.7;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* ── Typography ── */
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #f0f6fc;
+            border-bottom: 2px solid #da3633;
+            padding-bottom: 12px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #8b949e;
+            margin-bottom: 40px;
+            border-left: 3px solid #d29922;
+            padding-left: 16px;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #f0f6fc;
+            margin-top: 48px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin-top: 32px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: #c9d1d9;
+            margin-bottom: 16px;
+        }
+
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        blockquote {
+            border-left: 4px solid #f0883e;
+            padding-left: 18px;
+            margin: 24px 0;
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        /* ── Code ── */
+        pre {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px 18px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            color: #f0f6fc;
+            margin: 16px 0;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            background: #161b22;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #f0f6fc;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+        }
+
+        /* ── Lists ── */
+        ul, ol {
+            margin: 12px 0 16px 24px;
+            color: #c9d1d9;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+
+        /* ── Charts / SVG ── */
+        .chart {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 32px 0;
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        .chart svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .chart-caption {
+            color: #8b949e;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        /* ── Footnotes ── */
+        .footnotes {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid #30363d;
+            font-size: 0.9rem;
+            color: #8b949e;
+        }
+        .footnotes p {
+            margin-bottom: 4px;
+        }
+        .footnotes sup {
+            color: #58a6ff;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+            .container {
+                padding: 12px 8px;
+            }
+            pre {
+                font-size: 0.8rem;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ════════════════════════════════════════ -->
+    <!--  TITLE & SUBTITLE                      -->
+    <!-- ════════════════════════════════════════ -->
+
+    <h1>⛧ The Graveyard of Code</h1>
+    <div class="subtitle">
+        How We Traded Technical Sovereignty for the Illusion of "Comfort"<br>
+        <span style="color: #8b949e; font-size: 0.9rem;">
+            Musings on the Hell of Layers, and Why I Pulled the "Winch" Out of the Garage
+        </span>
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <!--  INTRODUCTION                          -->
+    <!-- ════════════════════════════════════════ -->
+
+    <h2>Introduction: A Cry from the Bottom of the Well</h2>
+
+    <p>
+        <strong>"We are not drowning in technical complexity—we are drowning in an <em>economy of waste</em>."</strong>
+    </p>
+
+    <p>
+        Two years ago, I made a decision that seemed to many like "going backward": I decided to return to talking to the metal (<em>Talk to Metal</em>). This decision wasn't born from nostalgia for the past, but from a bitter reflection on our technical reality.
+    </p>
+
+    <p>
+        During years of war, when technology ceased to be a "luxury" and became a scarce resource, I saw the structural collapse for what it truly is. I contemplated this madness: how we consume CPU and RAM processing hundreds of layers that add no value, while the physical foundation (The Metal) screams beneath all this weight.
+    </p>
+
+    <p>
+        This article isn't a technical guide. It's a <strong>manifesto of liberation</strong> from the bondage of frameworks, and an attempt to understand how we got here, and why returning to "simplicity" might be the only path to survival.
+    </p>
+
+    <!-- ════════════════════════════════════════ -->
+    <!--  CHAPTER ONE                           -->
+    <!-- ════════════════════════════════════════ -->
+
+    <h2>Chapter One: The Jurisprudence of Waste</h2>
+    <p style="color: #8b949e; margin-top: -6px;">— or: How We Squandered Decades on Meaningless Consumption</p>
+
+    <h3>1. The O(1) Illusion: When a Single Function Becomes a Consumption Monster</h3>
+
+    <p>Let's conduct a simple thought experiment. Imagine you write this code:</p>
+
+    <pre><code>$users = getUserService()-&gt;authenticate($credentials);</code></pre>
+
+    <p>
+        <strong>In the programmer's mind:</strong> This is one line, this is "O(1)", this is clean, concise code.
+    </p>
+
+    <p>
+        <strong>In the CPU's mind:</strong> You just requested "rebuilding the world." This simple journey hides beneath it:
+    </p>
+
+    <ul>
+        <li><strong>Bootstrap</strong>: Loading and activating 50+ Service Providers.</li>
+        <li><strong>Reflection</strong>: Searching memory for required classes.</li>
+        <li><strong>Dependency Injection</strong>: Creating a tree of nested objects.</li>
+        <li><strong>Middleware Stack</strong>: Passing the request through 5–10 layers of preprocessing.</li>
+        <li><strong>ORM</strong>: Building a complex SQL query, transforming results into objects.</li>
+        <li><strong>Serialization</strong>: Converting data to JSON.</li>
+        <li><strong>Garbage Collection</strong>: Cleaning up the mess created by all of the above.</li>
+    </ul>
+
+    <p>
+        The result: What appeared as <strong>O(1)</strong> in design, transforms into <strong>O(65,477)</strong> in execution.
+    </p>
+
+    <!-- Chart 1: O(1) Illusion -->
+    <div class="chart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" style="max-width:100%;height:auto;">
+          <rect width="800" height="500" fill="#0d1117"/>
+          <text x="400" y="40" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="20" font-weight="bold">The O(1) Illusion</text>
+          <text x="400" y="65" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="14">What the Programmer Sees vs. What the CPU Actually Executes</text>
+          <rect x="50" y="100" width="300" height="350" rx="10" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+          <text x="200" y="130" text-anchor="middle" fill="#58a6ff" font-family="monospace" font-size="16" font-weight="bold">👁️ Programmer's View</text>
+          <rect x="80" y="155" width="240" height="40" rx="5" fill="#0d1117" stroke="#30363d"/>
+          <text x="200" y="180" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="13">$users = getUserService()-&gt;authenticate()</text>
+          <text x="200" y="225" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="13">Complexity: O(1)</text>
+          <rect x="100" y="250" width="200" height="30" rx="4" fill="#238636" opacity="0.3"/>
+          <text x="200" y="270" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="12">✅ One Function Call</text>
+          <rect x="100" y="290" width="200" height="30" rx="4" fill="#238636" opacity="0.3"/>
+          <text x="200" y="310" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="12">✅ Clean, Readable Code</text>
+          <rect x="100" y="330" width="200" height="30" rx="4" fill="#238636" opacity="0.3"/>
+          <text x="200" y="350" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="12">✅ Simple Abstraction</text>
+          <line x1="355" y1="275" x2="440" y2="275" stroke="#8b949e" stroke-width="3" stroke-dasharray="5,5"/>
+          <polygon points="445,270 460,275 445,280" fill="#8b949e"/>
+          <rect x="465" y="100" width="300" height="350" rx="10" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+          <text x="615" y="130" text-anchor="middle" fill="#f85149" font-family="monospace" font-size="16" font-weight="bold">⚙️ CPU's Reality</text>
+          <rect x="485" y="155" width="260" height="35" rx="4" fill="#0d1117" stroke="#da3633"/>
+          <text x="615" y="175" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">Bootstrap: Load 50+ Services</text>
+          <rect x="485" y="198" width="260" height="35" rx="4" fill="#0d1117" stroke="#da3633"/>
+          <text x="615" y="218" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">Reflection: Find All Classes</text>
+          <rect x="485" y="241" width="260" height="35" rx="4" fill="#0d1117" stroke="#da3633"/>
+          <text x="615" y="261" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">DI Container: Build Object Tree</text>
+          <rect x="485" y="284" width="260" height="35" rx="4" fill="#0d1117" stroke="#da3633"/>
+          <text x="615" y="304" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">Middleware: 5-10 Layers</text>
+          <rect x="485" y="327" width="260" height="35" rx="4" fill="#0d1117" stroke="#da3633"/>
+          <text x="615" y="347" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">ORM: Complex SQL + Objects</text>
+          <rect x="485" y="370" width="260" height="35" rx="4" fill="#0d1117" stroke="#da3633"/>
+          <text x="615" y="390" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">Garbage Collector: Clean Up</text>
+          <text x="615" y="435" text-anchor="middle" fill="#f85149" font-family="monospace" font-size="14" font-weight="bold">Actual Complexity: O(65,477) 🚨</text>
+        </svg>
+        <div class="chart-caption">Chart 1 — The gap between perceived and actual complexity.</div>
+    </div>
+
+    <p>
+        <strong>This number isn't an exaggeration.</strong> In one study analyzing a typical Rails application's performance, it was found that <strong>95% of processing time is consumed by Framework Overhead</strong>, and only 5% goes to actual business logic<sup><a href="#fn1">[1]</a></sup>.
+    </p>
+
+    <h3>2. Why Do We Do This? Because the "Comfort Zone" Is More Expensive Than Efficiency</h3>
+
+    <p>Today's programmer doesn't want to "build"—they want to "assemble":</p>
+
+    <pre><code>I want Auth Library          ← Add ORM
+    I want Throttling Protection  ← Add Middleware
+    I want Social Login           ← Add Another Package
+    I want Injection Protection   ← Add Fourth Layer
+    I want XSS Protection         ← Add Fifth Layer</code></pre>
+
+    <p>
+        In the end, you find you've built a "castle of middleware" surrounding a simple function no more than 50 lines of logic.
+    </p>
+
+    <p>
+        This isn't "comfort"—this is <strong>fear</strong>:
+    </p>
+    <ul>
+        <li>Fear of writing raw SQL.</li>
+        <li>Fear of managing sessions manually.</li>
+        <li>Fear of dealing with Sockets directly.</li>
+    </ul>
+
+    <p>
+        This fear is what made us sacrifice technical sovereignty for the "illusion of security." But the bitter truth: <strong>Too many layers aren't protection—they're the biggest security vulnerability and the biggest source of waste.</strong>
+    </p>
+
+    <h3>3. The Waste in Numbers: What Has This Nonsense Cost Us Over 20 Years?</h3>
+
+    <p>Let's calculate together the cost of a simple choice: how to handle Arrays in PHP.</p>
+
+    <ul>
+        <li><strong>Method (A)</strong>: Using <code>foreach</code> with <code>&amp;$value</code> (Pass by reference) or <code>SplFixedArray</code> for fixed-size data.</li>
+        <li><strong>Method (B)</strong>: Using standard <code>foreach</code> with array copying in each iteration (the "conventional" method).</li>
+    </ul>
+
+    <p>
+        The difference in memory consumption and CPU cycles between the two methods can reach <strong>300–500%</strong> in data-intensive applications<sup><a href="#fn2">[2]</a></sup>.
+    </p>
+
+    <p>Multiply this difference by:</p>
+    <ul>
+        <li>Millions of applications running today.</li>
+        <li>Billions of requests processed daily.</li>
+        <li>20 years of usage.</li>
+    </ul>
+
+    <p>
+        <strong>The result:</strong> Millions of additional servers that were powered on, millions of tons of CO₂ emitted, and billions of dollars paid for the "comfort" of writing code.
+    </p>
+
+    <p>
+        <strong>We are living in an era of technical "austerity" without realizing it, because we live in an era of "luxury" in the code we write.</strong>
+    </p>
+
+    <!-- ════════════════════════════════════════ -->
+    <!--  CHAPTER TWO                           -->
+    <!-- ════════════════════════════════════════ -->
+
+    <h2>Chapter Two: Dissecting the Crime</h2>
+    <p style="color: #8b949e; margin-top: -6px;">— or: How HTTP Became a Waste Carrier</p>
+
+    <h3>1. The Protocol Designed to Be a "Water Pipe" Now Carries "Gravel"</h3>
+
+    <p>
+        When HTTP was designed in the early 1990s, its philosophy was simple: a <strong>stateless, fast, and uncomplicated data carrier</strong>.
+    </p>
+
+    <p>Its goal: transferring text and images from server to browser. Nothing more.</p>
+
+    <p>But today, we insist on using this "pipe" to carry:</p>
+
+    <ul>
+        <li><strong>JSON of 5+ MB</strong>: Mostly static data that doesn't change for months, but we resend it with every request, and redo <strong>Serialization/Deserialization</strong> on it every time.</li>
+        <li><strong>JavaScript Bundles of 2+ MB</strong>: Containing 95% "Dead Code" that's never used, but we insist on loading it, parsing it, and executing it on the user's device.</li>
+    </ul>
+
+    <p><strong>A Simple Analysis:</strong></p>
+    <ul>
+        <li>Average web page size today: ~2.5 MB<sup><a href="#fn3">[3]</a></sup></li>
+        <li>Average web page size in 2010: ~0.5 MB</li>
+        <li>Average web page size in 2000: ~0.05 MB</li>
+    </ul>
+
+    <p>
+        Page sizes have multiplied <strong>50 times</strong> over 20 years, while the actual value of the content (text and core images) hasn't multiplied at the same rate.
+    </p>
+
+    <!-- Chart 2: Bloat Acceleration -->
+    <div class="chart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" style="max-width:100%;height:auto;">
+          <rect width="800" height="500" fill="#0d1117"/>
+          <text x="400" y="40" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="20" font-weight="bold">The Bloat Acceleration</text>
+          <text x="400" y="65" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="14">Average Web Page Size vs. Meaningful Content (1990–2025)</text>
+          <line x1="80" y1="420" x2="750" y2="420" stroke="#30363d" stroke-width="2"/>
+          <line x1="80" y1="420" x2="80" y2="60" stroke="#30363d" stroke-width="2"/>
+          <text x="70" y="425" text-anchor="end" fill="#8b949e" font-family="monospace" font-size="11">0</text>
+          <text x="70" y="335" text-anchor="end" fill="#8b949e" font-family="monospace" font-size="11">1 MB</text>
+          <text x="70" y="245" text-anchor="end" fill="#8b949e" font-family="monospace" font-size="11">2 MB</text>
+          <text x="70" y="155" text-anchor="end" fill="#8b949e" font-family="monospace" font-size="11">3 MB</text>
+          <text x="70" y="65" text-anchor="end" fill="#8b949e" font-family="monospace" font-size="11">4 MB</text>
+          <line x1="80" y1="390" x2="750" y2="390" stroke="#21262d" stroke-width="0.5"/>
+          <line x1="80" y1="300" x2="750" y2="300" stroke="#21262d" stroke-width="0.5"/>
+          <line x1="80" y1="210" x2="750" y2="210" stroke="#21262d" stroke-width="0.5"/>
+          <line x1="80" y1="120" x2="750" y2="120" stroke="#21262d" stroke-width="0.5"/>
+          <text x="120" y="445" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">1990</text>
+          <text x="240" y="445" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">1995</text>
+          <text x="360" y="445" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">2000</text>
+          <text x="480" y="445" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">2005</text>
+          <text x="600" y="445" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">2010</text>
+          <text x="720" y="445" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">2020</text>
+          <rect x="105" y="416" width="25" height="4" fill="#3fb950"/>
+          <rect x="135" y="416" width="25" height="4" fill="#238636"/>
+          <rect x="225" y="410" width="25" height="10" fill="#3fb950"/>
+          <rect x="255" y="412" width="25" height="8" fill="#238636"/>
+          <rect x="345" y="390" width="25" height="30" fill="#3fb950"/>
+          <rect x="375" y="395" width="25" height="25" fill="#238636"/>
+          <rect x="465" y="330" width="25" height="90" fill="#d29922"/>
+          <rect x="495" y="360" width="25" height="60" fill="#238636"/>
+          <rect x="585" y="210" width="25" height="210" fill="#da3633"/>
+          <rect x="615" y="300" width="25" height="120" fill="#238636"/>
+          <rect x="705" y="60" width="25" height="360" fill="#da3633"/>
+          <rect x="735" y="280" width="25" height="140" fill="#238636"/>
+          <rect x="80" y="465" width="20" height="15" fill="#da3633"/>
+          <text x="105" y="477" fill="#ff7b72" font-family="monospace" font-size="12">Total Page Size (Bloat + Content)</text>
+          <rect x="80" y="485" width="20" height="15" fill="#238636"/>
+          <text x="105" y="497" fill="#3fb950" font-family="monospace" font-size="12">Meaningful Content</text>
+        </svg>
+        <div class="chart-caption">Chart 2 — Page size grew 50x while meaningful content barely moved.</div>
+    </div>
+
+    <h3>2. "Don't Sell Water at the River's Edge"</h3>
+
+    <p>
+        In 1999, programmers treated the Process as a "sacred task." CGI would spawn a new process for each request, and yet systems were considered "blazingly fast."
+    </p>
+
+    <p>Why?</p>
+    <ul>
+        <li>Because the contract was simple: <code>Input (STDIN) → Logic → Output (STDOUT)</code>.</li>
+        <li>There were no "protective layers" (Middleware) consuming 90% of request time.</li>
+        <li>The programmer could see the Socket, could see the File Descriptor. There was a direct connection between the programmer's mind and the machine's memory.</li>
+    </ul>
+
+    <p>Today, a request passes through:</p>
+
+    <pre><code>Load Balancer 
+      → Reverse Proxy 
+        → Container Gateway 
+          → Framework Router 
+            → DI Container 
+              → Middleware Stack (×10) 
+                → ORM/Database Layer 
+                  → Finally... Business Logic</code></pre>
+
+    <!-- Chart 4: Modern Request Journey -->
+    <div class="chart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" style="max-width:100%;height:auto;">
+          <rect width="800" height="500" fill="#0d1117"/>
+          <text x="400" y="35" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="20" font-weight="bold">The Modern Request Journey</text>
+          <text x="400" y="60" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="14">What a Single HTTP Request Passes Through in 2024</text>
+          <rect x="150" y="85" width="500" height="40" rx="6" fill="#161b22" stroke="#da3633" stroke-width="1.5"/>
+          <text x="400" y="110" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="13">🌐 Load Balancer</text>
+          <line x1="400" y1="125" x2="400" y2="140" stroke="#30363d" stroke-width="2"/>
+          <polygon points="395,140 405,140 400,148" fill="#30363d"/>
+          <rect x="150" y="150" width="500" height="40" rx="6" fill="#161b22" stroke="#da3633" stroke-width="1.5"/>
+          <text x="400" y="175" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="13">🔄 Reverse Proxy (Nginx/HAProxy)</text>
+          <line x1="400" y1="190" x2="400" y2="205" stroke="#30363d" stroke-width="2"/>
+          <polygon points="395,205 405,205 400,213" fill="#30363d"/>
+          <rect x="150" y="215" width="500" height="40" rx="6" fill="#161b22" stroke="#d29922" stroke-width="1.5"/>
+          <text x="400" y="240" text-anchor="middle" fill="#e3b341" font-family="monospace" font-size="13">🐳 Container Gateway (Kubernetes Ingress)</text>
+          <line x1="400" y1="255" x2="400" y2="270" stroke="#30363d" stroke-width="2"/>
+          <polygon points="395,270 405,270 400,278" fill="#30363d"/>
+          <rect x="150" y="280" width="500" height="40" rx="6" fill="#161b22" stroke="#d29922" stroke-width="1.5"/>
+          <text x="400" y="305" text-anchor="middle" fill="#e3b341" font-family="monospace" font-size="13">🧭 Framework Router + DI Container</text>
+          <line x1="400" y1="320" x2="400" y2="335" stroke="#30363d" stroke-width="2"/>
+          <polygon points="395,335 405,335 400,343" fill="#30363d"/>
+          <rect x="150" y="345" width="500" height="40" rx="6" fill="#161b22" stroke="#d29922" stroke-width="1.5"/>
+          <text x="400" y="370" text-anchor="middle" fill="#e3b341" font-family="monospace" font-size="13">🔐 Middleware Stack (Auth, Throttle, CORS, CSRF, ...)</text>
+          <line x1="400" y1="385" x2="400" y2="400" stroke="#30363d" stroke-width="2"/>
+          <polygon points="395,400 405,400 400,408" fill="#30363d"/>
+          <rect x="150" y="410" width="500" height="40" rx="6" fill="#161b22" stroke="#da3633" stroke-width="1.5"/>
+          <text x="400" y="435" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="13">🗄️ ORM → SQL → Objects → JSON</text>
+          <line x1="400" y1="450" x2="400" y2="470" stroke="#30363d" stroke-width="2"/>
+          <polygon points="395,470 405,470 400,478" fill="#30363d"/>
+          <text x="400" y="490" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="13">⚡ Finally... Business Logic (5% of processing time)</text>
+          <rect x="40" y="85" width="90" height="365" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="85" y="105" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">LAYERS</text>
+          <text x="85" y="130" text-anchor="middle" fill="#da3633" font-family="monospace" font-size="16" font-weight="bold">1</text>
+          <line x1="50" y1="140" x2="120" y2="140" stroke="#30363d" stroke-width="0.5"/>
+          <text x="85" y="160" text-anchor="middle" fill="#da3633" font-family="monospace" font-size="16" font-weight="bold">2</text>
+          <line x1="50" y1="170" x2="120" y2="170" stroke="#30363d" stroke-width="0.5"/>
+          <text x="85" y="195" text-anchor="middle" fill="#d29922" font-family="monospace" font-size="16" font-weight="bold">3</text>
+          <line x1="50" y1="205" x2="120" y2="205" stroke="#30363d" stroke-width="0.5"/>
+          <text x="85" y="230" text-anchor="middle" fill="#d29922" font-family="monospace" font-size="16" font-weight="bold">4</text>
+          <line x1="50" y1="240" x2="120" y2="240" stroke="#30363d" stroke-width="0.5"/>
+          <text x="85" y="265" text-anchor="middle" fill="#d29922" font-family="monospace" font-size="16" font-weight="bold">5</text>
+          <line x1="50" y1="275" x2="120" y2="275" stroke="#30363d" stroke-width="0.5"/>
+          <text x="85" y="300" text-anchor="middle" fill="#d29922" font-family="monospace" font-size="16" font-weight="bold">6</text>
+          <line x1="50" y1="310" x2="120" y2="310" stroke="#30363d" stroke-width="0.5"/>
+          <text x="85" y="335" text-anchor="middle" fill="#da3633" font-family="monospace" font-size="16" font-weight="bold">7</text>
+          <line x1="50" y1="345" x2="120" y2="345" stroke="#30363d" stroke-width="0.5"/>
+          <text x="85" y="370" text-anchor="middle" fill="#da3633" font-family="monospace" font-size="16" font-weight="bold">8</text>
+          <line x1="50" y1="380" x2="120" y2="380" stroke="#30363d" stroke-width="0.5"/>
+          <text x="85" y="405" text-anchor="middle" fill="#da3633" font-family="monospace" font-size="16" font-weight="bold">9</text>
+          <line x1="50" y1="415" x2="120" y2="415" stroke="#30363d" stroke-width="0.5"/>
+          <text x="85" y="440" text-anchor="middle" fill="#da3633" font-family="monospace" font-size="16" font-weight="bold">10</text>
+        </svg>
+        <div class="chart-caption">Chart 4 — A single request passes through 10+ layers before reaching business logic.</div>
+    </div>
+
+    <p>
+        If we removed this nonsense, we'd find that <strong>5 servers from 1999 would be sufficient to run the entire web as it is today</strong>, in terms of raw computing power<sup><a href="#fn4">[4]</a></sup>.
+    </p>
+
+    <!-- Chart 7: 1999 vs Today -->
+    <div class="chart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 350" style="max-width:100%;height:auto;">
+          <rect width="800" height="350" fill="#0d1117"/>
+          <text x="400" y="35" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="18" font-weight="bold">Computing Power: 1999 vs Today</text>
+          <text x="400" y="60" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="13">5 Servers in 1999 = 1 Modern Smartphone</text>
+          <rect x="40" y="90" width="340" height="200" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="210" y="120" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="14" font-weight="bold">1999: 5 Servers</text>
+          <rect x="70" y="145" width="45" height="55" rx="3" fill="#0d1117" stroke="#238636" stroke-width="1.5"/>
+          <circle cx="92.5" cy="158" r="4" fill="#3fb950"/>
+          <line x1="80" y1="170" x2="105" y2="170" stroke="#238636" stroke-width="1"/>
+          <line x1="80" y1="178" x2="105" y2="178" stroke="#238636" stroke-width="1"/>
+          <text x="92.5" y="195" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="9">500MHz</text>
+          <rect x="135" y="145" width="45" height="55" rx="3" fill="#0d1117" stroke="#238636" stroke-width="1.5"/>
+          <circle cx="157.5" cy="158" r="4" fill="#3fb950"/>
+          <line x1="145" y1="170" x2="170" y2="170" stroke="#238636" stroke-width="1"/>
+          <line x1="145" y1="178" x2="170" y2="178" stroke="#238636" stroke-width="1"/>
+          <text x="157.5" y="195" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="9">500MHz</text>
+          <rect x="200" y="145" width="45" height="55" rx="3" fill="#0d1117" stroke="#238636" stroke-width="1.5"/>
+          <circle cx="222.5" cy="158" r="4" fill="#3fb950"/>
+          <line x1="210" y1="170" x2="235" y2="170" stroke="#238636" stroke-width="1"/>
+          <line x1="210" y1="178" x2="235" y2="178" stroke="#238636" stroke-width="1"/>
+          <text x="222.5" y="195" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="9">500MHz</text>
+          <rect x="265" y="145" width="45" height="55" rx="3" fill="#0d1117" stroke="#238636" stroke-width="1.5"/>
+          <circle cx="287.5" cy="158" r="4" fill="#3fb950"/>
+          <line x1="275" y1="170" x2="300" y2="170" stroke="#238636" stroke-width="1"/>
+          <line x1="275" y1="178" x2="300" y2="178" stroke="#238636" stroke-width="1"/>
+          <text x="287.5" y="195" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="9">500MHz</text>
+          <rect x="60" y="215" width="280" height="30" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="200" y="235" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">Total: 2.5 GHz • 5 GB RAM • Ran the Whole Web</text>
+          <line x1="390" y1="190" x2="430" y2="190" stroke="#d29922" stroke-width="2"/>
+          <polygon points="430,185 440,190 430,195" fill="#d29922"/>
+          <text x="415" y="175" text-anchor="middle" fill="#d29922" font-family="monospace" font-size="11">×1000</text>
+          <rect x="450" y="90" width="310" height="200" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="605" y="120" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="14" font-weight="bold">2024: 1 Smartphone (Mid-range)</text>
+          <rect x="520" y="140" width="170" height="100" rx="10" fill="#0d1117" stroke="#3fb950" stroke-width="2"/>
+          <rect x="530" y="152" width="150" height="75" rx="3" fill="#161b22"/>
+          <text x="605" y="180" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="14" font-weight="bold">📱</text>
+          <text x="605" y="200" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="14">3.0 GHz • 8 GB RAM</text>
+          <rect x="530" y="220" width="150" height="15" rx="4" fill="#238636" opacity="0.3"/>
+          <text x="605" y="231" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="9">MORE POWER THAN ALL 5 SERVERS COMBINED</text>
+          <text x="400" y="320" text-anchor="middle" fill="#f85149" font-family="monospace" font-size="12" font-weight="bold">🔥 And we use this power to load JavaScript-heavy social media pages</text>
+        </svg>
+        <div class="chart-caption">Chart 7 — A mid-range 2024 phone has more power than 5 servers that ran the entire web in 1999.</div>
+    </div>
+
+    <p><strong>But who wants you to know this?</strong></p>
+
+    <!-- ════════════════════════════════════════ -->
+    <!--  CHAPTER THREE                        -->
+    <!-- ════════════════════════════════════════ -->
+
+    <h2>Chapter Three: The Stolen Power</h2>
+    <p style="color: #8b949e; margin-top: -6px;">— or: How We Turned Superphones into Waste Display Devices</p>
+
+    <h3>1. The Phone That Would Have Been a "Super Server"</h3>
+
+    <p>
+        Stop and reflect. The phone in your pocket today, considered "average" or "old" (from 2015, for example), would have been a <strong>fully integrated Data Center</strong> if placed in 2005.
+    </p>
+
+    <ul>
+        <li>Its processor is <strong>50x faster</strong>.</li>
+        <li>Its memory is <strong>100x larger</strong>.</li>
+        <li>Its computing power surpasses what was used in the Apollo program to send humans to the moon.</li>
+    </ul>
+
+    <p>
+        But what do we do with this power? We use it to run a web browser that consumes 80% of this power just to open a "social media" page filled with pointless scripts.
+    </p>
+
+    <h3>2. The Consumption Seizure: Disguised Digital Exclusion</h3>
+
+    <p>
+        When you design an application that requires 2GB of RAM just to run smoothly, you're imposing on the user:
+    </p>
+    <ul>
+        <li>Buying a new device (because their old one can't handle your bloated code).</li>
+        <li>Paying for a huge data plan (to download the digital waste).</li>
+        <li>Draining their battery processing code that provides no real value.</li>
+    </ul>
+
+    <p>The result: <strong>Digital Exclusion</strong>.</p>
+
+    <p>
+        Users who can't afford to keep up with this madness are excluded from the service. This isn't evolution—it's a <strong>moral and commercial decline</strong> rolled into one.
+    </p>
+
+    <p><strong>The Data Speaks:</strong></p>
+    <ul>
+        <li>Every 100ms delay in page load reduces conversion rate by 7%<sup><a href="#fn5">[5]</a></sup>.</li>
+        <li>53% of mobile users leave a page if it takes more than 3 seconds to load<sup><a href="#fn6">[6]</a></sup>.</li>
+    </ul>
+
+    <p>
+        We spend millions on servers and bandwidth, only to lose users because of our products' slowness! It's <strong>economic suicide disguised in a technical suit</strong>.
+    </p>
+
+    <!-- ════════════════════════════════════════ -->
+    <!--  CHAPTER FOUR                         -->
+    <!-- ════════════════════════════════════════ -->
+
+    <h2>Chapter Four: The Philosophy of the "Winch"</h2>
+    <p style="color: #8b949e; margin-top: -6px;">— or: Why I Left the Car in the Garage</p>
+
+    <h3>1. The Right Mechanics: Don't Carry a House in a Small Car</h3>
+
+    <p>
+        Current frameworks are like a <strong>small, dilapidated car</strong>:
+    </p>
+    <ul>
+        <li>Good-looking, suitable for a short trip or simple tasks.</li>
+        <li>But heavy, fuel-consuming, and with weak torque for heavy loads.</li>
+    </ul>
+
+    <p>
+        Today's programmer tries to use this car to carry tons of data. The car consumes all its power "moving its own weight" (framework waste), leaving none for the cargo (actual data).
+    </p>
+
+    <h3>2. The "Winch" Is the Solution, Not the Car</h3>
+
+    <p>
+        The decision I made two years ago—returning to "Talk to Metal"—wasn't just a technical choice; it was <strong>pulling the old winch out of the garage</strong>.
+    </p>
+
+    <p>The winch is direct logic:</p>
+    <ul>
+        <li>Dealing with Sockets directly.</li>
+        <li>Using System Calls without intermediaries.</li>
+        <li>Writing code that respects the CPU and RAM.</li>
+        <li>Using clear <code>if-else</code> instead of 20 layers of Middleware.</li>
+        <li>Using C, Rust, or even a small Python script, as long as it's "direct."</li>
+    </ul>
+
+    <p><strong>The "Winch" Philosophy:</strong></p>
+    <ul>
+        <li>Leave the car (frameworks) in the garage—use it only when you need a "nice interface" (UI/Rendering).</li>
+        <li>For the system's core, fundamental data, and critical operations, bring out the "winch" to lift them directly.</li>
+    </ul>
+
+    <p>
+        This isn't "going backward"—it's a <strong>leap above the digital madness factory</strong>.
+    </p>
+
+    <h3>3. A Numerical Example of the Difference</h3>
+
+    <p>Let's take a simple operation: returning a "Hello World" text from a web server.</p>
+
+    <p><strong>The Bloated Path (Node.js + Express):</strong></p>
+    <ul>
+        <li>Processing Time: ~10,000–50,000 CPU cycles</li>
+        <li>Memory Usage: ~50–100 MB (startup)</li>
+    </ul>
+
+    <p><strong>The Bloated Path (Python + Django):</strong></p>
+    <ul>
+        <li>Processing Time: ~15,000–60,000 CPU cycles</li>
+        <li>Memory Usage: ~60–120 MB (startup)</li>
+    </ul>
+
+    <p><strong>The Direct Path (C + libmicrohttpd):</strong></p>
+    <ul>
+        <li>Processing Time: ~50–100 CPU cycles</li>
+        <li>Memory Usage: ~1–2 MB</li>
+    </ul>
+
+    <p><strong>The Direct Path (Rust + Actix):</strong></p>
+    <ul>
+        <li>Processing Time: ~50–150 CPU cycles</li>
+        <li>Memory Usage: ~2–5 MB</li>
+    </ul>
+
+    <p><strong>The Direct Path (CGI with Perl/C):</strong></p>
+    <ul>
+        <li>Processing Time: ~200–500 CPU cycles</li>
+        <li>Memory Usage: ~2–5 MB (per request)</li>
+    </ul>
+
+    <p>
+        <strong>The Waste:</strong> The bloated path consumes <strong>100 to 500 times</strong> the resources to accomplish the same task.
+    </p>
+
+    <!-- Chart 3: Performance Gap -->
+    <div class="chart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" style="max-width:100%;height:auto;">
+          <rect width="800" height="500" fill="#0d1117"/>
+          <text x="400" y="40" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="20" font-weight="bold">The Performance Gap</text>
+          <text x="400" y="65" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="14">CPU Cycles to Return "Hello World" — Bloated vs. Direct Path</text>
+          <rect x="60" y="90" width="680" height="370" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="30" y="275" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="12" transform="rotate(-90, 30, 275)">CPU Cycles (Log Scale)</text>
+          <text x="120" y="115" text-anchor="middle" fill="#f85149" font-family="monospace" font-size="11" font-weight="bold">Node.js + Express</text>
+          <rect x="70" y="130" width="100" height="250" rx="4" fill="#da3633"/>
+          <text x="120" y="395" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">10,000–50,000</text>
+          <text x="120" y="410" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">cycles</text>
+          <text x="260" y="115" text-anchor="middle" fill="#f85149" font-family="monospace" font-size="11" font-weight="bold">Python + Django</text>
+          <rect x="210" y="140" width="100" height="240" rx="4" fill="#da3633"/>
+          <text x="260" y="395" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">15,000–60,000</text>
+          <text x="260" y="410" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">cycles</text>
+          <text x="400" y="115" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="11" font-weight="bold">C + libmicrohttpd</text>
+          <rect x="350" y="330" width="100" height="50" rx="4" fill="#238636"/>
+          <text x="400" y="395" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="11">50–100</text>
+          <text x="400" y="410" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">cycles</text>
+          <text x="540" y="115" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="11" font-weight="bold">Rust + Actix</text>
+          <rect x="490" y="320" width="100" height="60" rx="4" fill="#238636"/>
+          <text x="540" y="395" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="11">50–150</text>
+          <text x="540" y="410" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">cycles</text>
+          <text x="680" y="115" text-anchor="middle" fill="#58a6ff" font-family="monospace" font-size="11" font-weight="bold">CGI (Perl/C)</text>
+          <rect x="630" y="290" width="100" height="90" rx="4" fill="#1f6feb"/>
+          <text x="680" y="395" text-anchor="middle" fill="#58a6ff" font-family="monospace" font-size="11">200–500</text>
+          <text x="680" y="410" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">cycles</text>
+          <line x1="220" y1="250" x2="490" y2="380" stroke="#f0883e" stroke-width="2" stroke-dasharray="4,4"/>
+          <polygon points="490,380 485,370 495,370" fill="#f0883e"/>
+          <text x="350" y="245" text-anchor="middle" fill="#f0883e" font-family="monospace" font-size="13" font-weight="bold">🔥 100–500x More Resources</text>
+        </svg>
+        <div class="chart-caption">Chart 3 — The bloated path consumes 100–500x more CPU cycles for the same "Hello World" response.</div>
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <!--  CHAPTER FIVE                         -->
+    <!-- ════════════════════════════════════════ -->
+
+    <h2>Chapter Five: The "Debris" Industry</h2>
+    <p style="color: #8b949e; margin-top: -6px;">— or: Who Profits from This Nonsense?</p>
+
+    <h3>1. The Profitable Equation</h3>
+
+    <p>Let's be honest: this nonsense isn't a mistake—it's a <strong>business model</strong>.</p>
+
+    <p>The equation is simple:</p>
+
+    <pre><code>More Complexity = More Resources
+    More Resources = Bigger Cloud Bill
+    Bigger Bill = Trillion-Dollar Profits</code></pre>
+
+    <p>
+        Every abstraction layer added to a framework is a profitable investment for infrastructure companies.
+    </p>
+
+    <p>
+        When a new "trend" or Framework emerges that requires many times the resources of simple code, Cloud providers are the primary beneficiaries.
+    </p>
+
+    <!-- Chart 5: Business Model of Complexity -->
+    <div class="chart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" style="max-width:100%;height:auto;">
+          <rect width="800" height="450" fill="#0d1117"/>
+          <text x="400" y="40" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="20" font-weight="bold">The Business Model of Complexity</text>
+          <text x="400" y="65" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="14">Why the Industry Won't Fix What It Profits From</text>
+          <rect x="250" y="90" width="300" height="60" rx="10" fill="#161b22" stroke="#da3633" stroke-width="2"/>
+          <text x="400" y="118" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="16" font-weight="bold">🧩 More Abstraction Layers</text>
+          <text x="400" y="138" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="12">(Middleware, ORM, DI, Containers, ...)</text>
+          <line x1="400" y1="150" x2="400" y2="185" stroke="#30363d" stroke-width="2"/>
+          <polygon points="395,185 405,185 400,193" fill="#d29922"/>
+          <rect x="250" y="195" width="300" height="60" rx="10" fill="#161b22" stroke="#d29922" stroke-width="2"/>
+          <text x="400" y="223" text-anchor="middle" fill="#e3b341" font-family="monospace" font-size="16" font-weight="bold">💰 More Resource Consumption</text>
+          <text x="400" y="243" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="12">(CPU, RAM, Bandwidth, Storage, ...)</text>
+          <line x1="400" y1="255" x2="400" y2="290" stroke="#30363d" stroke-width="2"/>
+          <polygon points="395,290 405,290 400,298" fill="#3fb950"/>
+          <rect x="250" y="300" width="300" height="60" rx="10" fill="#161b22" stroke="#3fb950" stroke-width="2"/>
+          <text x="400" y="328" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="16" font-weight="bold">📈 Bigger Cloud Bills &amp; Profits</text>
+          <text x="400" y="348" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="12">(Trillion-dollar industry)</text>
+          <path d="M 250 330 L 110 330 L 110 120 L 250 120" stroke="#30363d" stroke-width="2" fill="none"/>
+          <polygon points="250,125 250,115 240,120" fill="#da3633"/>
+          <text x="130" y="225" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">🔄 More Innovation in Complexity</text>
+          <rect x="570" y="90" width="190" height="270" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+          <text x="665" y="115" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="12" font-weight="bold">WHO BENEFITS?</text>
+          <circle cx="600" cy="145" r="4" fill="#da3633"/>
+          <text x="615" y="150" fill="#ff7b72" font-family="monospace" font-size="11">Framework Creators</text>
+          <circle cx="600" cy="175" r="4" fill="#d29922"/>
+          <text x="615" y="180" fill="#e3b341" font-family="monospace" font-size="11">Cloud Providers</text>
+          <circle cx="600" cy="205" r="4" fill="#da3633"/>
+          <text x="615" y="210" fill="#ff7b72" font-family="monospace" font-size="11">Consulting Firms</text>
+          <circle cx="600" cy="235" r="4" fill="#d29922"/>
+          <text x="615" y="240" fill="#e3b341" font-family="monospace" font-size="11">Training Providers</text>
+          <circle cx="600" cy="265" r="4" fill="#da3633"/>
+          <text x="615" y="270" fill="#ff7b72" font-family="monospace" font-size="11">Hardware Vendors</text>
+          <line x1="585" y1="285" x2="745" y2="285" stroke="#30363d" stroke-width="0.5"/>
+          <text x="665" y="310" text-anchor="middle" fill="#f0883e" font-family="monospace" font-size="11" font-weight="bold">👨‍💻 The Programmer?</text>
+          <text x="665" y="330" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">Victim + Customer + Product</text>
+        </svg>
+        <div class="chart-caption">Chart 5 — The virtuous (profitable) cycle of complexity.</div>
+    </div>
+
+    <!-- Chart 8: Programmer's Triple Role -->
+    <div class="chart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" style="max-width:100%;height:auto;">
+          <rect width="700" height="400" fill="#0d1117"/>
+          <text x="350" y="35" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="18" font-weight="bold">The Programmer's Triple Role</text>
+          <text x="350" y="60" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="13">How the Industry Profits from the Same Person in 3 Ways</text>
+          <circle cx="180" cy="220" r="100" fill="#da3633" opacity="0.15" stroke="#da3633" stroke-width="2"/>
+          <text x="180" y="180" text-anchor="middle" fill="#da3633" font-family="monospace" font-size="16" font-weight="bold">VICTIM</text>
+          <text x="180" y="200" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">Suffers from</text>
+          <text x="180" y="215" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">complexity</text>
+          <text x="180" y="230" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="11">&amp; burnout</text>
+          <circle cx="350" cy="160" r="100" fill="#d29922" opacity="0.15" stroke="#d29922" stroke-width="2"/>
+          <text x="350" y="120" text-anchor="middle" fill="#d29922" font-family="monospace" font-size="16" font-weight="bold">CUSTOMER</text>
+          <text x="350" y="140" text-anchor="middle" fill="#e3b341" font-family="monospace" font-size="11">Buys training</text>
+          <text x="350" y="155" text-anchor="middle" fill="#e3b341" font-family="monospace" font-size="11">&amp; certifications</text>
+          <circle cx="520" cy="220" r="100" fill="#1f6feb" opacity="0.15" stroke="#1f6feb" stroke-width="2"/>
+          <text x="520" y="180" text-anchor="middle" fill="#58a6ff" font-family="monospace" font-size="16" font-weight="bold">PRODUCT</text>
+          <text x="520" y="200" text-anchor="middle" fill="#58a6ff" font-family="monospace" font-size="11">Locked into</text>
+          <text x="520" y="215" text-anchor="middle" fill="#58a6ff" font-family="monospace" font-size="11">vendor ecosystems</text>
+          <text x="350" y="275" text-anchor="middle" fill="#f0883e" font-family="monospace" font-size="12" font-weight="bold">THE MODERN</text>
+          <text x="350" y="292" text-anchor="middle" fill="#f0883e" font-family="monospace" font-size="12" font-weight="bold">PROGRAMMER</text>
+          <line x1="250" y1="200" x2="290" y2="180" stroke="#30363d" stroke-width="1.5"/>
+          <line x1="290" y1="240" x2="250" y2="240" stroke="#30363d" stroke-width="1.5"/>
+          <line x1="410" y1="180" x2="450" y2="200" stroke="#30363d" stroke-width="1.5"/>
+          <text x="350" y="350" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">One person. Three revenue streams. Infinite complexity.</text>
+          <text x="350" y="370" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">🔥 The industry doesn't want engineers — it wants consumers</text>
+        </svg>
+        <div class="chart-caption">Chart 8 — The programmer is simultaneously victim, customer, and product.</div>
+    </div>
+
+    <!-- Chart 9: Scalability Illusion -->
+    <div class="chart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 380" style="max-width:100%;height:auto;">
+          <rect width="700" height="380" fill="#0d1117"/>
+          <text x="350" y="35" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="18" font-weight="bold">The "Scalability" Illusion</text>
+          <text x="350" y="60" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="13">Scaling is the Solution to a Problem They Created</text>
+          <rect x="30" y="90" width="300" height="220" rx="8" fill="#161b22" stroke="#da3633" stroke-width="2"/>
+          <text x="180" y="120" text-anchor="middle" fill="#da3633" font-family="monospace" font-size="14" font-weight="bold">THE BLOATED PATH</text>
+          <rect x="50" y="140" width="260" height="25" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="180" y="157" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">App requires 32 GB RAM to run</text>
+          <rect x="50" y="175" width="260" height="25" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="180" y="192" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">1,000 users → 3 servers needed</text>
+          <rect x="50" y="210" width="260" height="25" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="180" y="227" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">10,000 users → 30 servers needed</text>
+          <rect x="50" y="250" width="260" height="35" rx="4" fill="#0d1117" stroke="#da3633"/>
+          <text x="180" y="272" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="12" font-weight="bold">☁️ Cloud Provider: "We love you!"</text>
+          <text x="180" y="300" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">$$$$$$$$$$$$$$$$$$$$$$$$</text>
+          <text x="350" y="200" text-anchor="middle" fill="#d29922" font-family="monospace" font-size="24" font-weight="bold">VS</text>
+          <rect x="370" y="90" width="300" height="220" rx="8" fill="#161b22" stroke="#3fb950" stroke-width="2"/>
+          <text x="520" y="120" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="14" font-weight="bold">THE DIRECT PATH</text>
+          <rect x="390" y="140" width="260" height="25" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="520" y="157" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">App requires 256 MB RAM to run</text>
+          <rect x="390" y="175" width="260" height="25" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="520" y="192" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">1,000 users → 1 server</text>
+          <rect x="390" y="210" width="260" height="25" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="520" y="227" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">10,000 users → 3 servers</text>
+          <rect x="390" y="250" width="260" height="35" rx="4" fill="#0d1117" stroke="#3fb950"/>
+          <text x="520" y="272" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="12" font-weight="bold">🚀 Cloud Provider: "You're doing it wrong!"</text>
+          <text x="520" y="300" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">💰💰💰 (Saved)</text>
+          <text x="350" y="345" text-anchor="middle" fill="#f0883e" font-family="monospace" font-size="12" font-weight="bold">🔥 The bloated path doesn't need scaling — it needs fixing</text>
+        </svg>
+        <div class="chart-caption">Chart 9 — Scaling is a solution to a problem the industry created.</div>
+    </div>
+
+    <h3>2. Why Won't They Fix This Nonsense?</h3>
+
+    <p>Because they profit from its continuation.</p>
+
+    <ul>
+        <li><strong>The Framework</strong>: Creates the need for "experts" in it.</li>
+        <li><strong>The Cloud</strong>: Creates the need for "larger machines" to run this Framework.</li>
+        <li><strong>The Consulting</strong>: Creates the need for "consultants" to solve its problems.</li>
+    </ul>
+
+    <p>
+        It's an integrated food chain, and the programmer is simultaneously the <strong>victim</strong>, the <strong>customer</strong>, and the <strong>product</strong>.
+    </p>
+
+    <h3>3. The "Neutralization" Strategy</h3>
+
+    <p>
+        When a small, lightweight, fast project appears that doesn't require massive resources, there's a known pattern for dealing with it:
+    </p>
+
+    <ol>
+        <li><strong>Ignore</strong>: Initially, they pretend it doesn't exist.</li>
+        <li><strong>Mock</strong>: It's described as "impractical" or "not scalable."</li>
+        <li><strong>Acquire</strong>: If it continues to grow, it gets bought.</li>
+        <li><strong>Bury</strong>: After acquisition, it's integrated into a complex system, stripped of its features, or simply neglected until death.</li>
+    </ol>
+
+    <p>
+        This pattern isn't conspiracy theory—it's a <strong>documented practice</strong> in the software industry<sup><a href="#fn7">[7]</a></sup>.
+    </p>
+
+    <!-- Chart 6: Neutralization Strategy -->
+    <div class="chart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" style="max-width:100%;height:auto;">
+          <rect width="800" height="400" fill="#0d1117"/>
+          <text x="400" y="35" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="20" font-weight="bold">The "Neutralization" Strategy</text>
+          <text x="400" y="60" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="14">How the Industry Handles Lightweight Innovation</text>
+          <rect x="30" y="90" width="160" height="180" rx="10" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+          <text x="110" y="120" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="18" font-weight="bold">①</text>
+          <text x="110" y="145" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="15" font-weight="bold">IGNORE</text>
+          <rect x="50" y="160" width="120" height="30" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="110" y="180" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">"Not worth noticing"</text>
+          <text x="110" y="220" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">Pretend it doesn't</text>
+          <text x="110" y="235" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">exist</text>
+          <line x1="190" y1="180" x2="230" y2="180" stroke="#30363d" stroke-width="2"/>
+          <polygon points="230,175 240,180 230,185" fill="#d29922"/>
+          <rect x="240" y="90" width="160" height="180" rx="10" fill="#161b22" stroke="#d29922" stroke-width="2"/>
+          <text x="320" y="120" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="18" font-weight="bold">②</text>
+          <text x="320" y="145" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="15" font-weight="bold">MOCK</text>
+          <rect x="260" y="160" width="120" height="30" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="320" y="180" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">"Impractical"</text>
+          <text x="320" y="220" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">"Not scalable"</text>
+          <text x="320" y="235" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">"Won't survive"</text>
+          <line x1="400" y1="180" x2="440" y2="180" stroke="#30363d" stroke-width="2"/>
+          <polygon points="440,175 450,180 440,185" fill="#da3633"/>
+          <rect x="450" y="90" width="160" height="180" rx="10" fill="#161b22" stroke="#da3633" stroke-width="2"/>
+          <text x="530" y="120" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="18" font-weight="bold">③</text>
+          <text x="530" y="145" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="15" font-weight="bold">ACQUIRE</text>
+          <rect x="470" y="160" width="120" height="30" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="530" y="180" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">"Great potential!"</text>
+          <text x="530" y="220" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">Buy it before</text>
+          <text x="530" y="235" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="11">it grows</text>
+          <line x1="610" y1="180" x2="650" y2="180" stroke="#30363d" stroke-width="2"/>
+          <polygon points="650,175 660,180 650,185" fill="#f0883e"/>
+          <rect x="660" y="90" width="110" height="180" rx="10" fill="#161b22" stroke="#f0883e" stroke-width="2"/>
+          <text x="715" y="120" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="18" font-weight="bold">④</text>
+          <text x="715" y="145" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="15" font-weight="bold">BURY</text>
+          <rect x="675" y="160" width="80" height="30" rx="4" fill="#0d1117" stroke="#30363d"/>
+          <text x="715" y="180" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">"RIP"</text>
+          <text x="715" y="220" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">Strip features</text>
+          <text x="715" y="235" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">Neglect</text>
+          <line x1="110" y1="285" x2="715" y2="285" stroke="#30363d" stroke-width="1.5"/>
+          <polygon points="715,280 725,285 715,290" fill="#30363d"/>
+          <text x="110" y="305" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">Phase 1</text>
+          <text x="320" y="305" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">Phase 2</text>
+          <text x="530" y="305" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">Phase 3</text>
+          <text x="715" y="305" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">Phase 4</text>
+          <text x="400" y="345" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="12">⚠️ A documented practice: acquire, integrate into a complex system, then slowly abandon</text>
+          <text x="400" y="370" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">Examples: MySQL (Sun), various startups acquired and "disappeared" over the years</text>
+        </svg>
+        <div class="chart-caption">Chart 6 — The four-phase "neutralization" strategy for lightweight innovation.</div>
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <!--  CHAPTER SIX                          -->
+    <!-- ════════════════════════════════════════ -->
+
+    <h2>Chapter Six: The Lost Generation</h2>
+    <p style="color: #8b949e; margin-top: -6px;">— or: What Did Universities Teach Us?</p>
+
+    <h3>1. The Culture of "Institutionalized Stupidity"</h3>
+
+    <p>
+        When universities teach Frameworks as "sacred tools" or "the only solution," they don't produce engineers—they produce <strong>Tool Users</strong>.
+    </p>
+
+    <p>
+        The graduate who doesn't know how to build a simple Socket connection but is an expert in Spring, React, or Laravel is a <strong>captive</strong> graduate. They can't work without this umbrella.
+    </p>
+
+    <p><strong>The Result</strong>: Generations of developers suffering from <strong>Metal Phobia</strong>. The moment you ask them to write code outside the Framework, they panic.</p>
+
+    <h3>2. Why Does This Continue?</h3>
+
+    <p>Because it's a business model:</p>
+    <ul>
+        <li>The Framework-dependent programmer is a <strong>perpetual consumer</strong>.</li>
+        <li>The independent programmer (who talks to metal) is an <strong>engineer who's hard to replace</strong>.</li>
+    </ul>
+
+    <p>
+        Large companies want "replaceable gears," not "engineers with technical sovereignty."
+    </p>
+
+    <!-- ════════════════════════════════════════ -->
+    <!--  CONCLUSION                           -->
+    <!-- ════════════════════════════════════════ -->
+
+    <h2>Conclusion: The River Still Flows... And the Ship Is Coming</h2>
+
+    <blockquote>
+        "I am a voice calling from the bottom of the well... who will hear me?"
+    </blockquote>
+
+    <p>
+        Not many will hear you today. The old generation either swims with the current—afraid of losing their jobs—or retreats to their private museums. And the new generation is taught that "complexity" is "evolution."
+    </p>
+
+    <p><strong>But physics doesn't lie.</strong></p>
+
+    <p>
+        At some point, cloud bills and technical sluggishness will reach a "breaking point." And then, anyone with a "wooden raft" (knowledge of how to talk to metal) will be the only one capable of survival.
+    </p>
+
+    <p><strong>The debris filling the sea today is the raw material for our coming ship.</strong></p>
+
+    <p>
+        Every simple script that reduces complexity, every system that reuses direct System Calls, every engineer who decides to "understand" rather than "consume"—is a new piece of this raft.
+    </p>
+
+    <p>
+        <strong>The coming ship won't be built by a technical "trend," but by "economic necessity."</strong>
+    </p>
+
+    <p>
+        It will have to respect physics, address the metal directly, and leave the dilapidated car in the garage where it belongs.
+    </p>
+
+    <!-- Chart 10: The Raft -->
+    <div class="chart">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" style="max-width:100%;height:auto;">
+          <rect width="800" height="400" fill="#0d1117"/>
+          <text x="400" y="35" text-anchor="middle" fill="#f0f6fc" font-family="monospace" font-size="18" font-weight="bold">The Raft</text>
+          <text x="400" y="60" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="13">Building Survival from the Industry's Own Debris</text>
+          <rect x="40" y="150" width="720" height="200" fill="#0d1117" stroke="#30363d" stroke-width="1" rx="4"/>
+          <path d="M 40 250 Q 100 230 160 250 Q 220 270 280 250 Q 340 230 400 250 Q 460 270 520 250 Q 580 230 640 250 Q 700 270 760 250 L 760 350 L 40 350 Z" fill="#161b22" stroke="#30363d" stroke-width="0.5"/>
+          <rect x="100" y="280" width="40" height="25" rx="2" fill="#da3633" opacity="0.4" transform="rotate(-15, 120, 290)"/>
+          <text x="120" y="297" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="7" opacity="0.6">Django</text>
+          <rect x="200" y="290" width="35" height="20" rx="2" fill="#d29922" opacity="0.4" transform="rotate(10, 217, 300)"/>
+          <text x="217" y="305" text-anchor="middle" fill="#e3b341" font-family="monospace" font-size="7" opacity="0.6">Spring</text>
+          <rect x="320" y="275" width="45" height="22" rx="2" fill="#1f6feb" opacity="0.4" transform="rotate(-8, 342, 286)"/>
+          <text x="342" y="291" text-anchor="middle" fill="#58a6ff" font-family="monospace" font-size="7" opacity="0.6">Laravel</text>
+          <rect x="450" y="285" width="40" height="20" rx="2" fill="#da3633" opacity="0.4" transform="rotate(5, 470, 295)"/>
+          <text x="470" y="300" text-anchor="middle" fill="#ff7b72" font-family="monospace" font-size="7" opacity="0.6">React</text>
+          <rect x="550" y="295" width="35" height="18" rx="2" fill="#d29922" opacity="0.4" transform="rotate(-12, 567, 304)"/>
+          <text x="567" y="308" text-anchor="middle" fill="#e3b341" font-family="monospace" font-size="7" opacity="0.6">Angular</text>
+          <text x="400" y="340" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="10">🌊 The Sea of Abstractions — Filled with Sinking Frameworks</text>
+          <rect x="330" y="215" width="140" height="35" rx="4" fill="#3fb950" stroke="#238636" stroke-width="2"/>
+          <line x1="335" y1="225" x2="465" y2="225" stroke="#238636" stroke-width="1"/>
+          <line x1="335" y1="235" x2="465" y2="235" stroke="#238636" stroke-width="1"/>
+          <line x1="335" y1="245" x2="465" y2="245" stroke="#238636" stroke-width="1"/>
+          <text x="400" y="237" text-anchor="middle" fill="#0d1117" font-family="monospace" font-size="11" font-weight="bold">🪵 THE RAFT</text>
+          <text x="400" y="260" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="9">(Your Direct Code — 48KB of Logic)</text>
+          <circle cx="400" cy="200" r="6" fill="#f0f6fc"/>
+          <line x1="400" y1="206" x2="400" y2="218" stroke="#f0f6fc" stroke-width="2"/>
+          <line x1="390" y1="212" x2="410" y2="212" stroke="#f0f6fc" stroke-width="2"/>
+          <line x1="400" y1="218" x2="395" y2="226" stroke="#f0f6fc" stroke-width="1.5"/>
+          <line x1="400" y1="218" x2="405" y2="226" stroke="#f0f6fc" stroke-width="1.5"/>
+          <rect x="650" y="170" width="80" height="50" rx="3" fill="#238636" opacity="0.3" stroke="#3fb950" stroke-width="1"/>
+          <text x="690" y="195" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="8" opacity="0.6">THE SHIP</text>
+          <text x="690" y="208" text-anchor="middle" fill="#3fb950" font-family="monospace" font-size="8" opacity="0.6">(Coming Soon)</text>
+          <line x1="460" y1="220" x2="650" y2="190" stroke="#30363d" stroke-width="1" stroke-dasharray="4,4"/>
+          <text x="555" y="195" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="9">👁️</text>
+          <text x="400" y="385" text-anchor="middle" fill="#f0883e" font-family="monospace" font-size="12" font-weight="bold">🔥 The debris is the raw material. Start building.</text>
+        </svg>
+        <div class="chart-caption">Chart 10 — The raft: survival from the industry's own debris.</div>
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <!--  FOOTNOTES & SOURCES                  -->
+    <!-- ════════════════════════════════════════ -->
+
+    <div class="footnotes">
+        <h3>Sources &amp; References</h3>
+
+        <p id="fn1"><sup>1</sup> Rails application performance study in production environments (Source: Various Rails performance benchmarks, 2018–2022).</p>
+        <p id="fn2"><sup>2</sup> PHP Arrays performance benchmarks: SplFixedArray vs standard arrays, PHP Internals discussions.</p>
+        <p id="fn3"><sup>3</sup> HTTP Archive: Page Weight Statistics, 2024.</p>
+        <p id="fn4"><sup>4</sup> Comparison of Intel processors from 1999 (Pentium III ~ 500MHz) vs modern processors (Apple M3 ~ 4GHz). The difference in raw computing power exceeds 1000×.</p>
+        <p id="fn5"><sup>5</sup> Google/SOASTA Research, 2017.</p>
+        <p id="fn6"><sup>6</sup> Google: Mobile Page Speed Insights, 2023.</p>
+        <p id="fn7"><sup>7</sup> Documented patterns: Sun Microsystems' acquisition of MySQL, corporate acquisition of various startups, etc. (Source: Tech industry analysis).</p>
+
+        <br>
+
+        <p><strong>Additional References:</strong></p>
+        <ul>
+            <li>HTTP Archive: Page Weight Statistics, 2024.</li>
+            <li>Google/SOASTA: Impact of Load Time on Conversion Rates, 2017.</li>
+            <li>Google: Mobile Page Speed Insights, 2023.</li>
+            <li>PHP Internals: Arrays and Memory Usage Benchmarks.</li>
+            <li>Various performance benchmarks: Node.js vs C/Rust vs Python.</li>
+            <li>Tech industry analysis: Acquisition and "kill" strategies in software industry.</li>
+        </ul>
+
+        <br>
+
+        <blockquote style="border-left-color: #3fb950; font-style: normal;">
+            <p style="color: #f0f6fc; font-size: 1.1rem;">
+                "Code doesn't care whether you write it in Shakespeare's language or the language of the market. Code executes. Either you execute your instructions efficiently, or you consume resources needlessly. The choice is yours."
+            </p>
+        </blockquote>
+
+        <p style="color: #f0f6fc; font-size: 1.1rem; font-weight: bold; margin-top: 24px;">
+            Leave the debris in the sea, and start building your raft.
+        </p>
+
+        <p style="color: #3fb950; font-size: 1.2rem; font-weight: bold;">
+            The river still flows.
+        </p>
+
+        <hr style="border-color: #30363d; margin: 32px 0;">
+
+     
+
+        <p style="color: #8b949e; font-size: 0.85rem; font-style: italic; margin-top: 8px;">
+            <em>"The machine doesn't care about your design patterns. It only cares about cycles and bytes. Everything else is just noise."</em>
+        </p>
+
+     <p style="color: #30363d; font-size: 0.75rem; margin-top: 40px; text-align: center; border-top: 1px solid #21262d; padding-top: 20px;">
+    <span style="color: #8b949e;">⚡</span><br>
+    Written by <strong style="color: #f0f6fc;">@ezmu</strong><br>
+    <span style="color: #8b949e; font-size: 0.7rem;">
+        This work is a synthesis of technical philosophy and critique.<br>
+        Published as a manifesto for the return to metal.
+    </span><br><br>
+    <span style="color: #30363d; font-size: 0.65rem;">
+        &copy; 2026 &bull; <a href="https://ezmu.github.io" style="color: #58a6ff; text-decoration: none;">ezmu.github.io</a> &bull; CC BY-NC-SA
+    </span>
+</p>
+    </div>
+
+</div>
+
+</body>
+</html>
