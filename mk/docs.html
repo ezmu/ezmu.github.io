@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MidKnight · Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #060a14;
+            color: #e2e8f0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            padding: 0 24px 40px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .logo-group img {
+            height: 44px;
+            width: auto;
+        }
+        .logo-group h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+        .logo-group h1 .mid {
+            background: linear-gradient(135deg, #00d4ff, #7b2ffc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logo-group h1 .knight {
+            color: #e2e8f0;
+            -webkit-text-fill-color: #e2e8f0;
+        }
+        .logo-group .tagline {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin-top: -2px;
+        }
+        .badge-prod {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 255, 136, 0.06);
+            border: 1px solid rgba(0, 255, 136, 0.15);
+            padding: 6px 18px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #00ff88;
+        }
+        .badge-prod .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .doc-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            padding: 30px 0 40px;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            align-self: start;
+        }
+        .sidebar h3 {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin-bottom: 2px;
+        }
+        .sidebar ul li a {
+            display: block;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+        }
+        .sidebar ul li a:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: #e2e8f0;
+        }
+        .sidebar ul li a.active {
+            background: rgba(0, 212, 255, 0.08);
+            color: #00d4ff;
+            font-weight: 600;
+        }
+        .sidebar .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 12px 0;
+        }
+
+        .content h2 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+        .content .subtitle {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+        .content h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 32px;
+            margin-bottom: 12px;
+        }
+        .content h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 6px;
+            color: #e2e8f0;
+        }
+        .content p {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        .code-block {
+            background: rgba(10, 14, 23, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 12px 0 20px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #e2e8f0;
+            line-height: 1.8;
+        }
+        .code-block .comment {
+            color: #2a3a5a;
+        }
+        .code-block .keyword {
+            color: #00d4ff;
+        }
+        .code-block .string {
+            color: #00ff88;
+        }
+        .code-block .variable {
+            color: #ffcc00;
+        }
+        .code-block .function {
+            color: #a855f7;
+        }
+
+        .inline-code {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #00d4ff;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(12, 20, 34, 0.3);
+            margin: 16px 0 24px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            text-align: left;
+            padding: 10px 16px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        td {
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: #94a3b8;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .badge.green {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+        }
+        .badge.blue {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+        }
+        .badge.purple {
+            background: rgba(168, 85, 247, 0.1);
+            color: #a855f7;
+        }
+        .badge.yellow {
+            background: rgba(255, 204, 0, 0.1);
+            color: #ffcc00;
+        }
+        .badge.red {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-size: 13px;
+            color: #2a3a5a;
+        }
+        .footer strong {
+            color: #64748b;
+        }
+
+        @media (max-width: 900px) {
+            .doc-grid { grid-template-columns: 1fr; }
+            .sidebar {
+                position: static;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            .sidebar h3 { width: 100%; margin-bottom: 4px; }
+            .sidebar ul { display: flex; flex-wrap: wrap; gap: 2px; }
+            .sidebar ul li a { padding: 4px 12px; font-size: 12px; }
+        }
+        @media (max-width: 600px) {
+            .header { flex-direction: column; align-items: flex-start; }
+        }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0a0e17; }
+        ::-webkit-scrollbar-thumb { background: #1a2a3a; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <div class="logo-group">
+                <img src="logo.png" alt="MidKnight Logo" onerror="this.style.display='none'" />
+                <div>
+                    <h1>
+                        <span class="mid">MID</span><span class="knight">KNIGHT</span>
+                    </h1>
+                    <div class="tagline">Documentation · v2.0.0</div>
+                </div>
+            </div>
+            <div class="badge-prod">
+                <span class="dot"></span>
+                 Ready
+            </div>
+        </div>
+
+        <!-- ===== DOCUMENTATION ===== -->
+        <div class="doc-grid">
+
+            <!-- ===== SIDEBAR ===== -->
+            <nav class="sidebar">
+                <h3>Quick Start</h3>
+                <ul>
+                    <li><a href="#getting-started" class="active">Getting Started</a></li>
+                    <li><a href="#license">License</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                    <li><a href="#configuration">Configuration</a></li>
+                    <li><a href="#running">Running MidKnight</a></li>
+                </ul>
+                <div class="divider"></div>
+                <h3>Index Management</h3>
+                <ul>
+                    <li><a href="#create-index">Create Index</a></li>
+                    <li><a href="#list-indexes">List Indexes</a></li>
+                    <li><a href="#drop-index">Drop Index</a></li>
+                    <li><a href="#index-stats">Index Stats</a></li>
+                </ul>
+                <div class="divider"></div>
+                <h3>Data Loading</h3>
+                <ul>
+                    <li><a href="#load-json">Load JSON</a></li>
+                    <li><a href="#load-url">Load from URL</a></li>
+                    <li><a href="#batch-index">Batch Indexing</a></li>
+                </ul>
+                <div class="divider"></div>
+                <h3>Core Features</h3>
+                <ul>
+                    <li><a href="#cache">Cache</a></li>
+                    <li><a href="#full-text">Full-Text Search</a></li>
+                    <li><a href="#fuzzy">Fuzzy Search</a></li>
+                    <li><a href="#auto-complete">Auto-Complete</a></li>
+                    <li><a href="#json-path">JSON Path</a></li>
+                    <li><a href="#admin-api">Admin API</a></li>
+                </ul>
+                <div class="divider"></div>
+                <h3>Advanced</h3>
+                <ul>
+                    <li><a href="#persistence">Persistence</a></li>
+                    <li><a href="#multi-index">Multi-Index</a></li>
+                    <li><a href="#indexing">Indexing JSON</a></li>
+                </ul>
+            </nav>
+
+            <!-- ===== CONTENT ===== -->
+            <div class="content">
+
+                <!-- ===== GETTING STARTED ===== -->
+                <h2 id="getting-started">Getting Started</h2>
+                <p class="subtitle">Run MidKnight in 30 seconds — no dependencies, no configuration hell.</p>
+                <p>
+                    MidKnight is a single binary HTTP reverse proxy with built-in
+                    zero-copy cache, full‑text search, fuzzy search, and auto‑complete.
+                    It runs on any Linux system with zero external dependencies.
+                </p>
+
+                <!-- ===== LICENSE ===== -->
+                <h3 id="license">License</h3>
+                <p>
+                    MidKnight requires a valid license key to run. The license is
+                    embedded in the binary and can be activated via configuration
+                    or environment variable.
+                </p>
+                <div class="code-block">
+                    <span class="comment"># In config file</span><br />
+                    license = MIDK-XXXX-XXXX-XXXX-XXXX<br /><br />
+                    <span class="comment"># Or via environment variable</span><br />
+                    export MIDKNIGHT_LICENSE=MIDK-XXXX-XXXX-XXXX-XXXX
+                </div>
+                <p>
+                    <span class="badge green">✓</span> Trial license: 30 days<br />
+                    <span class="badge green">✓</span> Full license: 1 year<br />
+                    <span class="badge yellow">ℹ</span> Contact: <a href="mailto:3z.eldeen@gmail.com" style="color:#00d4ff;text-decoration:none;">3z.eldeen@gmail.com</a>
+                </p>
+
+                <!-- ===== INSTALLATION ===== -->
+                <h3 id="installation">Installation</h3>
+                <div class="code-block">
+                    <span class="comment"># Download the latest release</span><br />
+                    wget https:// mk domain /releases/midknight-latest-linux-amd64 -O midknight<br /><br />
+                    <span class="comment"># Make it executable</span><br />
+                    chmod +x midknight
+                </div>
+                <p>
+                    <span class="inline-code">midknight</span> is a single file.
+                    No <span class="inline-code">npm install</span>, no <span class="inline-code">apt-get</span>,
+                    no <span class="inline-code">docker pull</span>. Just the binary.
+                </p>
+
+                <!-- ===== CONFIGURATION ===== -->
+                <h3 id="configuration">Configuration</h3>
+                <p>
+                    Everything is configured in a single file. No complex YAML,
+                    no environment variables, no secret management overhead.
+                </p>
+                <div class="code-block">
+                    <span class="comment"># midknight.conf</span><br />
+                    port = 8081<br />
+                    backend = 127.0.0.1:3000<br />
+                    shm_size_mb = 512<br />
+                    license = MIDK-XXXX-XXXX-XXXX-XXXX<br /><br />
+                    cache_rule = *.jpg 86400 disk<br />
+                    cache_rule = /api/* 3600 shm<br /><br />
+                    ft_enabled = 1<br />
+                    ft_size_mb = 256<br /><br />
+                    fuzzy_enabled = 1<br />
+                    ac_enabled = 1
+                </div>
+
+                <!-- ===== RUNNING ===== -->
+                <h3 id="running">Running MidKnight</h3>
+                <div class="code-block">
+                    <span class="comment"># Start MidKnight</span><br />
+                    ./midknight --config midknight.conf --port 8081 --backend 127.0.0.1:3000<br /><br />
+                    <span class="comment"># Test the proxy</span><br />
+                    curl http://localhost:8081/api/test<br /><br />
+                    <span class="comment"># Check cache stats</span><br />
+                    curl http://localhost:8082/__ezmu_admin__/stats
+                </div>
+
+                <!-- ===== INDEX MANAGEMENT ===== -->
+                <h2 id="create-index">Create Index</h2>
+                <p>
+                    Before loading data, you must create an index. Each index
+                    has its own isolated memory space.
+                </p>
+                <div class="code-block">
+                    <span class="comment"># Create a products index</span><br />
+                    curl -X POST http://localhost:8082/__ezmu_admin__/ft/index/create \<br />
+                    &nbsp;&nbsp;-H "Content-Type: application/json" \<br />
+                    &nbsp;&nbsp;-d '{<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;"name": "products",<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;"language": "en",<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;"size_mb": 128<br />
+                    &nbsp;&nbsp;}'
+                </div>
+                <p>
+                    <span class="badge blue">Note</span> Always create the index
+                    <strong>before</strong> loading data. The index name must match
+                    the one used in <span class="inline-code">load_json</span>.
+                </p>
+
+                <h3 id="list-indexes">List Indexes</h3>
+                <div class="code-block">
+                    curl http://localhost:8082/__ezmu_admin__/ft/index/list
+                </div>
+
+                <h3 id="drop-index">Drop Index</h3>
+                <div class="code-block">
+                    curl -X DELETE "http://localhost:8082/__ezmu_admin__/ft/index/drop?index=products"
+                </div>
+                <p><span class="badge red">⚠️</span> This permanently deletes all data in the index.</p>
+
+                <h3 id="index-stats">Index Stats</h3>
+                <div class="code-block">
+                    curl "http://localhost:8082/__ezmu_admin__/ft/index/stats?index=products"
+                </div>
+
+                <!-- ===== DATA LOADING ===== -->
+                <h2 id="load-json">Load JSON</h2>
+                <p>
+                    Load JSON data into an existing index. The data must be an
+                    array of objects with an <span class="inline-code">id</span> field.
+                </p>
+                <div class="code-block">
+                    <span class="comment"># Sample JSON</span><br />
+                    {<br />
+                    &nbsp;&nbsp;"data": [<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;{"id": 1, "name": "Product A", "description": "..."},<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;{"id": 2, "name": "Product B", "description": "..."}<br />
+                    &nbsp;&nbsp;]<br />
+                    }<br /><br />
+                    <span class="comment"># Load into index</span><br />
+                    curl -X POST http://localhost:8082/__ezmu_admin__/persistence/load_json \<br />
+                    &nbsp;&nbsp;-H "Content-Type: application/json" \<br />
+                    &nbsp;&nbsp;-d '{"index":"products","file":"/data/products.json"}'
+                </div>
+
+                <h3 id="load-url">Load from URL</h3>
+                <div class="code-block">
+                    curl -X POST http://localhost:8082/__ezmu_admin__/persistence/load_url \<br />
+                    &nbsp;&nbsp;-H "Content-Type: application/json" \<br />
+                    &nbsp;&nbsp;-d '{"index":"products","url":"https://example.com/products.json"}'
+                </div>
+
+                <h3 id="batch-index">Batch Indexing</h3>
+                <div class="code-block">
+                    curl -X POST http://localhost:8082/__ezmu_admin__/ft/index/batch \<br />
+                    &nbsp;&nbsp;-H "Content-Type: application/json" \<br />
+                    &nbsp;&nbsp;-d '{<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;"index": "products",<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;"documents": [<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"id": 1, "content": "Product A description"},<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"id": 2, "content": "Product B description"}<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;]<br />
+                    &nbsp;&nbsp;}'
+                </div>
+
+                <!-- ===== CORE FEATURES ===== -->
+                <h2 id="cache">Cache</h2>
+                <p>
+                    Zero-copy shared memory (SHM) cache with disk fallback.
+                    Responses stored with TTL and evicted using LRU policy.
+                </p>
+                <div class="code-block">
+                    cache_rule = *.jpg 86400 disk<br />
+                    cache_rule = /api/* 3600 shm
+                </div>
+
+                <h2 id="full-text">Full-Text Search</h2>
+                <p>
+                    Built-in full-text search with 8-language support.
+                    No Elasticsearch required.
+                </p>
+                <div class="code-block">
+                    curl "http://localhost:8081/api/search/products?q=water"
+                </div>
+
+                <h2 id="fuzzy">Fuzzy Search</h2>
+                <p>
+                    Levenshtein-based fuzzy search with automatic suggestions.
+                </p>
+                <div class="code-block">
+                    curl "http://localhost:8081/api/search/countries?q=palestin"
+                </div>
+
+                <h2 id="auto-complete">Auto-Complete</h2>
+                <div class="code-block">
+                    curl "http://localhost:8081/api/ac?q=wa"
+                </div>
+
+                <h2 id="json-path">JSON Path</h2>
+                <div class="code-block">
+                    curl "http://localhost:8081/api/v1/path/countries/65/capital"
+                </div>
+
+                <h2 id="admin-api">Admin API</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="inline-code">/stats</span></td><td><span class="badge blue">GET</span></td><td>Cache statistics</td></tr>
+                            <tr><td><span class="inline-code">/ft/index/create</span></td><td><span class="badge purple">POST</span></td><td>Create index</td></tr>
+                            <tr><td><span class="inline-code">/ft/index/list</span></td><td><span class="badge blue">GET</span></td><td>List indexes</td></tr>
+                            <tr><td><span class="inline-code">/ft/index/drop</span></td><td><span class="badge yellow">DELETE</span></td><td>Drop index</td></tr>
+                            <tr><td><span class="inline-code">/ft/index/stats</span></td><td><span class="badge blue">GET</span></td><td>Index statistics</td></tr>
+                            <tr><td><span class="inline-code">/persistence/load_json</span></td><td><span class="badge purple">POST</span></td><td>Load JSON</td></tr>
+                            <tr><td><span class="inline-code">/persistence/load_url</span></td><td><span class="badge purple">POST</span></td><td>Load from URL</td></tr>
+                            <tr><td><span class="inline-code">/persistence/save</span></td><td><span class="badge purple">POST</span></td><td>Save snapshot</td></tr>
+                            <tr><td><span class="inline-code">/persistence/list</span></td><td><span class="badge blue">GET</span></td><td>List snapshots</td></tr>
+                            <tr><td><span class="inline-code">/cache/all</span></td><td><span class="badge yellow">DELETE</span></td><td>Clear cache</td></tr>
+                            <tr><td><span class="inline-code">/license</span></td><td><span class="badge blue">GET</span></td><td>License status</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== PERSISTENCE ===== -->
+                <h2 id="persistence">Persistence</h2>
+                <div class="code-block">
+                    <span class="comment"># Save snapshot</span><br />
+                    curl -X POST http://localhost:8082/__ezmu_admin__/persistence/save<br /><br />
+                    <span class="comment"># List snapshots</span><br />
+                    curl http://localhost:8082/__ezmu_admin__/persistence/list
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ===== FOOTER ===== -->
+        <div class="footer">
+            <strong>MidKnight v2.0.0</strong> ·
+            Run on Metal · Zero‑Copy · Single Binary · No Dependencies
+        </div>
+
+    </div>
+</body>
+</html>
