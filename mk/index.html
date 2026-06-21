@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MidKnight · Run on Metal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #060a14;
+            color: #e2e8f0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            padding: 0 24px 40px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .logo-group img {
+            height: 52px;
+            width: auto;
+        }
+        .logo-group h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+        .logo-group h1 .mid {
+            background: linear-gradient(135deg, #00d4ff, #7b2ffc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logo-group h1 .knight {
+            color: #e2e8f0;
+            -webkit-text-fill-color: #e2e8f0;
+        }
+        .logo-group .tagline {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin-top: -2px;
+        }
+        .badge-prod {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 255, 136, 0.06);
+            border: 1px solid rgba(0, 255, 136, 0.15);
+            padding: 6px 18px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #00ff88;
+        }
+        .badge-prod .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            padding: 50px 0 30px;
+            align-items: center;
+        }
+        .hero h2 {
+            font-size: 52px;
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -2px;
+        }
+        .hero h2 .highlight {
+            background: linear-gradient(135deg, #00d4ff, #7b2ffc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero h2 .metal {
+            color: #e2e8f0;
+            -webkit-text-fill-color: #e2e8f0;
+        }
+        .hero p {
+            font-size: 17px;
+            color: #94a3b8;
+            margin: 18px 0 28px;
+            max-width: 500px;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #7b2ffc);
+            border: none;
+            padding: 12px 34px;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s;
+        }
+        .btn-primary:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 12px 34px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .btn-secondary:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 50px 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .section-title .line {
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .section-title .tag {
+            font-size: 11px;
+            font-weight: 500;
+            color: #64748b;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 2px 14px;
+            border-radius: 100px;
+            letter-spacing: 0.3px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(12, 20, 34, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px 26px;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.09);
+            transform: translateY(-3px);
+        }
+        .card .icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        .card h4 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .card p {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .card .highlight-text {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .card-accent {
+            border-color: rgba(0, 212, 255, 0.12);
+        }
+
+        .svg-container {
+            background: rgba(10, 14, 23, 0.4);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            overflow: hidden;
+        }
+        .svg-container svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-size: 13px;
+            color: #2a3a5a;
+        }
+        .footer strong {
+            color: #64748b;
+        }
+
+        /* What Makes It Different */
+        .pill {
+            display: inline-block;
+            padding: 2px 14px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 500;
+            background: rgba(0, 212, 255, 0.08);
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.08);
+        }
+
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .grid-3 { grid-template-columns: 1fr; }
+            .hero h2 { font-size: 32px; }
+            .header { flex-direction: column; align-items: flex-start; }
+        }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #0a0e17; }
+        ::-webkit-scrollbar-thumb { background: #1a2a3a; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <div class="logo-group">
+                <img src="logo.png" alt="MidKnight Logo" onerror="this.style.display='none'" />
+                <div>
+                    <h1>
+                        <span class="mid">MID</span><span class="knight">KNIGHT</span>
+                    </h1>
+                    <div class="tagline">Run on Metal · Zero‑Copy</div>
+                </div>
+            </div>
+            <div class="badge-prod">
+                <span class="dot"></span>
+                v2.0.0 · Ready
+            </div>
+        </div>
+
+        <!-- ===== HERO ===== -->
+        <div class="hero">
+            <div>
+                <h2>
+                    <span class="metal">Run</span><br />
+                    <span class="highlight">&amp; Go</span>
+                </h2>
+                <p>
+                    MidKnight is a zero‑copy reverse proxy that sits between your network layer
+                    and HTTP servers. It isolates the backend, caches responses, and delivers
+                    sub‑millisecond latency — with zero changes to your existing infrastructure.
+                </p>
+                <div class="hero-actions">
+                    <a href="docs.html"class="btn-primary">🚀 Get Started</a>
+                   
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                <div style="background:rgba(12,20,34,0.5);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:20px 24px;text-align:center;min-width:120px;">
+                    <div style="font-size:28px;font-weight:800;color:#00d4ff;">36</div>
+                    <div style="font-size:12px;color:#64748b;">Kilobytes</div>
+                </div>
+                <div style="background:rgba(12,20,34,0.5);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:20px 24px;text-align:center;min-width:120px;">
+                    <div style="font-size:28px;font-weight:800;color:#00ff88;">0</div>
+                    <div style="font-size:12px;color:#64748b;">Dependencies</div>
+                </div>
+                <div style="background:rgba(12,20,34,0.5);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:20px 24px;text-align:center;min-width:120px;">
+                    <div style="font-size:28px;font-weight:800;color:#7b2ffc;">1</div>
+                    <div style="font-size:12px;color:#64748b;">Binary · No Services</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== WHAT MAKES IT DIFFERENT ===== -->
+        <div class="section-title">
+            ⚡ What Makes MidKnight Different
+            <span class="line"></span>
+        </div>
+
+        <div class="grid-3" style="margin-bottom:40px;">
+            <div class="card card-accent">
+                <div class="icon">📦</div>
+                <h4>One Binary. Everything Included.</h4>
+                <p>
+                    No dependencies, no package managers, no runtime environments.
+                    A single 36 KB file that does everything — HTTP proxy, cache,
+                    search, and auto‑complete.
+                </p>
+                <div style="margin-top:12px;">
+                    <span class="pill">No Docker</span>
+                    <span class="pill">No Services</span>
+                    <span class="pill">No Dependencies</span>
+                </div>
+            </div>
+            <div class="card card-accent">
+                <div class="icon">⚡</div>
+                <h4>Run on Metal. Zero‑Copy.</h4>
+                <p>
+                    Built in C for bare‑metal performance. Direct memory access
+                    with zero‑copy architecture — no serialization, no garbage
+                    collection, no virtual machine overhead.
+                </p>
+                <div style="margin-top:12px;">
+                    <span class="pill">Zero‑Copy</span>
+                    <span class="pill">SHM</span>
+                    <span class="pill">C Language</span>
+                </div>
+            </div>
+            <div class="card card-accent">
+                <div class="icon">🔄</div>
+                <h4>Backend Isolated. Zero Changes.</h4>
+                <p>
+                    Your backend stays untouched. MidKnight sits in front,
+                    caches responses, and serves them directly. No code changes,
+                    no configuration hell, no infrastructure redesign.
+                </p>
+                <div style="margin-top:12px;">
+                    <span class="pill">No Code Changes</span>
+                    <span class="pill">Isolated</span>
+                    <span class="pill">Any HTTP Server</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ARCHITECTURE ===== -->
+        <div class="section-title">
+            🏗️ Architecture
+            <span class="line"></span>
+        </div>
+
+        <div class="svg-container" style="margin-bottom:20px;">
+            <svg viewBox="0 0 1000 400" xmlns="http://www.w3.org/2000/svg" font-family="'Inter', sans-serif">
+                <rect width="1000" height="400" fill="#060a14" rx="8" />
+
+                <text x="500" y="28" font-size="15" fill="#e2e8f0" text-anchor="middle" font-weight="700">⚡ Reverse Proxy · Zero‑Copy · Backend‑Isolated</text>
+
+                <!-- Client -->
+                <rect x="400" y="55" width="200" height="40" rx="8" fill="#0d1a2a" stroke="#00f0ff" stroke-width="1.5"/>
+                <text x="500" y="80" font-size="13" fill="#00f0ff" text-anchor="middle" font-weight="600">🌐 Client</text>
+
+                <line x1="500" y1="95" x2="500" y2="115" stroke="#4a5a7a" stroke-width="2" marker-end="url(#a)"/>
+
+                <!-- MidKnight -->
+                <rect x="330" y="125" width="340" height="50" rx="10" fill="#0d1a2a" stroke="#7b2ffc" stroke-width="2"/>
+                <rect x="330" y="125" width="340" height="4" fill="url(#gH)"/>
+                <text x="500" y="150" font-size="15" fill="#fff" text-anchor="middle" font-weight="800">⚡ MIDKNIGHT PROXY</text>
+                <text x="500" y="166" font-size="10" fill="#64748b" text-anchor="middle">Zero‑Copy · SHM · Cache‑First</text>
+
+                <line x1="500" y1="175" x2="500" y2="195" stroke="#4a5a7a" stroke-width="2" marker-end="url(#a)"/>
+
+                <!-- Cache -->
+                <rect x="330" y="205" width="340" height="55" rx="8" fill="#0d1a2a" stroke="#00ff88" stroke-width="1.5"/>
+                <rect x="330" y="205" width="340" height="4" fill="#00ff88"/>
+                <text x="500" y="228" font-size="13" fill="#00ff88" text-anchor="middle" font-weight="700">📦 CACHE LAYER</text>
+                <text x="500" y="246" font-size="10" fill="#64748b" text-anchor="middle">SHM · Disk Fallback · TTL · LRU</text>
+
+                <!-- Hit -->
+                <path d="M670 232 L740 232 L740 150 L500 150" stroke="#00ff88" stroke-width="2.5" stroke-dasharray="6,4" fill="none" marker-end="url(#g)"/>
+                <text x="755" y="225" font-size="10" fill="#00ff88" text-anchor="start">⚡ Cache Hit</text>
+
+                <!-- Miss -->
+                <line x1="500" y1="260" x2="500" y2="290" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#r)"/>
+                <text x="520" y="278" font-size="10" fill="#ff6b6b" text-anchor="start">Miss</text>
+
+                <!-- HTTP Server -->
+                <rect x="400" y="300" width="200" height="40" rx="8" fill="#0d1a2a" stroke="#ffcc00" stroke-width="1.5"/>
+                <text x="500" y="325" font-size="13" fill="#ffcc00" text-anchor="middle" font-weight="700">🖥️ HTTP Server</text>
+
+                <line x1="500" y1="340" x2="500" y2="355" stroke="#ffa502" stroke-width="2" marker-end="url(#y)"/>
+
+                <!-- Backend -->
+                <rect x="400" y="360" width="200" height="35" rx="8" fill="#1a0a0a" stroke="#ff6b6b" stroke-width="1.5"/>
+                <rect x="400" y="360" width="200" height="4" fill="#ff6b6b"/>
+                <text x="500" y="381" font-size="12" fill="#ff6b6b" text-anchor="middle" font-weight="700">🔌 Backend (Isolated)</text>
+
+                <!-- Isolation -->
+                <rect x="380" y="345" width="240" height="65" rx="10" fill="none" stroke="#ff6b6b" stroke-width="1" stroke-dasharray="4,4" opacity="0.25"/>
+
+                <defs>
+                    <linearGradient id="gH" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#00d4ff"/>
+                        <stop offset="50%" stop-color="#7b2ffc"/>
+                        <stop offset="100%" stop-color="#00ff88"/>
+                    </linearGradient>
+                    <marker id="a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a5a7a"/></marker>
+                    <marker id="g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#00ff88"/></marker>
+                    <marker id="r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ff6b6b"/></marker>
+                    <marker id="y" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ffa502"/></marker>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- ===== FEATURES ===== -->
+        <div class="section-title">
+            ⚡ Built‑in Features
+            <span class="line"></span>
+        </div>
+
+        <div class="grid-3" style="margin-bottom:40px;">
+            <div class="card">
+                <div class="icon">📦</div>
+                <h4>Zero‑Copy Cache</h4>
+                <p>Shared memory with direct pointers — no serialization, no overhead.</p>
+            </div>
+            <div class="card">
+                <div class="icon">🔍</div>
+                <h4>Full‑Text Search</h4>
+                <p>Multi‑language tokenizer with stop‑word filtering and scoring.</p>
+            </div>
+            <div class="card">
+                <div class="icon">🌀</div>
+                <h4>Fuzzy Search</h4>
+                <p>Levenshtein‑based suggestions with automatic "did you mean?"</p>
+            </div>
+            <div class="card">
+                <div class="icon">⚡</div>
+                <h4>Auto‑Complete</h4>
+                <p>Trie‑based real‑time suggestions with frequency weighting.</p>
+            </div>
+            <div class="card">
+                <div class="icon">📄</div>
+                <h4>JSON Path</h4>
+                <p>Direct access to any field in your JSON documents.</p>
+            </div>
+            <div class="card">
+                <div class="icon">🛠️</div>
+                <h4>Admin API</h4>
+                <p>Full control over indexes, cache, persistence, and metrics.</p>
+            </div>
+        </div>
+
+        <!-- ===== WHY MIDKNIGHT ===== -->
+        <div class="section-title">
+            🎯 Why MidKnight?
+            <span class="line"></span>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:20px;">
+            <div class="card" style="border-color:rgba(0,212,255,0.12);">
+                <div style="font-size:40px;margin-bottom:8px;">⚡</div>
+                <h4 style="font-size:20px;font-weight:800;margin-bottom:4px;">Run &amp; Go</h4>
+                <p style="font-size:14px;color:#94a3b8;">
+                    Download. Execute. Done. No setup, no configuration hell, no
+                    dependency management. Just a single binary that works.
+                </p>
+            </div>
+            <div class="card" style="border-color:rgba(123,47,252,0.12);">
+                <div style="font-size:40px;margin-bottom:8px;">🛡️</div>
+                <h4 style="font-size:20px;font-weight:800;margin-bottom:4px;">Backend Isolated</h4>
+                <p style="font-size:14px;color:#94a3b8;">
+                    Your backend stays untouched. MidKnight sits in front,
+                    absorbs traffic, and protects your infrastructure from
+                    unnecessary load.
+                </p>
+            </div>
+            <div class="card" style="border-color:rgba(0,255,136,0.12);">
+                <div style="font-size:40px;margin-bottom:8px;">📦</div>
+                <h4 style="font-size:20px;font-weight:800;margin-bottom:4px;">Zero‑Copy Architecture</h4>
+                <p style="font-size:14px;color:#94a3b8;">
+                    Direct memory access. No serialization. No garbage collection.
+                    No virtual machine. Just pure, deterministic performance.
+                </p>
+            </div>
+            <div class="card" style="border-color:rgba(255,165,2,0.12);">
+                <div style="font-size:40px;margin-bottom:8px;">🔧</div>
+                <h4 style="font-size:20px;font-weight:800;margin-bottom:4px;">Everything Built‑in</h4>
+                <p style="font-size:14px;color:#94a3b8;">
+                    Cache, search, auto‑complete, fuzzy search, JSON path,
+                    persistence, admin API — all in one 36 KB binary.
+                </p>
+            </div>
+        </div>
+
+        <!-- ===== FOOTER ===== -->
+        <div class="footer">
+            <strong>MidKnight v2.0.0</strong> ·
+            Run on Metal · Zero‑Copy · Single Binary · No Dependencies
+        </div>
+
+    </div>
+</body>
+</html>
