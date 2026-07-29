@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Arachne – The Algorithm of Everything</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0f;
+            color: #d4d4e0;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.9;
+            padding: 2rem 1.2rem;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 3.2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #a78bfa, #6ee7b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            font-weight: 700;
+            padding-bottom: 0.2rem;
+        }
+        .sub {
+            text-align: center;
+            color: #8888aa;
+            font-size: 1.3rem;
+            border-bottom: 1px solid #2d2d44;
+            padding-bottom: 1.6rem;
+            margin-bottom: 2.6rem;
+            font-style: italic;
+        }
+        h2 {
+            color: #e0e0ff;
+            font-size: 2rem;
+            margin-top: 3.2rem;
+            border-right: 5px solid #a78bfa;
+            padding-right: 1.2rem;
+            font-weight: 600;
+        }
+        p {
+            margin: 1.3rem 0;
+            color: #d4d4e0;
+        }
+        .highlight {
+            color: #6ee7b7;
+            font-weight: 500;
+        }
+        .accent {
+            color: #a78bfa;
+        }
+        .red {
+            color: #f87171;
+        }
+        .gold {
+            color: #fbbf24;
+        }
+        .quote {
+            background: #14141f;
+            border: 1px solid #2d2d44;
+            border-radius: 14px;
+            padding: 1.8rem 2rem;
+            margin: 2.2rem 0;
+            color: #c8c8dd;
+        }
+        .quote strong {
+            color: #a78bfa;
+        }
+        .quote-gold {
+            border-color: #fbbf24;
+            background: #14140f;
+        }
+        .quote-red {
+            border-color: #7f1d1d;
+            background: #1a0a0a;
+        }
+        .svg-container {
+            background: #0a0a0f;
+            border-radius: 14px;
+            padding: 1rem;
+            margin: 2rem 0;
+            border: 1px solid #2d2d44;
+            text-align: center;
+        }
+        .svg-container svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        pre {
+            background: #14141f;
+            border: 1px solid #2d2d44;
+            border-radius: 12px;
+            padding: 1.2rem 1.6rem;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #c8c8dd;
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            text-align: left;
+            margin: 1.8rem 0;
+        }
+        pre code {
+            display: block;
+            color: #c8c8dd;
+        }
+        .matrix {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            background: #14141f;
+            padding: 1.2rem 1.6rem;
+            border-radius: 12px;
+            border: 1px solid #2d2d44;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            color: #c8c8dd;
+            white-space: pre;
+            margin: 1.8rem 0;
+        }
+        ul {
+            padding-right: 1.8rem;
+            margin: 1.2rem 0;
+        }
+        ul li {
+            margin: 0.6rem 0;
+            color: #c8c8dd;
+        }
+        .divider {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #a78bfa, transparent);
+            margin: 3.2rem 0;
+            opacity: 0.3;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #555577;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid #2d2d44;
+        }
+        @media (max-width: 650px) {
+            body { padding: 1rem 0.7rem; }
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.5rem; }
+            pre { font-size: 0.7rem; padding: 0.8rem; }
+            .matrix { font-size: 0.6rem; padding: 0.6rem; }
+            .sub { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SVG: THE SPIDERWEB -->
+    <div class="svg-container">
+        <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+            <rect width="800" height="500" fill="#0a0a0f" rx="8"/>
+            <line x1="400" y1="50" x2="100" y2="200" stroke="#2d2d44" stroke-width="1.5" opacity="0.5"/>
+            <line x1="400" y1="50" x2="200" y2="400" stroke="#2d2d44" stroke-width="1.5" opacity="0.5"/>
+            <line x1="400" y1="50" x2="400" y2="450" stroke="#2d2d44" stroke-width="1.5" opacity="0.5"/>
+            <line x1="400" y1="50" x2="600" y2="400" stroke="#2d2d44" stroke-width="1.5" opacity="0.5"/>
+            <line x1="400" y1="50" x2="700" y2="200" stroke="#2d2d44" stroke-width="1.5" opacity="0.5"/>
+            <ellipse cx="400" cy="200" rx="180" ry="70" fill="none" stroke="#2d2d44" stroke-width="1" opacity="0.4"/>
+            <ellipse cx="400" cy="300" rx="250" ry="90" fill="none" stroke="#2d2d44" stroke-width="1" opacity="0.4"/>
+            <ellipse cx="400" cy="400" rx="300" ry="100" fill="none" stroke="#2d2d44" stroke-width="1" opacity="0.3"/>
+            <circle cx="400" cy="50" r="35" fill="#a78bfa" opacity="0.15" stroke="#a78bfa" stroke-width="2"/>
+            <text x="400" y="55" text-anchor="middle" fill="#d4d4e0" font-size="12" font-family="monospace">Universe</text>
+            <circle cx="100" cy="200" r="30" fill="#a78bfa" opacity="0.15" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="100" y="195" text-anchor="middle" fill="#d4d4e0" font-size="11" font-family="monospace">Israel</text>
+            <text x="100" y="210" text-anchor="middle" fill="#8888aa" font-size="9" font-family="monospace">1.00</text>
+            <circle cx="200" cy="400" r="30" fill="#6ee7b7" opacity="0.15" stroke="#6ee7b7" stroke-width="1.5"/>
+            <text x="200" y="395" text-anchor="middle" fill="#d4d4e0" font-size="11" font-family="monospace">Hamas</text>
+            <text x="200" y="410" text-anchor="middle" fill="#8888aa" font-size="9" font-family="monospace">0.95</text>
+            <circle cx="400" cy="450" r="30" fill="#fbbf24" opacity="0.15" stroke="#fbbf24" stroke-width="1.5"/>
+            <text x="400" y="445" text-anchor="middle" fill="#d4d4e0" font-size="11" font-family="monospace">Gaza</text>
+            <text x="400" y="460" text-anchor="middle" fill="#8888aa" font-size="9" font-family="monospace">0.90</text>
+            <circle cx="600" cy="400" r="30" fill="#a78bfa" opacity="0.15" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="600" y="395" text-anchor="middle" fill="#d4d4e0" font-size="11" font-family="monospace">Egypt</text>
+            <text x="600" y="410" text-anchor="middle" fill="#8888aa" font-size="9" font-family="monospace">0.40</text>
+            <circle cx="700" cy="200" r="30" fill="#6ee7b7" opacity="0.15" stroke="#6ee7b7" stroke-width="1.5"/>
+            <text x="700" y="195" text-anchor="middle" fill="#d4d4e0" font-size="11" font-family="monospace">USA</text>
+            <text x="700" y="210" text-anchor="middle" fill="#8888aa" font-size="9" font-family="monospace">0.85</text>
+            <circle cx="550" cy="130" r="25" fill="#f87171" opacity="0.15" stroke="#f87171" stroke-width="1.5"/>
+            <text x="550" y="125" text-anchor="middle" fill="#d4d4e0" font-size="10" font-family="monospace">UN</text>
+            <text x="550" y="140" text-anchor="middle" fill="#8888aa" font-size="9" font-family="monospace">0.50</text>
+            <circle cx="300" cy="130" r="25" fill="#fbbf24" opacity="0.15" stroke="#fbbf24" stroke-width="1.5"/>
+            <text x="300" y="125" text-anchor="middle" fill="#d4d4e0" font-size="10" font-family="monospace">Qatar</text>
+            <text x="300" y="140" text-anchor="middle" fill="#8888aa" font-size="9" font-family="monospace">0.60</text>
+            <line x1="115" y1="215" x2="185" y2="375" stroke="#f87171" stroke-width="3" opacity="0.9"/>
+            <text x="140" y="295" text-anchor="middle" fill="#f87171" font-size="9" font-family="monospace">Conflict 95%</text>
+            <line x1="125" y1="210" x2="570" y2="385" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>
+            <text x="340" y="290" text-anchor="middle" fill="#fbbf24" font-size="9" font-family="monospace">Negotiates 40%</text>
+            <line x1="130" y1="200" x2="670" y2="205" stroke="#6ee7b7" stroke-width="2.5" opacity="0.8"/>
+            <text x="400" y="195" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="monospace">Allied 85%</text>
+            <line x1="220" y1="415" x2="375" y2="440" stroke="#fbbf24" stroke-width="2" opacity="0.7"/>
+            <text x="300" y="435" text-anchor="middle" fill="#fbbf24" font-size="9" font-family="monospace">Controls 80%</text>
+            <line x1="585" y1="415" x2="430" y2="440" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>
+            <text x="510" y="435" text-anchor="middle" fill="#a78bfa" font-size="9" font-family="monospace">Mediates 60%</text>
+            <line x1="550" y1="155" x2="420" y2="435" stroke="#f87171" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
+            <text x="490" y="290" text-anchor="middle" fill="#f87171" font-size="9" font-family="monospace">Protects 50%</text>
+            <line x1="310" y1="155" x2="215" y2="375" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>
+            <text x="270" y="260" text-anchor="middle" fill="#fbbf24" font-size="9" font-family="monospace">Funds 75%</text>
+            <rect x="20" y="450" width="220" height="45" rx="4" fill="#14141f" stroke="#2d2d44" stroke-width="0.5"/>
+            <text x="30" y="465" fill="#8888aa" font-size="9" font-family="monospace">Solid = Strong (≥0.70)</text>
+            <text x="30" y="480" fill="#8888aa" font-size="9" font-family="monospace">Dashed = Weak (&lt;0.70)</text>
+            <text x="180" y="465" fill="#f87171" font-size="9" font-family="monospace">Red = Conflict</text>
+            <text x="180" y="480" fill="#6ee7b7" font-size="9" font-family="monospace">Green = Alliance</text>
+            <text x="750" y="490" fill="#555577" font-size="8" font-family="monospace" text-anchor="end">Arachne v1.0</text>
+        </svg>
+    </div>
+
+    <h1>🕸️ Arachne</h1>
+    <p class="sub">The Algorithm of Everything<br/><span style="font-size:0.95rem; color:#666688;">The Fabric of Existence</span></p>
+
+    <h2>🔥 Introduction: The Story of Arachne</h2>
+    <p>In Greek mythology, <span class="accent">Arachne</span> was a simple girl, skilled in weaving. She wove fine threads, mimicking reality. She challenged the goddess Athena, weaving a scene that exposed the gods of Olympus. She wasn't afraid of death—she was afraid of <strong>losing her freedom to weave</strong>.</p>
+    <p>Athena punished her. She turned her into a spider. Trapped her in her own web forever.</p>
+    <div class="quote"><p><strong>The irony:</strong> Arachne became immortal. Not as a goddess, but as a web. A web that weaves itself. Every thread is a probability, every node is a decision, and every movement changes the fate of those caught in it.</p></div>
+    <p><strong>Arachne</strong> is not just a name. It is an <span class="accent">acknowledgment</span> that we are all in a web. A web of relationships, probabilities, and destinies.</p>
+    <div class="quote quote-red"><p><span class="red">But</span>… have you noticed something? Arachne didn't choose to become a web. She was <span class="red">forced</span> into it. Just as many are forced into webs they never chose. Webs of occupation, poverty, war, and injustice.</p><p style="margin-top:0.8rem;"><span class="gold">This is the first lesson:</span> The web is not neutral. Whoever holds the threads controls the fabric.</p></div>
+
+    <hr class="divider" />
+
+    <h2>🧬 Truth: Just a Probability That Became Real</h2>
+    <p>In quantum physics, a particle doesn't have definite properties until measured. Before measurement, it exists in a <span class="accent">superposition</span> of all possible probabilities.</p>
+    <p>In Arachne, this translates to a <strong>node</strong> that can exist in multiple states simultaneously:</p>
+    <pre><code>node->state = NODE_SUPERPOSITION;
+node->quantum_states[0] = {value: "Peace", probability: 0.3};
+node->quantum_states[1] = {value: "War", probability: 0.7};</code></pre>
+    <p>Upon <span class="highlight">collapse</span>, a single truth emerges:</p>
+    <pre><code>arachne_collapse_node(graph, node_id);
+// Now the node is "War" (the most probable)</code></pre>
+    <div class="quote"><p><span class="highlight">Truth is not absolute.</span> It is just a realized probability. If the probabilities changed, the truth would change.</p></div>
+    <p><span class="highlight">And this is comforting.</span> Because if we were in a different world, where probabilities were different, the truth would be different. If the weight of history were different, Palestine would be different. If the balance of power were different, peace would be possible.</p>
+    <p><span class="highlight">And this is painful.</span> Because we know that the current probabilities are not fair. And that whoever holds the threads determines which probabilities become reality.</p>
+
+    <hr class="divider" />
+
+    <h2>⚛️ Quantum Superposition: Existence and Non-Existence Together</h2>
+    <p>In quantum mechanics, a particle can exist in <span class="accent">multiple states</span> simultaneously. This is not fantasy. This is <strong>reality</strong> proven experimentally (double-slit experiment, Hall effect, etc.).</p>
+    <p>In Arachne, quantum superposition applies to <strong>nodes</strong> and <strong>edges</strong>. A node can exist and not exist simultaneously. An edge can be real and imaginary at the same time.</p>
+    <div class="quote"><p><span class="highlight">Why does this matter?</span></p><p>Because life is all superposition. Every decision you make is a collapse of a wave of probabilities. You chose to read this article, so a wave of other possibilities collapsed (watching a video, sleeping, eating). You are here now. And this is your reality.</p></div>
+    <div class="quote quote-red"><p><span class="red">But</span>… what about those who didn't choose? The children in Gaza, trapped between a life they didn't choose and a death they didn't ask for. They too are in superposition. Existing and not existing simultaneously. Visible and invisible. Alive and dead at the same time.</p></div>
+    <p>Arachne simulates this. Not because it is real quantum physics, but because it is a <strong>model</strong> of reality. A model that says: <span class="accent">"Everything is probability, and measurement determines reality."</span></p>
+    <p style="color:#f87171;">And measurement… is not always fair.</p>
+
+    <hr class="divider" />
+
+    <h2>🧬 Quantum Entanglement: Everything Affects Everything</h2>
+    <p>In quantum physics, two particles can be <span class="accent">entangled</span>. Changing one instantly affects the other, even if they are billions of light-years apart. Einstein called this "spooky action at a distance."</p>
+    <p>In Arachne:</p>
+    <pre><code>arachne_entangle_nodes(graph, node1, node2);</code></pre>
+    <p>This creates a special edge. An edge that says: <span class="gold">"You are connected. No matter how far apart, you will affect each other."</span></p>
+    <div class="quote"><p><span class="highlight">And this is history.</span> Every event is connected to another. Every decision affects later decisions. Every thread in the web affects neighboring threads.</p><p style="margin-top:0.8rem;">The Nakba affects the Naksa. The Naksa affects the Intifada. The Intifada affects the war. The war affects the peace. The peace affects the next Nakba.</p><p style="margin-top:0.8rem;"><strong>This is the chain of consequences.</strong> Not linear, but a <span class="accent">spiderweb</span> of mutual influence.</p></div>
+    <p><span class="highlight">And this is the pain.</span> Because we know that every thread is heard, every node is influential, and every decision has consequences. But we also know that some threads are stronger than others, and some nodes control the entire fabric.</p>
+
+    <hr class="divider" />
+
+    <h2>📊 Prediction: Calculating Possible Paths</h2>
+    <p>After building the web, we can <strong>predict</strong> the most probable path:</p>
+    <pre><code>predict 0 5</code></pre>
+    <div class="matrix">0. "Israel" (1.00)
+1. "Hamas" (0.95)
+2. "Escalation" (0.85)
+3. "Humanitarian_Crisis" (0.90)
+4. "Ceasefire" (0.80)
+5. "Peace_Agreement" (0.70)</div>
+    <div class="quote"><p><span class="highlight">P(path) = 0.95 × 0.85 × 0.90 × 0.80 × 0.70 = 0.407 (40.7%)</span></p><p>This means: there is a 40.7% chance that the conflict will lead to peace. Not 100%. Not 0%. But 40.7%.</p><p style="margin-top:0.8rem;"><span class="highlight">And this is reality.</span> Nothing is certain. Everything is probability.</p></div>
+    <p><span class="highlight">And this is hope.</span> Because 40.7% is not zero. There is always a chance. There is always another thread to weave. There is always another path to take.</p>
+    <p><span class="highlight">And this is despair.</span> Because 40.7% is not enough. Because it means there is a 59.3% chance that peace will not happen. And that history, pain, occupation, and injustice all push probabilities in another direction.</p>
+
+    <hr class="divider" />
+
+    <h2>🛤️ Paths: History and Alternatives</h2>
+    <p>Paths are <strong>sequences of nodes and edges</strong>. They are history. But they are also alternatives. Paths we didn't take, but they exist in the web as probabilities.</p>
+    <pre><code>paths 23 "Peace_Agreement" 6</code></pre>
+    <div class="matrix">┌────┬──────────────────────────────────────────┬────────┬───────┐
+│  # │  PATH                                    │  PROB  │  LEN  │
+├────┼──────────────────────────────────────────┼────────┼───────┤
+│  1 │  Hamas → Egypt → Conflict → Ceasefire    │   70%  │   4   │
+│  2 │  Hamas → Gaza_City → Conflict → Ceasefire│   65%  │   4   │
+│  3 │  Hamas → Egypt → UN → Ceasefire          │   55%  │   4   │
+│  4 │  Hamas → USA → UN → Ceasefire            │   45%  │   4   │
+│  5 │  Hamas → Qatar → Ceasefire               │   40%  │   3   │
+└────┴──────────────────────────────────────────┴────────┴───────┘</div>
+    <div class="quote"><p><span class="highlight">These are the paths.</span> Paths we took, and paths we didn't take. Paths that led to the present, and paths that could have led to a different present.</p><p style="margin-top:0.8rem;"><span class="gold">And this is the question:</span> Which path will we choose? Do we continue on the same path, or do we weave a new one?</p><p style="margin-top:0.8rem;"><span class="gold">And this is the challenge:</span> Because some paths are blocked, some are risky, and some seem impossible. But the web still exists. And the threads are still within reach.</p></div>
+
+    <hr class="divider" />
+
+    <h2>🔬 Learning: How the System Adapts</h2>
+    <p>Arachne learns. When events occur, you can <strong>teach</strong> the system:</p>
+    <pre><code>learn 3 "mediation_success" 0.2</code></pre>
+    <p>This says: <span class="gold">"A successful mediation event occurred, increasing the influence of node 3 by 20%."</span></p>
+    <div class="quote"><p><strong>The system adjusts weights and probabilities</strong> based on these events. It becomes more accurate over time.</p><p style="margin-top:0.8rem;"><span class="highlight">And this is the lesson:</span> Change is possible. Learning is possible. Adaptation is possible. But it requires awareness. It requires seeing which threads can be adjusted. It requires courage to weave a new thread.</p></div>
+
+    <hr class="divider" />
+
+    <h2>🧠 Decision Trees: Choosing the Optimal Path</h2>
+    <p>After learning, you can build a <strong>decision tree</strong>:</p>
+    <pre><code>decision 23 4 "Peace_Agreement"</code></pre>
+    <div class="matrix">🎯 Target: Peace_Agreement (Node 21)
+📍 Start: Hamas (Node 23)
+📏 Depth: 4
+
+🔮 RECOMMENDED PATH:
+   Hamas → Egypt (95%) → Conflict (95%) → Ceasefire (80%) → Peace_Agreement (70%) ✓</div>
+    <div class="quote"><p><span class="highlight">This says:</span> "To reach peace from Hamas, follow this path. Its probability is 50.5%."</p><p style="margin-top:0.8rem;"><span class="gold">And this is the decision.</span> Not easy. Not guaranteed. But possible.</p><p style="margin-top:0.8rem;"><span class="highlight">And this is hope.</span> Because the decision is not determined by history. It is determined by probabilities. And probabilities can be changed.</p></div>
+
+    <hr class="divider" />
+
+    <h2>🌌 Imagination: Another Reality</h2>
+    <p>Imagination is not an escape from reality. It is <span class="accent">another reality</span>. A parallel reality in Arachne's web.</p>
+    <pre><code>// Imagination: if occupation never happened
+add "Alternative_Reality" 80
+link 0 2 "peace" 0.95
+link 2 0 "peace" 0.95</code></pre>
+    <div class="quote quote-gold"><p><span class="gold">Imagination is not a lie.</span> It is a probability not yet realized. It is a path not yet taken. It is an alternative to reality.</p><p style="margin-top:0.8rem;"><span class="highlight">And this is beauty.</span> Because imagination reminds us that reality is not the only possible one. That there are other worlds we can weave. That threads not yet woven are still waiting for us.</p><p style="margin-top:0.8rem;"><span class="highlight">And this is pain.</span> Because imagination also reminds us that these other worlds are far away. And that threads not yet woven may never be woven.</p></div>
+
+    <hr class="divider" />
+
+    <h2>🎯 Conclusion: The Real Fabric</h2>
+    <p>Arachne is not a tool. It is a <span class="accent">mirror</span> of reality. A mirror that shows that everything is a <strong>result</strong> of intertwined factors.</p>
+    <p>Reality is not a straight line. It is a <strong>fabric</strong>. A fabric of:</p>
+    <ul><li><span class="highlight">Truths</span> – what became real from probabilities</li><li><span class="highlight">Controlling forces</span> – what tips probabilities in a certain direction</li><li><span class="highlight">Imaginations</span> – what could be</li><li><span class="highlight">Expectations</span> – what we hope for</li><li><span class="highlight">Paths</span> – what we walked</li><li><span class="highlight">Selves</span> – who we are</li><li><span class="highlight">Needs</span> – what we want</li></ul>
+    <div class="quote quote-gold"><p style="font-size:1.3rem; text-align:center;"><span class="gold">Changing one thread changes the entire fabric.</span></p><p style="text-align:center; font-size:1.05rem;">This is the real lesson. Not that the future is predetermined. But that <span class="accent">the present is a result</span>, and <span class="accent">the future is another result</span>.</p><p style="text-align:center; font-size:1.1rem; margin-top:0.8rem;"><span class="gold">And this is the question:</span> Which thread will you weave today?</p></div>
+
+    <hr class="divider" />
+
+    <h2>📚 References</h2>
+    <ul><li>Nielsen, M. A., &amp; Chuang, I. L. (2010). <em>Quantum Computation and Quantum Information</em>. Cambridge University Press.</li><li>Barabási, A. L. (2016). <em>Network Science</em>. Cambridge University Press.</li><li>Pearl, J. (2009). <em>Causality: Models, Reasoning, and Inference</em>. Cambridge University Press.</li><li>Jaynes, E. T. (2003). <em>Probability Theory: The Logic of Science</em>. Cambridge University Press.</li><li>Osborne, M. J. (2004). <em>An Introduction to Game Theory</em>. Oxford University Press.</li></ul>
+
+    <hr class="divider" />
+
+    <h2>🕸️ Appendix: How to Weave Your Own Web?</h2>
+    <pre><code>git clone https://github.com/yourusername/arachne.git
+cd arachne
+make
+./arachne</code></pre>
+    <p>Then:</p>
+    <pre><code>add "Your_Truth" 50
+add "Your_Imagination" 50
+link 0 1 "maybe" 0.5
+predict 0 5</code></pre>
+    <div class="quote" style="border-color:#a78bfa; background:#14141f;"><p style="text-align:center; font-size:1.1rem;"><span class="accent">And remember:</span> Everything you see is a result. Every result is a fabric. And every fabric is Arachne.</p><p style="text-align:center; font-size:1rem;">This is reality. This is imagination. This is everything. 🕸️✨</p></div>
+
+    <div class="footer"><p>🕸️ Arachne v1.0.0 — The Algorithm of Everything</p><p style="font-size:0.75rem; color:#444466;">Reality · Imagination · Probability</p><p style="font-size:0.7rem; margin-top:0.5rem; color:#333355;"><span>🧬 Science · 🧠 Philosophy · 🕸️ The Web</span></p></div>
+
+</body>
+</html>
