@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-    <!-- Root -->
+    <!-- EZMU Root -->
     <url>
         <loc>https://ezmu.github.io/</loc>
     </url>
 
-    <!-- Projects -->
-
+    <!-- Main Projects -->
     <url>
         <loc>https://ezmu.github.io/resource-thief-detector/</loc>
     </url>
@@ -41,7 +40,6 @@
     </url>
 
     <!-- Tools / Applications -->
-
     <url>
         <loc>https://ezmu.github.io/mk/</loc>
     </url>
@@ -55,7 +53,6 @@
     </url>
 
     <!-- Writing -->
-
     <url>
         <loc>https://ezmu.github.io/a_programmers_inferno.html</loc>
     </url>
@@ -64,9 +61,129 @@
         <loc>https://ezmu.github.io/TheGraveyardofCode.html</loc>
     </url>
 
-  <url>
+    <!-- Performance Bible -->
+    <url>
         <loc>https://ezmu.github.io/performance-bible/</loc>
     </url>
 
-  
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-01.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-02.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-03.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-04.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-05.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-06.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-07.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-08.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-09.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-10.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-11.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-12.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-13.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-14.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-15.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-16.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-17.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-18.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-19.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-20.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-21.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-22.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-23.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-24.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-25.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-26.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-27.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-28.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-29.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/performance-bible/topic-30.html</loc>
+    </url>
+
 </urlset>
