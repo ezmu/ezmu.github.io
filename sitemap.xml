@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <!-- Root -->
+    <url>
+        <loc>https://ezmu.github.io/</loc>
+    </url>
+
+    <!-- Projects -->
+
+    <url>
+        <loc>https://ezmu.github.io/resource-thief-detector/</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/Arachne/</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/Db-Manager/</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/memory-scanner-poc/</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/ModuleGenerator/</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/view-hints/</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/ezscaffold.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/tca.html</loc>
+    </url>
+
+    <!-- Tools / Applications -->
+
+    <url>
+        <loc>https://ezmu.github.io/mk/</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/finance.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/business.html</loc>
+    </url>
+
+    <!-- Writing -->
+
+    <url>
+        <loc>https://ezmu.github.io/a_programmers_inferno.html</loc>
+    </url>
+
+    <url>
+        <loc>https://ezmu.github.io/TheGraveyardofCode.html</loc>
+    </url>
+
+  <url>
+        <loc>https://ezmu.github.io/performance-bible/</loc>
+    </url>
+
+  
+</urlset>
