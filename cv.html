@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ez-Eldeen A. Y. Mushtaha — Systems Architect & Performance Engineer</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg:           #0b0a0e;
+    --bg-elevated:  #12111a;
+    --bg-card:      #16151f;
+    --gold:         #fbc863;
+    --gold-soft:    rgba(251, 200, 99, 0.55);
+    --gold-faint:   rgba(251, 200, 99, 0.15);
+    --blue:         #5ba3d0;
+    --text:         #e8e4dc;
+    --text-muted:   rgba(232, 228, 220, 0.65);
+    --text-dim:     rgba(232, 228, 220, 0.40);
+    --border:       rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(251, 200, 99, 0.25);
+    --radius:       10px;
+    --max-width:    900px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    padding: 3rem 1.5rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 800px 600px at 30% 10%, rgba(251, 200, 99, 0.04) 0%, transparent 55%),
+        radial-gradient(ellipse 700px 500px at 80% 90%, rgba(91, 163, 208, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* ═══ HEADER ═══ */
+.header {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+}
+
+.name {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--gold);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+}
+
+.title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    margin-bottom: 0.35rem;
+}
+
+.tagline {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 1.25rem;
+}
+
+.contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.contact a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.contact a:hover { color: var(--gold); }
+
+/* ═══ SECTIONS ═══ */
+.section {
+    margin-bottom: 2.5rem;
+}
+
+.section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--gold-faint);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.section-title::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* ═══ ABOUT ═══ */
+.about p {
+    color: var(--text-muted);
+    margin-bottom: 0.85rem;
+    font-size: 0.9rem;
+    line-height: 1.75;
+}
+
+.about p:last-child { margin-bottom: 0; }
+
+/* ═══ STRENGTHS ═══ */
+.strengths {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem 1.5rem;
+    list-style: none;
+}
+
+.strengths li {
+    color: var(--text-muted);
+    font-size: 0.86rem;
+    padding-left: 1.1rem;
+    position: relative;
+    line-height: 1.6;
+}
+
+.strengths li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 0.75rem;
+}
+
+/* ═══ EXPERIENCE ═══ */
+.job {
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.job:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.job-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.job-date {
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.job-company {
+    font-size: 0.85rem;
+    color: var(--blue);
+    font-weight: 500;
+    margin-bottom: 0.65rem;
+}
+
+.job-intro {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    margin-bottom: 0.65rem;
+    line-height: 1.7;
+    font-style: italic;
+}
+
+.job ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.job ul li {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    padding-left: 1.1rem;
+    position: relative;
+    margin-bottom: 0.4rem;
+    line-height: 1.65;
+}
+
+.job ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 0.75rem;
+}
+
+/* ═══ PROJECTS ═══ */
+.project {
+    margin-bottom: 1.75rem;
+    padding: 1.25rem 1.4rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color 0.2s;
+}
+
+.project:hover { border-color: var(--border-hover); }
+
+.project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.project-name {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: -0.01em;
+}
+
+.project-meta {
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+}
+
+.project-link {
+    font-size: 0.78rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--blue);
+    text-decoration: none;
+    margin-bottom: 0.65rem;
+    display: inline-block;
+    transition: color 0.2s;
+}
+
+.project-link:hover { color: var(--gold); }
+
+.project-desc {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    margin-bottom: 0.7rem;
+    line-height: 1.7;
+}
+
+.project ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0.7rem;
+}
+
+.project ul li {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    padding-left: 1.1rem;
+    position: relative;
+    margin-bottom: 0.35rem;
+    line-height: 1.6;
+}
+
+.project ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 0.75rem;
+}
+
+.project-tech {
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--border);
+}
+
+.project-tech strong {
+    color: var(--gold-soft);
+    font-weight: 500;
+}
+
+/* ═══ SKILLS ═══ */
+.skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.skill-group {
+    padding: 1rem 1.15rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.skill-group h4 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+}
+
+.skill-group p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+}
+
+/* ═══ LANGUAGES ═══ */
+.languages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+}
+
+.languages div {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+}
+
+.languages strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+/* ═══ SUMMARY ═══ */
+.summary {
+    padding: 1.5rem 1.75rem;
+    background: var(--bg-elevated);
+    border: 1px solid var(--gold-faint);
+    border-radius: var(--radius);
+}
+
+.summary p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 0.85rem;
+}
+
+.summary p:last-child {
+    margin-bottom: 0;
+    color: var(--gold);
+    font-weight: 500;
+    font-style: italic;
+}
+
+/* ═══ PRINT ═══ */
+@media print {
+    @page {
+        size: A4;
+        margin: 12mm 10mm;
+    }
+
+    body {
+        background: #fff !important;
+        color: #1a1a1a !important;
+        padding: 0;
+        font-size: 10.5pt;
+        line-height: 1.5;
+    }
+
+    body::before { display: none; }
+
+    .container { max-width: 100%; }
+
+    .name { color: #b8860b !important; font-size: 22pt; }
+    .title { color: #1a1a1a !important; font-size: 11pt; }
+    .tagline { color: #4a7fa5 !important; font-size: 8.5pt; }
+    .contact { color: #444 !important; font-size: 8.5pt; }
+    .contact a { color: #444 !important; }
+
+    .section-title {
+        color: #b8860b !important;
+        border-bottom-color: #d4b06a !important;
+        font-size: 9pt;
+        page-break-after: avoid;
+    }
+
+    .section-title::before { background: #b8860b !important; }
+
+    .job, .project, .skill-group, .summary {
+        page-break-inside: avoid;
+        background: #fafafa !important;
+        border-color: #ddd !important;
+        box-shadow: none !important;
+    }
+
+    .project-name { color: #b8860b !important; }
+    .job-company { color: #4a7fa5 !important; }
+    .job-title { color: #1a1a1a !important; }
+    .job-date, .project-meta, .project-tech { color: #666 !important; }
+
+    .about p, .job ul li, .project ul li, .project-desc,
+    .skill-group p, .languages div, .summary p {
+        color: #333 !important;
+    }
+
+    .job ul li::before, .project ul li::before, .strengths li::before {
+        color: #b8860b !important;
+    }
+
+    .project-link { color: #4a7fa5 !important; }
+
+    a { text-decoration: none; }
+
+    .section { margin-bottom: 1.2rem; }
+    .job { margin-bottom: 1rem; padding-bottom: 0.8rem; }
+    .project { margin-bottom: 1rem; padding: 0.8rem 1rem; }
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 700px) {
+    body { padding: 1.5rem 1rem; }
+    .name { font-size: 1.7rem; }
+    .strengths, .skills-grid { grid-template-columns: 1fr; }
+    .job-header, .project-header { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+    <!-- ═══ HEADER ═══ -->
+    <header class="header">
+        <h1 class="name">Ez-Eldeen A. Y. Mushtaha</h1>
+        <div class="title">Systems Architect &amp; Performance Engineer</div>
+        <div class="tagline">System Architecture · Performance · Cybersecurity · Reverse Engineering · Databases</div>
+        <div class="contact">
+            <span>📍 Gaza, Palestinian Territory</span>
+            <span>📞 +972 599 455 328</span>
+            <span>✉️ <a href="mailto:3z.eldeen@gmail.com">3z.eldeen@gmail.com</a></span>
+            <span>🔗 <a href="https://ezmu.github.io">ezmu.github.io</a></span>
+            <span>💻 <a href="https://github.com/ezmu">github.com/ezmu</a></span>
+            <span>✍️ <a href="https://medium.com/@3z.eldeen">medium.com/@3z.eldeen</a></span>
+        </div>
+    </header>
+
+    <!-- ═══ ABOUT ═══ -->
+    <section class="section about">
+        <h2 class="section-title">About Me</h2>
+        <p>I am a systems-oriented engineer with over 18 years of experience across system architecture, performance engineering, cybersecurity, reverse engineering, and databases. I approach software as a living system — tracing behavior across code, databases, servers, and networks to find root causes and eliminate them at the architectural level, not the symptom level.</p>
+        <p>My work sits at the intersection of deep technical implementation and architectural thinking. I move fluidly between low-level code, database internals, Linux kernel behavior, and business logic. I diagnose complex production failures by following the data — through syscalls, query plans, memory maps, and network traces — until the real cause surfaces.</p>
+        <p>Alongside my professional work, I build products, conduct independent research, and publish technical writing on system behavior, performance, and the systemic causes of software bloat.</p>
+    </section>
+
+    <!-- ═══ STRENGTHS ═══ -->
+    <section class="section">
+        <h2 class="section-title">Key Strengths</h2>
+        <ul class="strengths">
+            <li>Systems-first engineering mindset with strong architectural awareness</li>
+            <li>Performance engineering: profiling, syscall-level optimization, query tuning</li>
+            <li>Cybersecurity-aware across application, system, and network layers</li>
+            <li>Reverse engineering and root-cause analysis of complex production issues</li>
+            <li>Deep Linux internals: io_uring, splice/sendfile, SHM, SO_REUSEPORT</li>
+            <li>Database administration, tuning, and query optimization</li>
+            <li>Extensive experience with ERP, POS, and business-critical systems</li>
+            <li>Independent researcher and active open-source author</li>
+            <li>Technical writer on performance, systems, and software economics</li>
+        </ul>
+    </section>
+
+    <!-- ═══ EXPERIENCE ═══ -->
+    <section class="section">
+        <h2 class="section-title">Professional Experience</h2>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Operations Manager</span>
+                <span class="job-date">May 2023 – Mar 2024</span>
+            </div>
+            <div class="job-company">AnvilERP</div>
+            <p class="job-intro">Oversaw delivery and operational stability of ERP solutions for multiple clients — not as a coordinator, but as the technical decision-maker when systems failed under real operational pressure.</p>
+            <ul>
+                <li>Led cross-functional teams to improve delivery efficiency and operational consistency</li>
+                <li>Reviewed system architecture and data workflows to eliminate failure points at the design level</li>
+                <li>Conducted operational data analysis and reporting to support strategic decisions</li>
+                <li>Resolved complex client-side technical issues by tracing them to architectural root causes</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Magento 2.x Developer / Systems Integrator</span>
+                <span class="job-date">Nov 2021 – Mar 2023</span>
+            </div>
+            <div class="job-company">Infoney Tech</div>
+            <p class="job-intro">Built and maintained ERPNext ↔ marketplace integrations where data consistency and operational reliability were non-negotiable.</p>
+            <ul>
+                <li>Designed and implemented ERPNext ↔ marketplace integrations with strict data consistency</li>
+                <li>Managed Linux servers and cloud infrastructure (AWS, Azure)</li>
+                <li>Performed system security testing and environment hardening</li>
+                <li>Built reporting tools that turned raw operational data into decisions</li>
+                <li>Optimized data gathering, reformatting, and workflow logic</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Magento 2.x Developer</span>
+                <span class="job-date">Mar 2021 – Oct 2021</span>
+            </div>
+            <div class="job-company">Mawaqaa Co.</div>
+            <p class="job-intro">Developed custom Magento 2.x solutions and third-party integrations where business logic had to behave predictably under production load — not in theory.</p>
+            <ul>
+                <li>Built custom Magento modules and integrations</li>
+                <li>Optimized data flow between external systems</li>
+                <li>Improved platform performance and stability under real traffic</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Software Developer</span>
+                <span class="job-date">Oct 2020 – Sep 2021</span>
+            </div>
+            <div class="job-company">Trust Angle Co.</div>
+            <p class="job-intro">Customized Magento-based solutions for retail and restaurant environments, integrating eCommerce operations with ERP systems.</p>
+            <ul>
+                <li>Customized Magento solutions for operational use cases</li>
+                <li>Integrated ERP systems with eCommerce platforms</li>
+                <li>Conducted security testing and system validation before production deployment</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Full-Stack Developer</span>
+                <span class="job-date">Apr 2018 – Nov 2020</span>
+            </div>
+            <div class="job-company">SNAPIX Co.</div>
+            <p class="job-intro">Worked on data-driven platforms and AI-assisted systems, including genealogy and relational data management.</p>
+            <ul>
+                <li>Led development teams across web, desktop, and mobile platforms</li>
+                <li>Designed and built Android applications for network analysis and security testing</li>
+                <li>Managed Linux servers, cloud infrastructure, and network security</li>
+                <li>Designed system-level integrations across heterogeneous systems</li>
+                <li>Developed AI and machine-learning algorithms for behavioral systems</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Team Lead &amp; PHP Developer</span>
+                <span class="job-date">2017 – 2018</span>
+            </div>
+            <div class="job-company">TechLine ITC</div>
+            <p class="job-intro">Led backend development for API-centric platforms in real estate and eCommerce.</p>
+            <ul>
+                <li>Led backend development for API-centric platforms</li>
+                <li>Oversaw server configuration, security, and networking</li>
+                <li>Mentored developers and reviewed technical designs</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Senior Programmer &amp; Project Manager</span>
+                <span class="job-date">Sep 2015 – Sep 2017</span>
+            </div>
+            <div class="job-company">PIXEL ITC</div>
+            <p class="job-intro">Led cross-platform development projects with emphasis on system integration, performance, and security.</p>
+            <ul>
+                <li>Led development teams across multiple platforms</li>
+                <li>Managed Linux servers, cloud infrastructure, and network security</li>
+                <li>Designed system-level integrations across heterogeneous systems</li>
+                <li>Built Android-based tools for network analysis and security testing</li>
+                <li>Developed machine-learning and AI algorithms for games and logic-driven systems</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Programmer &amp; Systems Consultant</span>
+                <span class="job-date">2011 – 2015</span>
+            </div>
+            <div class="job-company">Various Roles</div>
+            <p class="job-intro">Consulted and developed ERP, CRM, and LMS systems, primarily on open-source platforms.</p>
+            <ul>
+                <li>Integrated ERP, CRM, and LMS platforms (Moodle, BigBlueButton)</li>
+                <li>Conducted penetration testing and vulnerability assessments</li>
+                <li>Designed and optimized complex database schemas</li>
+                <li>Worked with Java for mobile and backend integrations</li>
+                <li>Built system-level applications using Delphi</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ═══ PART-TIME ═══ -->
+    <section class="section">
+        <h2 class="section-title">Part-time &amp; Consulting Roles</h2>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Database Administrator &amp; Performance Consultant</span>
+                <span class="job-date">2016 – 2019 &amp; 2021 – 2024</span>
+            </div>
+            <div class="job-company">Digital Cloud · Part-time · 20 hrs/week · Remote</div>
+            <p class="job-intro">Provided database administration, monitoring, and performance optimization for production systems in a software company environment — alongside full-time roles.</p>
+            <ul>
+                <li>Administered relational databases and ensured availability, integrity, and performance</li>
+                <li>Monitored database health, resource usage, and slow queries on an ongoing basis</li>
+                <li>Analyzed and optimized query performance, indexing strategies, and execution plans</li>
+                <li>Reviewed schema design and recommended structural improvements</li>
+                <li>Implemented and maintained backup, recovery, and monitoring procedures</li>
+                <li>Diagnosed and resolved production performance bottlenecks</li>
+                <li>Kept production databases fast under pressure — including the unglamorous work of preventing 3 AM outages</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ═══ PROJECTS ═══ -->
+    <section class="section">
+        <h2 class="section-title">Selected Projects &amp; Products</h2>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-name">Arachne — The Algorithm of Everything</span>
+                <span class="project-meta">2026 · Research · CC BY-NC-SA 4.0</span>
+            </div>
+            <a class="project-link" href="https://ezmu.github.io/Arachne/">ezmu.github.io/Arachne/</a>
+            <p class="project-desc">A probabilistic knowledge network framework inspired by quantum mechanics. Models reality as a spiderweb of interconnected nodes and probabilistic edges, where every connection carries uncertainty, causality, and choice.</p>
+            <ul>
+                <li>Graph-based knowledge representation with memory-mapped storage (up to 1M nodes, 5M edges)</li>
+                <li>Quantum-inspired states: superposition, collapse, and entanglement</li>
+                <li>Prediction engine for most probable paths</li>
+                <li>Adaptive learning via Bayesian probability updates</li>
+                <li>Batch simulation for sensitivity analysis and decision-tree generation</li>
+                <li>ASCII/SVG visualisations; export to JSON, Graphviz, D3.js</li>
+                <li>CLI with 20+ commands; thread-safe with read-write locks</li>
+                <li>Applied to a Middle East conflict network (ACLED data, 2016–2026), identifying a critical probability threshold (~55%) for peace-path shifts</li>
+            </ul>
+            <div class="project-tech"><strong>Tech:</strong> C, POSIX, pthread, memory-mapped storage, Bayesian inference, Graph theory, CLI</div>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-name">ERESHKIGAL — Native Infrastructure Runtime</span>
+                <span class="project-meta">2024 – 2026 · Closed Source</span>
+            </div>
+            <a class="project-link" href="https://kigal.co">kigal.co</a>
+            <p class="project-desc">Designed, built, and productized a high-performance HTTP reverse proxy cache with embedded Lua scripting, written entirely in C from scratch.</p>
+            <ul>
+                <li>Single-binary runtime (357 KB, zero dependencies) replacing 7+ separate services</li>
+                <li>Zero-copy I/O using <code>splice</code>/<code>sendfile</code>, reducing memory copies by 2–3x per request</li>
+                <li><code>io_uring</code> integration for async accept, reducing syscall overhead by ~90%</li>
+                <li>Shared-memory cache achieving sub-millisecond latencies on 2012 hardware</li>
+                <li>Embedded Lua 5.4 framework for programmable request/response manipulation</li>
+                <li>Multi-DB access layer (MySQL, PostgreSQL, SQLite) with JSON indexing and full-text search</li>
+                <li>Runtime-level DDoS protection, XSS/injection filters, and rate limiting</li>
+                <li>Benchmarked at 2,487 req/s on a single core and 4,022 req/s across four cores on a 2012 Intel Core i3 — sustaining 14,000 concurrent requests with memory usage between 20–120 MB and zero failed requests</li>
+                <li>Defined licensing tiers, pricing model, and compliance positioning (HIPAA, PCI-DSS, GDPR, SOC 2)</li>
+            </ul>
+            <div class="project-tech"><strong>Tech:</strong> C, Linux, io_uring, SHM, SO_REUSEPORT, Lua 5.4, OpenSSL, MySQL, PostgreSQL, SQLite, JSON</div>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-name">Resource Thief Detector (RTD)</span>
+                <span class="project-meta">2026 · Open Source (MIT)</span>
+            </div>
+            <a class="project-link" href="https://github.com/ezmu/resource-thief-detector">github.com/ezmu/resource-thief-detector</a>
+            <p class="project-desc">An interactive CLI regression-testing suite for Laravel that detects resource leaks at the query and memory level.</p>
+            <ul>
+                <li>Detects N+1 query patterns automatically via an intelligent Query Normalization Engine</li>
+                <li>Profiles Wall Time, CPU Process Time, RAM usage, and per-query SQL time</li>
+                <li>Identifies slow queries, unindexed lookups, and large collection hydration</li>
+                <li>Provides baseline vs fix comparison with quantitative regression/improvement reports</li>
+                <li>Interactive REPL for profiling routes, applying fixes, and comparing iterations live</li>
+                <li>Hooks directly into Laravel's lifecycle using strict memory tracking</li>
+            </ul>
+            <div class="project-tech"><strong>Tech:</strong> PHP, Laravel, SQL, Query Normalization, AST Instrumentation, CLI</div>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-name">Tiered-Cost Architecture (TCA)</span>
+                <span class="project-meta">2024 – 2026 · Research · CC BY-NC 4.0</span>
+            </div>
+            <a class="project-link" href="https://ezmu.github.io/tca.html">ezmu.github.io/tca.html</a>
+            <p class="project-desc">A multi-layer AI processing framework that routes queries across four tiers — from on-device deterministic processing to server-side generative AI — governed by a Cognitive Gate for ethical and logical validation.</p>
+            <ul>
+                <li>Optimizes cost, privacy, and latency through intelligent query routing</li>
+                <li>Includes a live prototype of the Adaptive Routing Engine</li>
+                <li>Focus: Efficiency-First AI design, ethical firewalls, edge privacy</li>
+            </ul>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-name">The Performance Bible</span>
+                <span class="project-meta">2026 · Technical Reference</span>
+            </div>
+            <a class="project-link" href="https://ezmu.github.io/performance-bible/">ezmu.github.io/performance-bible/</a>
+            <p class="project-desc">A 30-topic reference covering performance from code to physics: algorithmic complexity, Laravel tuning, database scaling, distributed systems, and zero-trust architecture.</p>
+            <ul>
+                <li>800+ pages equivalent, 200+ production-grade code examples</li>
+                <li>Topics include OpCache/JIT, PHP-FPM, ProxySQL, Octane, SplFixedArray, CAP theorem, distributed locking, observability</li>
+            </ul>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-name">A Programmer's Inferno</span>
+                <span class="project-meta">2026 · Manifesto · Medium</span>
+            </div>
+            <a class="project-link" href="https://ezmu.github.io/a_programmers_inferno.html">ezmu.github.io/a_programmers_inferno.html</a>
+            <p class="project-desc">A technical manifesto in nine essays exposing the systemic causes of software bloat: architectural collapse, dependency hell, Docker absurdity, cloud economics, and the psychology of distraction.</p>
+            <ul>
+                <li>Combines systems critique with economic analysis (Jevons Paradox)</li>
+                <li>Proposes six principles for returning to efficient engineering</li>
+            </ul>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-name">CloudEMR · BeeHive · Odoo POS &amp; Delivery Modules</span>
+                <span class="project-meta">2023 – 2026</span>
+            </div>
+            <ul>
+                <li><strong>CloudEMR:</strong> hybrid cloud EMR with offline sync and advanced reporting</li>
+                <li><strong>BeeHive:</strong> AI-assisted genealogy platform with complex relational data</li>
+                <li><strong>Odoo Modules:</strong> POS + delivery + server-side thermal printing + accounting integration, with printer communication, job queuing, and acknowledgment handling</li>
+            </ul>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-name">Other Open-Source Tools</span>
+                <span class="project-meta">github.com/ezmu</span>
+            </div>
+            <ul>
+                <li><strong>Db-Manager</strong> — Laravel CLI for database schema inspection and management</li>
+                <li><strong>memory-scanner-poc</strong> — Python PoC for memory scanning and in-memory data analysis</li>
+                <li><strong>view-hints</strong> — Laravel Blade debugging with inline editing</li>
+                <li><strong>docs-generator</strong> — Laravel project documentation generator</li>
+                <li><strong>ModuleGenerator</strong> — Magento 2 module generator</li>
+                <li><strong>live-lang-translator</strong> — Inline translation editor for Laravel</li>
+                <li><strong>API-Tester</strong> — Lightweight API inspection tool</li>
+                <li><strong>html-to-markdown</strong> — HTML to Markdown converter</li>
+                <li><strong>ascii-tree-builder</strong> — Visual ASCII tree builder</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ═══ SKILLS ═══ -->
+    <section class="section">
+        <h2 class="section-title">Technical Skills</h2>
+        <div class="skills-grid">
+            <div class="skill-group">
+                <h4>SYSTEMS &amp; PERFORMANCE</h4>
+                <p>Performance engineering, profiling, syscall-level optimization · Reverse engineering, debugging, root-cause analysis · Linux internals: io_uring, splice/sendfile, SHM, SO_REUSEPORT · Graph-based knowledge systems, probabilistic modeling, Bayesian inference · Memory-mapped storage, thread-safe C systems</p>
+            </div>
+            <div class="skill-group">
+                <h4>DATABASES</h4>
+                <p>MySQL, PostgreSQL, Oracle · Query optimization, indexing, execution plan analysis · Monitoring, backup &amp; recovery, performance tuning</p>
+            </div>
+            <div class="skill-group">
+                <h4>BACKEND &amp; LANGUAGES</h4>
+                <p>PHP (Laravel, Magento, OpenCart, CodeIgniter) · Python (Data Analysis, AI/ML) · C (systems programming, io_uring, zero-copy I/O) · Java (Java SE, Android) · C#, Delphi, Shell, Perl, Ruby</p>
+            </div>
+            <div class="skill-group">
+                <h4>FRAMEWORKS &amp; PLATFORMS</h4>
+                <p>Odoo, ERPNext (Frappe), Laravel, Magento 2.x, OpenCart, Django · Qt (C++), Java SE, Android, .NET, VB.NET, Delphi</p>
+            </div>
+            <div class="skill-group">
+                <h4>INFRASTRUCTURE &amp; SYSTEMS</h4>
+                <p>Linux server administration, AWS, Azure · Network configuration and security · Advanced Bash/Shell scripting</p>
+            </div>
+            <div class="skill-group">
+                <h4>SECURITY &amp; QA</h4>
+                <p>Penetration testing, vulnerability assessment · Secure system design · Software QA (manual &amp; automation)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ LANGUAGES ═══ -->
+    <section class="section">
+        <h2 class="section-title">Languages</h2>
+        <div class="languages">
+            <div><strong>Arabic</strong> — Native</div>
+            <div><strong>English</strong> — Professional working proficiency</div>
+            <div><strong>Hebrew</strong> — Conversational proficiency</div>
+        </div>
+    </section>
+
+    <!-- ═══ SUMMARY ═══ -->
+    <section class="section">
+        <h2 class="section-title">Experience Summary</h2>
+        <div class="summary">
+            <p>With over 18 years of experience, I have worked across the full lifecycle of software systems — from low-level implementation and database design to system architecture, infrastructure, security, and operational delivery. My background allows me to move fluidly between development, integration, and leadership roles while maintaining a strong focus on system reliability, clarity, and long-term sustainability.</p>
+            <p>I don't just build systems. I trace them, harden them, and make them behave under pressure.</p>
+        </div>
+    </section>
+
+</div>
+</body>
+</html>
