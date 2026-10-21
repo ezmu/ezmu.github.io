@@ -14,7 +14,9 @@
     <url>
         <loc>https://ezmu.github.io/Arachne/</loc>
     </url>
-
+<url>
+        <loc>https://ezmu.github.io/Arachne.html</loc>
+    </url>
     <url>
         <loc>https://ezmu.github.io/Db-Manager/</loc>
     </url>
@@ -64,6 +66,12 @@
     </url>
    <url>
         <loc>https://ezmu.github.io/namtar.html</loc>
+    </url>
+   <url>
+        <loc>https://ezmu.github.io/cv.html</loc>
+    </url>
+  <url>
+        <loc>https://ezmu.github.io/POSIX.html</loc>
     </url>
     <url>
         <loc>https://ezmu.github.io/TheGraveyardofCode.html</loc>
